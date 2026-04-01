@@ -1,0 +1,96 @@
+############################################################
+# Flutter & Dart (apps/portfolio_mobile_app and any future apps)
+############################################################
+# Dart/Flutter tooling
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-configuration
+
+# Build artifacts - CORREGIR RUTAS
+build/
+coverage/
+
+# Flutter generated registrants
+**/GeneratedPluginRegistrant.*
+
+# Do NOT ignore the Flutter app lockfile
+!pubspec.lock
+
+# Secrets in Flutter assets
+assets/keys/**
+!assets/keys/.gitkeep
+
+############################################################
+# Android - CORREGIR RUTAS
+############################################################
+android/.gradle/
+android/local.properties
+android/**/captures/
+android/**/build/
+android/**/release/
+android/**/debug/
+android/**/generated/
+
+# Android keystores
+android/**/*.keystore
+android/**/*.jks
+android/key.properties
+
+############################################################
+# NUEVAS REGLAS ESPECÍFICAS
+############################################################
+# Archivos temporales y de IDE en la app Flutter
+.metadata
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Gradle files (algunos pueden necesitar committearse)
+android/.gradle/
+# --!!!--Necesita commit--!!!--
+!android/gradle/wrapper/gradle-wrapper.jar 
+# --!!!--Necesita commit--!!!--
+!android/gradlew 
+# --!!!--Necesita commit--!!!--
+!android/gradlew.bat 
+
+# Build outputs
+**/build/
+
+
+############################################################
+# Android Studio / IntelliJ IDEA - Archivos específicos de la app
+############################################################
+.idea/
+*.iml
+android/*.iml
+
+############################################################
+# Archivos misceláneos de la app
+############################################################
+flutter_01.png
+
+
+############################################################
+# Visual Studio Code - Archivos específicos de la app
+############################################################
+.vs/
+.vscode/
+
+
+############################################################
+# MAC - Archivos específicos de la app
+############################################################
+.DS_Store
+
+############################################################
+# Environment files - Archivos específicos de la app
+############################################################
+.env
+.env.*.local
+.env.local
+.env.*.secret
+.env.secret
+.dart-defines.local.json

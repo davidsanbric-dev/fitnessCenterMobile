@@ -1,0 +1,176 @@
+import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_availability_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_filters_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/logic/capabilities_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:get/get.dart';
+
+class AvailableSlotsController extends ControllerBase {
+  factory AvailableSlotsController({
+    AvailableSlotsService? service,
+    LocationController? locationController,
+    CapabilitiesController? capabilitiesController,
+  }) {
+    final resolvedService = service ?? AvailableSlotsService();
+    final LocationController resolvedLocationController =
+        locationController ??
+        (Get.isRegistered<LocationController>()
+            ? Get.find<LocationController>()
+            : Get.put(LocationController()));
+    final CapabilitiesController resolvedCapabilitiesController =
+        capabilitiesController ?? CapabilitiesController();
+    final filtersController = AvailableSlotsFiltersController(
+      locationController: resolvedLocationController,
+      capabilitiesController: resolvedCapabilitiesController,
+    );
+    final availabilityController = AvailableSlotsAvailabilityController(
+      filtersController: filtersController,
+      service: resolvedService,
+    );
+
+    return AvailableSlotsController._(
+      locationController: resolvedLocationController,
+      capabilitiesController: resolvedCapabilitiesController,
+      filtersController: filtersController,
+      availabilityController: availabilityController,
+    );
+  }
+
+  AvailableSlotsController._({
+    required this.locationController,
+    required this.capabilitiesController,
+    required this.filtersController,
+    required this.availabilityController,
+  });
+
+  final LocationController locationController;
+  final CapabilitiesController capabilitiesController;
+  final AvailableSlotsFiltersController filtersController;
+  final AvailableSlotsAvailabilityController availabilityController;
+
+  RxList<String> get disciplines => filtersController.disciplines;
+  RxList<String> get locations => filtersController.locations;
+
+  RxBool get isFiltersLoading => filtersController.isFiltersLoading;
+  RxBool get hasLoadedFilters => filtersController.hasLoadedFilters;
+  RxBool get hasLoadedCapabilityFilters =>
+      filtersController.hasLoadedCapabilityFilters;
+  RxnString get filtersError => filtersController.filtersError;
+
+  RxBool get hasSubmittedAvailabilityRequest =>
+      availabilityController.hasSubmittedAvailabilityRequest;
+  RxBool get isAvailabilityLoading =>
+      availabilityController.isAvailabilityLoading;
+  RxnString get availabilityError => availabilityController.availabilityError;
+  RxBool get isReservingBooking => availabilityController.isReservingBooking;
+  RxnString get reserveBookingError =>
+      availabilityController.reserveBookingError;
+  RxList<AvailableSlotDto> get availableSlots =>
+      availabilityController.availableSlots;
+  Rxn<MemberAvailabilityFilters> get lastSubmittedFilters =>
+      availabilityController.lastSubmittedFilters;
+  RxInt get availabilityPageNumber =>
+      availabilityController.availabilityPageNumber;
+  RxInt get availabilityPageSize => availabilityController.availabilityPageSize;
+  RxInt get availabilityTotalItems =>
+      availabilityController.availabilityTotalItems;
+
+  RxList<FilterBoxOptionData> get capabilityOptions =>
+      filtersController.capabilityOptions;
+  RxList<CapabilityDto> get capabilityGroups =>
+      filtersController.capabilityGroups;
+  RxList<CapabilityDto> get capabilitySubgroup =>
+      filtersController.capabilitySubgroup;
+  RxList<CapabilityDto> get capabilitySubgroupItems =>
+      filtersController.capabilitySubgroupItems;
+  List<CapabilityDto> get capabilitySubgroupItemsPageRows =>
+      filtersController.capabilitySubgroupItemsPageRows;
+  Rxn<CapabilityDto> get selectedCapability =>
+      filtersController.selectedCapability;
+  RxBool get isCapabilitySubgroupItemsLoading =>
+      filtersController.isCapabilitySubgroupItemsLoading;
+  RxnString get capabilitySubgroupItemsError =>
+      filtersController.capabilitySubgroupItemsError;
+  RxInt get capabilitySubgroupItemsPageNumber =>
+      filtersController.capabilitySubgroupItemsPageNumber;
+  RxInt get capabilitySubgroupItemsPageSize =>
+      filtersController.capabilitySubgroupItemsPageSize;
+  RxInt get capabilitySubgroupItemsTotalItems =>
+      filtersController.capabilitySubgroupItemsTotalItems;
+  RxBool get isCapabilityAvailabilityLoading =>
+      filtersController.isCapabilityAvailabilityLoading;
+  RxnString get capabilityAvailabilityError =>
+      filtersController.capabilityAvailabilityError;
+  RxInt get capabilityAvailabilityPageNumber =>
+      filtersController.capabilityAvailabilityPageNumber;
+  RxInt get capabilityAvailabilityPageSize =>
+      filtersController.capabilityAvailabilityPageSize;
+  RxInt get capabilityAvailabilityTotalItems =>
+      filtersController.capabilityAvailabilityTotalItems;
+  List<Map<String, dynamic>> get capabilityBookingsTableRows =>
+      filtersController.capabilityBookingsTableRows;
+  List<Map<String, dynamic>> get availableSlotsTableRows =>
+      availabilityController.availableSlotsTableRows;
+
+  Future<void> ensureFiltersLoaded() => filtersController.ensureFiltersLoaded();
+
+  Future<void> loadMemberFilters() => filtersController.loadMemberFilters();
+
+  Future<void> consultAvailability(MemberAvailabilityParams params) =>
+      availabilityController.consultAvailability(params);
+
+  Future<void> reserveBooking(AvailableSlotDto slot, {String? online}) =>
+      availabilityController.reserveBooking(slot, online: online);
+
+  Future<void> loadCapabilitySubgroupFor(CapabilityDto group) =>
+      filtersController.loadCapabilitySubgroupFor(group);
+
+  void resetCapabilitySubgroup() => filtersController.resetCapabilitySubgroup();
+
+  Future<void> loadCapabilitySubgroupItemsFor({
+    required CapabilityDto group,
+    required CapabilityDto subgroup,
+  }) => filtersController.loadCapabilitySubgroupItemsFor(
+    group: group,
+    subgroup: subgroup,
+  );
+
+  void resetCapabilitySubgroupItems() =>
+      filtersController.resetCapabilitySubgroupItems();
+
+  void setCapabilitySubgroupItemsPageNumber(int value) =>
+      filtersController.setCapabilitySubgroupItemsPageNumber(value);
+
+  void setCapabilitySubgroupItemsPageSize(int value) =>
+      filtersController.setCapabilitySubgroupItemsPageSize(value);
+
+  void resetAvailabilityView() =>
+      availabilityController.resetAvailabilityView();
+
+  Future<void> loadBookingsByCapability(CapabilityDto capability) =>
+      filtersController.loadBookingsByCapability(capability);
+
+  Future<void> reserveCapabilitySlot(AvailableSlotByCapabilityDto slot) =>
+      filtersController.reserveCapabilitySlot(slot);
+
+  void resetCapabilityAvailability() =>
+      filtersController.resetCapabilityAvailability();
+
+  void setCapabilityAvailabilityPageNumber(int value) =>
+      filtersController.setCapabilityAvailabilityPageNumber(value);
+
+  void setCapabilityAvailabilityPageSize(int value) =>
+      filtersController.setCapabilityAvailabilityPageSize(value);
+
+  void setAvailabilityPageNumber(int value) =>
+      availabilityController.setAvailabilityPageNumber(value);
+
+  void setAvailabilityPageSize(int value) =>
+      availabilityController.setAvailabilityPageSize(value);
+}

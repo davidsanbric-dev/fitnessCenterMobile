@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+
+class MenuTriggerButton extends StatelessWidget {
+  const MenuTriggerButton({super.key, this.onPressed});
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.menu),
+        color: Colors.grey.shade800,
+        onPressed: onPressed,
+      ),
+    );
+  }
+}

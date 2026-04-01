@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+
+import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_option.dart';
+
+class ActiveFilterOptionButton<T> extends StatelessWidget {
+  const ActiveFilterOptionButton({
+    super.key,
+    required this.option,
+    required this.isSelected,
+    required this.accentColor,
+    required this.onPressed,
+  });
+
+  final FilterOption<T> option;
+  final bool isSelected;
+  final Color accentColor;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = isSelected ? accentColor : Colors.white;
+    final borderColor = isSelected
+        ? accentColor
+        : accentColor.withValues(alpha: 0.6);
+    final foregroundColor = isSelected ? Colors.white : Colors.grey.shade700;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onPressed,
+        child: Ink(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: borderColor, width: 1.4),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(6, 24, 10, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  option.label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: foregroundColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: option.iconData != null
+                      ? Icon(option.iconData, size: 28, color: foregroundColor)
+                      : Image.asset(
+                          option.iconPath!,
+                          height: 28,
+                          width: 28,
+                          errorBuilder: (context, _, __) {
+                            return Icon(
+                              Icons.fitness_center,
+                              color: foregroundColor,
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

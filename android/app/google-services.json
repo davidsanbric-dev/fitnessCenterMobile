@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "291079672843",
+    "project_id": "fitness-center-3e1a6",
+    "storage_bucket": "fitness-center-3e1a6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291079672843:android:1702ad3c9d6c074ed4630e",
+        "android_client_info": {
+          "package_name": "com.example.portfolio_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291079672843-e158kci948k514lv9lhcrf1s1lam9dso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiLkUknPDO2iV2y-RQM9vHcn8S9Tz3GAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291079672843-e158kci948k514lv9lhcrf1s1lam9dso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

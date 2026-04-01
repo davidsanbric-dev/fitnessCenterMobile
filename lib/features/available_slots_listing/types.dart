@@ -1,0 +1,82 @@
+enum DisciplineSearchMode { discipline, trainer }
+
+enum SchedulingMode { byService, byDisciplineTrainer, online }
+
+enum MemberFilterKind { rut, name }
+
+class BookingsLocationOption {
+  const BookingsLocationOption({required this.id, required this.name});
+
+  final int id;
+  final String name;
+}
+
+class BookingsMemberOption {
+  const BookingsMemberOption({
+    required this.key,
+    required this.label,
+    required this.kind,
+  });
+
+  final String key;
+  final String label;
+  final MemberFilterKind kind;
+}
+
+class MemberAvailabilityParams {
+  const MemberAvailabilityParams({
+    required this.serviceLabel,
+    required this.primarySelectionLabel,
+    required this.locationLabel,
+    required this.searchMode,
+    this.isOnline = false,
+    this.trainerId,
+    this.trainerDisciplineId,
+    this.trainerDisciplineLabel,
+  });
+
+  final String serviceLabel;
+  final String primarySelectionLabel;
+  final String locationLabel;
+  final DisciplineSearchMode searchMode;
+  final bool isOnline;
+  final String? trainerId;
+  final int? trainerDisciplineId;
+  final String? trainerDisciplineLabel;
+}
+
+class MemberAvailabilityFilters {
+  const MemberAvailabilityFilters({
+    required this.serviceLabel,
+    required this.disciplineId,
+    this.disciplineLabel,
+    this.trainerId,
+    this.trainerLabel,
+    required this.locationId,
+    required this.locationLabel,
+    required this.searchMode,
+    this.isOnline = false,
+  });
+
+  final String serviceLabel;
+  final int disciplineId;
+  final String? disciplineLabel;
+  final String? trainerId;
+  final String? trainerLabel;
+  final int locationId;
+  final String locationLabel;
+  final DisciplineSearchMode searchMode;
+  final bool isOnline;
+
+  String get primaryLabel => searchMode == DisciplineSearchMode.discipline
+      ? (disciplineLabel ?? '')
+      : (trainerLabel ?? '');
+}
+
+String buildMemberFilterKey(MemberFilterKind kind, String value) {
+  final normalized = value.trim().toLowerCase();
+  if (normalized.isEmpty) {
+    return '';
+  }
+  return '${kind.name}::$normalized';
+}
