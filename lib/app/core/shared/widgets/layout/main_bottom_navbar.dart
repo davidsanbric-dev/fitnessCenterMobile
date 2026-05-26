@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 
 class MainBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -34,11 +33,6 @@ class MainBottomNavBar extends StatelessWidget {
         width: size,
         height: size,
         errorBuilder: (context, error, stackTrace) {
-          RuntimeDiagnostics.missingAsset(
-            icon,
-            scope: 'MainBottomNavBar',
-            error: error,
-          );
           return Icon(
             LucideIcons.imageOff,
             color: isSelected ? AppTheme.brandBlue : Colors.grey[800],

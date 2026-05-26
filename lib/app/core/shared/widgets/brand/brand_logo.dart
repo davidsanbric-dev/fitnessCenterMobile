@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 
 class BrandLogo extends StatelessWidget {
   final double height;
@@ -15,11 +14,6 @@ class BrandLogo extends StatelessWidget {
       future: DefaultAssetBundle.of(context).loadString(AppAssets.logo),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          RuntimeDiagnostics.missingAsset(
-            AppAssets.logo,
-            scope: 'BrandLogo',
-            error: snapshot.error,
-          );
           return Icon(LucideIcons.imageOff, size: height * 0.7);
         }
 

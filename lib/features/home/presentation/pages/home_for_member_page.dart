@@ -7,7 +7,6 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
@@ -17,7 +16,6 @@ import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_sli
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_summary.dart';
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/shortcuts_display.dart';
 import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -39,31 +37,18 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
   late final BookingsApi _bookingsApi;
   late final Future<AvailableSlotDto?> _todayBooking;
   bool _hasNotified = false;
-  bool _loggedFirstBuild = false;
-  bool _loggedTodayResult = false;
 
   @override
   void initState() {
     super.initState();
-    RuntimeDiagnostics.breadcrumb('home-member-init');
     _bookingsApi = BookingsApi();
     _todayBooking = _loadTodayBooking();
   }
 
   Future<AvailableSlotDto?> _loadTodayBooking() async {
-    RuntimeDiagnostics.breadcrumb('home-member-today-fetch-start');
     try {
-      final slot = await _bookingsApi.getTodayBooking();
-      RuntimeDiagnostics.breadcrumb(
-        'home-member-today-fetch-ok',
-        data: 'hasSlot=${slot != null}',
-      );
-      return slot;
+      return await _bookingsApi.getTodayBooking();
     } catch (error) {
-      RuntimeDiagnostics.breadcrumb(
-        'home-member-today-fetch-error',
-        data: 'error=$error',
-      );
       rethrow;
     }
   }
@@ -139,10 +124,6 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loggedFirstBuild) {
-      _loggedFirstBuild = true;
-      RuntimeDiagnostics.breadcrumb('home-member-first-build');
-    }
     final authService = Get.find<AuthService>();
     final greeting = _greetingFor(authService);
     final sliderSlides = [
@@ -225,15 +206,6 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
                     FutureBuilder<AvailableSlotDto?>(
                       future: _todayBooking,
                       builder: (context, snapshot) {
-                        if (!_loggedTodayResult &&
-                            snapshot.connectionState == ConnectionState.done) {
-                          _loggedTodayResult = true;
-                          RuntimeDiagnostics.breadcrumb(
-                            'home-member-today-future-done',
-                            data:
-                                'hasData=${snapshot.data != null} hasError=${snapshot.error != null}',
-                          );
-                        }
                         final slot = snapshot.data;
                         if (slot != null &&
                             !_hasNotified &&
@@ -303,30 +275,18 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
   Future<void> _notifyTodayBooking(AvailableSlotDto slot) async {
     if (!mounted || _hasNotified) return;
     _hasNotified = true;
-    RuntimeDiagnostics.breadcrumb('home-member-notify-start');
-
-    if (kDebugMode) {
-      RuntimeDiagnostics.breadcrumb('home-member-notify-skip-debug');
-      return;
-    }
 
     await Future<void>.delayed(const Duration(seconds: 2));
     if (!mounted) {
-      RuntimeDiagnostics.breadcrumb('home-member-notify-cancelled-unmounted');
       return;
     }
 
-    final lifecycle = RuntimeDiagnostics.currentLifecycleState;
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
     if (lifecycle != AppLifecycleState.resumed) {
-      RuntimeDiagnostics.breadcrumb(
-        'home-member-notify-skip-lifecycle',
-        data: 'state=${lifecycle?.name ?? '-'}',
-      );
       return;
     }
 
     if (!Get.isRegistered<LocalNotificationService>()) {
-      RuntimeDiagnostics.breadcrumb('home-member-notify-skip-no-service');
       return;
     }
 
@@ -339,6 +299,5 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
           '${slot.serviceName.isEmpty ? 'Class' : slot.serviceName} · ${slot.locationName} · ${DateTimeCell.formatTime(slot.schedulingDate)}',
       payload: const {'action': 'open_member_bookings'},
     );
-    RuntimeDiagnostics.breadcrumb('home-member-notify-done');
   }
 }

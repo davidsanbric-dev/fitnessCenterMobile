@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:portfolio_mobile_app/features/auth/logic/auth_controller.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_mfa_debug_log.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/form_text_field.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/form_title.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
+import 'package:portfolio_mobile_app/features/auth/logic/auth_controller.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -57,27 +54,6 @@ class _LoginFormState extends State<LoginForm> {
     if (!(_mfaFormKey.currentState?.validate() ?? false)) return;
     FocusScope.of(context).unfocus();
     await controller.verifyMfaCode(smsCodeController.text);
-  }
-
-  Future<void> _copyMfaDiagnostics() async {
-    final dump = AuthMfaDebugLog.dump(limit: 250);
-    await Clipboard.setData(ClipboardData(text: dump));
-    if (!mounted) {
-      return;
-    }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('MFA diagnostics copied.')));
-  }
-
-  void _clearMfaDiagnostics() {
-    AuthMfaDebugLog.clear();
-    if (!mounted) {
-      return;
-    }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('MFA diagnostics cleared.')));
   }
 
   @override
@@ -194,20 +170,6 @@ class _LoginFormState extends State<LoginForm> {
                                     style: AppTheme.brandTextButtonStyle(),
                                     child: const Text('Back'),
                                   ),
-                                  if (kDebugMode) ...[
-                                    TextButton(
-                                      onPressed: _copyMfaDiagnostics,
-                                      style: AppTheme.brandTextButtonStyle(),
-                                      child: const Text('Copy MFA diagnostics'),
-                                    ),
-                                    TextButton(
-                                      onPressed: _clearMfaDiagnostics,
-                                      style: AppTheme.brandTextButtonStyle(),
-                                      child: const Text(
-                                        'Clear MFA diagnostics',
-                                      ),
-                                    ),
-                                  ],
                                 ],
                               ],
                             ),

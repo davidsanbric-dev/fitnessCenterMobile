@@ -23,21 +23,13 @@ class DeepLinkService extends GetxService {
       if (initialUri != null) {
         _handleUri(initialUri);
       }
-    } catch (error) {
-      if (kDebugMode) {
-        debugPrint('Deep link init error: $error');
-      }
-    }
+    } catch (_) {}
 
     _subscription = _appLinks.uriLinkStream.listen(
       (uri) {
         _handleUri(uri);
       },
-      onError: (error) {
-        if (kDebugMode) {
-          debugPrint('Deep link stream error: $error');
-        }
-      },
+      onError: (_) {},
     );
 
     return this;

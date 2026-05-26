@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:portfolio_mobile_app/app/config/config.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -16,7 +15,6 @@ class MainApp extends StatelessWidget {
       title: 'FitnessCenter',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      navigatorObservers: <NavigatorObserver>[RuntimeRouteObserver()],
       initialBinding: BindingsBuilder(() {
         AppBindings.ensureAuthDependencies();
         if (!Get.isRegistered<AuthService>()) {

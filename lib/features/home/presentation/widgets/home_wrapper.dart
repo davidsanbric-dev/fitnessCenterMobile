@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/member_profile_page.dart';
@@ -23,7 +22,6 @@ class HomeWrapper extends StatefulWidget {
 
 class _HomeWrapperState extends State<HomeWrapper> {
   final Set<int> _visitedIndexes = <int>{};
-  bool _loggedFirstBuild = false;
   bool _loggedFirstInteractiveFrame = false;
 
   @override
@@ -32,12 +30,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
     final authService = Get.find<AuthService>();
 
     return Obx(() {
-      if (!_loggedFirstBuild) {
-        _loggedFirstBuild = true;
-        RuntimeDiagnostics.breadcrumb('home-wrapper-first-build');
-      }
       if (!authService.isLoggedIn) {
-        RuntimeDiagnostics.breadcrumb('home-wrapper-not-logged');
         return const SizedBox.shrink();
       }
 
@@ -80,10 +73,6 @@ class _HomeWrapperState extends State<HomeWrapper> {
       // ensure we fall back to a valid tab.
 
       if (_visitedIndexes.add(safeIndex)) {
-        RuntimeDiagnostics.breadcrumb(
-          'home-wrapper-visit-tab',
-          data: 'tab=$safeIndex visited=${_visitedIndexes.length}',
-        );
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             setState(() {});
@@ -97,10 +86,6 @@ class _HomeWrapperState extends State<HomeWrapper> {
           if (!mounted) {
             return;
           }
-          RuntimeDiagnostics.breadcrumb(
-            'home-wrapper-first-interactive-frame',
-            data: 'tab=$safeIndex',
-          );
         });
       }
 

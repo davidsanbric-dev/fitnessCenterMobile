@@ -1,5 +1,4 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -135,11 +134,6 @@ class _ShortcutCard extends StatelessWidget {
                                 width: shortcut.iconSize,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) {
-                                  RuntimeDiagnostics.missingAsset(
-                                    shortcut.iconPath!,
-                                    scope: 'ShortcutsDisplay',
-                                    error: error,
-                                  );
                                   return Icon(
                                     LucideIcons.dumbbell,
                                     size: shortcut.iconSize,

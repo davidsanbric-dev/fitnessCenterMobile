@@ -1,13 +1,10 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_mfa_debug_log.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/inline_error_text.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -150,7 +147,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
     });
 
     try {
-      _debugMfaUi('send-code-start', message: 'resend=$resend');
       final delivery = await _authService.sendMfaEnrollmentCode(
         phoneNumber: _phoneController.text.trim(),
         forceResendingToken: resend ? _resendToken : null,
@@ -160,11 +156,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
         _verificationId = delivery.verificationId;
         _resendToken = delivery.resendToken;
       });
-      _debugMfaUi(
-        'send-code-result',
-        message:
-            'confirmed=${delivery.isCodeSentConfirmed} resendToken=${delivery.resendToken ?? '-'}',
-      );
       if (delivery.isCodeSentConfirmed) {
         _showSnack('SMS code sent.');
       } else {
@@ -173,7 +164,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
         );
       }
     } catch (error) {
-      _debugMfaUi('send-code-error', message: '$error');
       if (!mounted) return;
       setState(() {
         _error = _mapError(error);
@@ -202,7 +192,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
     });
 
     try {
-      _debugMfaUi('confirm-enrollment-start');
       final verificationId = _verificationId;
       if (verificationId == null || verificationId.isEmpty) {
         throw const ApiException('Request the SMS code first.');
@@ -212,7 +201,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
         smsCode: _codeController.text.trim(),
         displayName: _buildDisplayName(_phoneController.text),
       );
-      _debugMfaUi('confirm-enrollment-success');
       _showSnack('SMS verification enabled successfully.');
       _codeController.clear();
       if (!mounted) return;
@@ -222,7 +210,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
       });
       await _loadFactors();
     } catch (error) {
-      _debugMfaUi('confirm-enrollment-error', message: '$error');
       if (!mounted) return;
       setState(() {
         _error = _mapError(error);
@@ -335,23 +322,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
     return null;
   }
 
-  void _debugMfaUi(String event, {String? message}) {
-    AuthMfaDebugLog.recordEvent(
-      scope: 'MFA/UI',
-      event: event,
-      fields: <String, Object?>{'message': message ?? '-'},
-    );
-  }
-
-  Future<void> _copyMfaDiagnostics() async {
-    final dump = AuthMfaDebugLog.dump(limit: 250);
-    await Clipboard.setData(ClipboardData(text: dump));
-    if (!mounted) {
-      return;
-    }
-    _showSnack('MFA diagnostics copied.');
-  }
-
   @override
   Widget build(BuildContext context) {
     final canEnroll = !_isCheckingEmail && _isEmailVerified;
@@ -375,12 +345,6 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
                 const SizedBox(height: 20),
                 _buildEnrollmentSection(canEnroll: canEnroll),
                 InlineErrorText(message: _error),
-                if (kDebugMode)
-                  TextButton(
-                    onPressed: _copyMfaDiagnostics,
-                    style: AppTheme.brandTextButtonStyle(),
-                    child: const Text('Copy MFA diagnostics'),
-                  ),
               ],
             ),
           ),

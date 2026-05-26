@@ -1,5 +1,4 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -136,11 +135,6 @@ class _InfoSummaryState extends State<InfoSummary> {
                               widget.iconAsset!,
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) {
-                                RuntimeDiagnostics.missingAsset(
-                                  widget.iconAsset!,
-                                  scope: 'InfoSummary',
-                                  error: error,
-                                );
                                 return Icon(
                                   LucideIcons.dumbbell,
                                   color: accentColor,

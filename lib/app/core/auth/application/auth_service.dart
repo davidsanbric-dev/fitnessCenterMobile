@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/app/core/auth/domain/types.dart';
 import 'package:get/get.dart';
 
 import 'package:portfolio_mobile_app/app/core/auth/application/auth_api/auth_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_mfa_debug_log.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
@@ -280,15 +279,6 @@ class AuthService extends GetxService {
     required MfaSignInContext context,
     required bool resend,
   }) async {
-    if (resend && context.resendToken != null) {
-      // Firebase can stall when forcing resend token during MFA sign-in.
-      // Prefer a fresh request to avoid long spinner states.
-      AuthMfaDebugLog.recordEvent(
-        scope: 'MFA/signin',
-        event: 'resend-ignoring-token',
-        fields: <String, Object?>{'resendToken': context.resendToken},
-      );
-    }
     return _authApi.sendMfaSignInCode(challengeId: context.challengeId);
   }
 

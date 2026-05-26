@@ -5,7 +5,6 @@ import 'package:portfolio_mobile_app/app/core/api/user_api.dart';
 import 'package:portfolio_mobile_app/app/core/auth/application/auth_session_claims_mapper.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_dependencies.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_mfa_debug_log.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/types.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
@@ -93,13 +92,6 @@ class AuthApi {
         throw ApiException('Internal error: $error');
       }
     } on FirebaseAuthMultiFactorException catch (error) {
-      AuthMfaDebugLog.recordMfaEvent(
-        flow: 'signin',
-        event: 'mfa-required',
-        exceptionCode: error.code,
-        exceptionMessage: error.message,
-        currentUserUid: _firebaseAuthGateway.currentUser?.uid,
-      );
       return _buildMfaRequiredResult(error);
     } on FirebaseAuthException catch (error) {
       throw ApiException(_firebaseErrorMapper.map(error));

@@ -1,5 +1,4 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -153,11 +152,6 @@ class _SlideCard extends StatelessWidget {
                   slide.imageAsset,
                   fit: BoxFit.fitWidth,
                   errorBuilder: (context, error, stackTrace) {
-                    RuntimeDiagnostics.missingAsset(
-                      slide.imageAsset,
-                      scope: 'InfoSlider',
-                      error: error,
-                    );
                     return DecoratedBox(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,

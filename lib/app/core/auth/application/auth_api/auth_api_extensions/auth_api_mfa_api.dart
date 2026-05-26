@@ -245,16 +245,6 @@ extension AuthApiMfaApi on AuthApi {
     FirebaseAuthMultiFactorException error,
   ) {
     final resolver = error.resolver;
-    AuthMfaDebugLog.recordEvent(
-      scope: 'MFA/signin',
-      event: 'mfa-hints',
-      fields: <String, Object?>{
-        'count': resolver.hints.length,
-        'types': AuthMfaDebugLog.resolverHintTypes(
-          resolver.hints.map((hint) => hint.factorId),
-        ),
-      },
-    );
     PhoneMultiFactorInfo? phoneFactor;
     for (final hint in resolver.hints) {
       if (hint is PhoneMultiFactorInfo) {

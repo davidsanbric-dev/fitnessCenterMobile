@@ -11,7 +11,6 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/config/config.dart';
 import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/app/core/services/deep_link_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
@@ -30,16 +29,8 @@ class _BootstrapAppState extends State<BootstrapApp> {
   bool _startupDispatched = false;
 
   Future<void> _initializeCriticalStartup() async {
-    RuntimeDiagnostics.breadcrumb('bootstrap-start');
-    final firebaseReady = await _ensureFirebaseReady();
-    if (!firebaseReady) {
-      RuntimeDiagnostics.resourceWarning(
-        'startup-degraded',
-        data: 'firebase-ready=false',
-      );
-    }
+    await _ensureFirebaseReady();
     // _logEffectiveBaseUrl();
-    RuntimeDiagnostics.breadcrumb('bootstrap-critical-ready');
   }
 
   @override
@@ -48,10 +39,6 @@ class _BootstrapAppState extends State<BootstrapApp> {
       future: _bootstrapFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          RuntimeDiagnostics.breadcrumb(
-            'bootstrap-failure',
-            data: 'error=${snapshot.error}',
-          );
           return StartupFailureApp(error: snapshot.error!);
         }
 
@@ -65,7 +52,6 @@ class _BootstrapAppState extends State<BootstrapApp> {
         if (!_startupDispatched) {
           _startupDispatched = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            RuntimeDiagnostics.breadcrumb('startup-dispatch');
             unawaited(_startApp());
           });
         }
@@ -125,19 +111,6 @@ class StartupFailureApp extends StatelessWidget {
   }
 }
 
-// void _logEffectiveBaseUrl() {
-//   try {
-//     debugPrint('[APP] effective BASE_URL=${AppStrings.baseUrl}');
-//     RuntimeDiagnostics.breadcrumb(
-//       'base-url',
-//       data: 'value=${AppStrings.baseUrl}',
-//     );
-//   } catch (error) {
-//     debugPrint('[APP] BASE_URL resolution failed: $error');
-//     RuntimeDiagnostics.breadcrumb('base-url-error', data: 'error=$error');
-//   }
-// }
-
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -145,7 +118,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> _startApp() async {
-  RuntimeDiagnostics.breadcrumb('start-app-begin');
   unawaited(_runStartupAssetPreflight());
   AppBindings.ensureAuthDependencies();
 
@@ -168,10 +140,6 @@ Future<void> _startApp() async {
   );
 
   if (Firebase.apps.isEmpty) {
-    RuntimeDiagnostics.resourceWarning(
-      'push-init-skipped',
-      data: 'firebase-not-ready',
-    );
   } else {
     final pushService = Get.isRegistered<PushNotificationService>()
         ? Get.find<PushNotificationService>()
@@ -187,7 +155,6 @@ Future<void> _startApp() async {
       ? Get.find<DeepLinkService>()
       : Get.put(DeepLinkService());
   await _runStartupStep('DeepLinkService.init', deepLinkService.init);
-  RuntimeDiagnostics.breadcrumb('start-app-end');
 }
 
 Future<void> _runStartupAssetPreflight() async {
@@ -197,11 +164,6 @@ Future<void> _runStartupAssetPreflight() async {
   ];
   const timeout = Duration(seconds: 2);
 
-  RuntimeDiagnostics.breadcrumb(
-    'startup-assets-preflight-start',
-    data: 'count=${criticalAssets.length}',
-  );
-
   for (final asset in criticalAssets) {
     try {
       final isSvg = asset.toLowerCase().endsWith('.svg');
@@ -210,23 +172,12 @@ Future<void> _runStartupAssetPreflight() async {
       } else {
         await rootBundle.load(asset).timeout(timeout);
       }
-      RuntimeDiagnostics.breadcrumb('startup-asset-ok', data: 'path=$asset');
-    } catch (error) {
-      RuntimeDiagnostics.missingAsset(
-        asset,
-        scope: 'startup-preflight',
-        error: error,
-      );
-    }
+    } catch (_) {}
   }
-
-  RuntimeDiagnostics.breadcrumb('startup-assets-preflight-end');
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  RuntimeDiagnostics.installGlobalHandlers();
-  RuntimeDiagnostics.breadcrumb('main-runapp');
 
   runApp(
     // kEnableDevicePreview
@@ -248,13 +199,8 @@ Future<bool> _ensureFirebaseReady() async {
     }
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    RuntimeDiagnostics.breadcrumb('firebase-ready');
     return true;
   } on TimeoutException catch (error, stackTrace) {
-    RuntimeDiagnostics.breadcrumb(
-      'firebase-init-timeout',
-      data: 'error=$error timeoutMs=${timeout.inMilliseconds}',
-    );
     FlutterError.reportError(
       FlutterErrorDetails(
         exception: error,
@@ -265,7 +211,6 @@ Future<bool> _ensureFirebaseReady() async {
     );
     return false;
   } catch (error, stackTrace) {
-    RuntimeDiagnostics.breadcrumb('firebase-init-error', data: 'error=$error');
     FlutterError.reportError(
       FlutterErrorDetails(
         exception: error,
@@ -286,19 +231,9 @@ Future<void> _runStartupStep(
 ) async {
   const timeout = Duration(seconds: 8);
   try {
-    RuntimeDiagnostics.breadcrumb('startup-step-start', data: 'name=$name');
     await action().timeout(timeout);
-    RuntimeDiagnostics.breadcrumb('startup-step-ok', data: 'name=$name');
-  } on TimeoutException catch (error) {
-    RuntimeDiagnostics.resourceWarning(
-      'startup-step-timeout',
-      data: 'name=$name timeoutMs=${timeout.inMilliseconds} error=$error',
-    );
+  } on TimeoutException {
   } catch (error, stackTrace) {
-    RuntimeDiagnostics.breadcrumb(
-      'startup-step-error',
-      data: 'name=$name error=$error',
-    );
     FlutterError.reportError(
       FlutterErrorDetails(
         exception: error,
