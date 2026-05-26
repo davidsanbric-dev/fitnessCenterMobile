@@ -37,6 +37,7 @@ class AuthController extends GetxController with WidgetsBindingObserver {
     isLoading.value = true;
     error.value = '';
     mfaError.value = '';
+    var shouldClearLoading = true;
     try {
       final mfaRequired = await _authService.loginWithEmailAndPassword(
         email: request.mail,
@@ -49,13 +50,16 @@ class AuthController extends GetxController with WidgetsBindingObserver {
         return;
       }
       isMfaRequired.value = false;
+      shouldClearLoading = false;
       await _navigateToHome();
     } on ApiException catch (e) {
       error.value = _mapBackendError(e.message);
     } catch (e, s) {
       error.value = 'Authentication error: $e/$s';
     } finally {
-      isLoading.value = false;
+      if (shouldClearLoading) {
+        isLoading.value = false;
+      }
     }
   }
 
@@ -71,16 +75,20 @@ class AuthController extends GetxController with WidgetsBindingObserver {
     }
     isLoading.value = true;
     mfaError.value = '';
+    var shouldClearLoading = true;
     try {
       await _authService.confirmMfaSignIn(smsCode: trimmed);
       isMfaRequired.value = false;
+      shouldClearLoading = false;
       await _navigateToHome();
     } on ApiException catch (e) {
       mfaError.value = _mapBackendError(e.message);
     } catch (e, s) {
       mfaError.value = 'Error validating MFA: $e/$s';
     } finally {
-      isLoading.value = false;
+      if (shouldClearLoading) {
+        isLoading.value = false;
+      }
     }
   }
 
@@ -153,11 +161,6 @@ class AuthController extends GetxController with WidgetsBindingObserver {
       return;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Get.currentRoute != AppRoutes.postLogin &&
-          Get.currentRoute != AppRoutes.home) {
-        Get.offAllNamed(AppRoutes.postLogin);
-      }
-    });
+    await Get.offAllNamed(AppRoutes.postLogin);
   }
 }

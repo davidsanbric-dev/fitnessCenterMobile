@@ -143,16 +143,16 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
 
     final shortcuts = [
       ShortcutCardData(
-        title: 'Explore Disciplines',
+        title: 'Explore\nDisciplines',
         iconData: LucideIcons.dumbbell,
         onTap: _handleDisciplinesNavigation,
       ),
       const ShortcutCardData(
-        title: 'Fitness Assessments',
+        title: 'Fitness\nAssessments',
         iconData: LucideIcons.heartPulse,
       ),
       ShortcutCardData(
-        title: 'Meet Trainers',
+        title: 'Meet\nTrainers',
         iconData: LucideIcons.activity,
         onTap: _handleTrainersNavigation,
       ),

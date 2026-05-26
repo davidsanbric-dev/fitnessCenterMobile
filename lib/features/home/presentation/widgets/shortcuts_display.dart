@@ -52,7 +52,10 @@ class ShortcutsDisplay extends StatelessWidget {
               .map(
                 (shortcut) => SizedBox(
                   width: itemWidth,
-                  child: _ShortcutCard(shortcut: shortcut),
+                  child: SizedBox.square(
+                    dimension: itemWidth,
+                    child: _ShortcutCard(shortcut: shortcut),
+                  ),
                 ),
               )
               .toList(),
@@ -110,16 +113,18 @@ class _ShortcutCard extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(7, 8, 6, 6),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         shortcut.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Colors.grey.shade800,
                           fontWeight: FontWeight.w500,
                           fontSize: 11,
                         ),
                       ),
-                      const SizedBox(height: 28),
                       Align(
                         alignment: Alignment.bottomRight,
                         child: shortcut.iconData != null

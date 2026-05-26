@@ -117,12 +117,14 @@ class _LoginFormState extends State<LoginForm> {
                         const SizedBox(height: 8),
                       ],
                       const SizedBox(height: 10),
-                      AppButton(
-                        text: isMfa ? 'Verify code' : 'Sign in',
-                        onPressed: isMfa ? _submitMfa : _submit,
-                      ),
                       isLoading
                           ? const Center(child: CircularProgressIndicator())
+                          : AppButton(
+                              text: isMfa ? 'Verify code' : 'Sign in',
+                              onPressed: isMfa ? _submitMfa : _submit,
+                            ),
+                      isLoading
+                          ? const SizedBox.shrink()
                           : Column(
                               children: [
                                 if (!isMfa) ...[
