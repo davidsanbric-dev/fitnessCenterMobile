@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -44,10 +43,12 @@ class _InfoSummaryState extends State<InfoSummary> {
   @override
   Widget build(BuildContext context) {
     final tabs = widget.tabs;
-    const accentColor = AppTheme.brandBlue;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accentColor = colorScheme.primary;
     final tab = tabs[_selectedTab.clamp(0, tabs.length - 1)];
-    final cardTextStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      color: Colors.grey.shade600,
+    final cardTextStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: colorScheme.onSurface.withValues(alpha: 0.75),
       fontWeight: FontWeight.w500,
       fontSize: 13,
     );
@@ -63,8 +64,10 @@ class _InfoSummaryState extends State<InfoSummary> {
             final tabIndex = index ~/ 2;
             final tabData = tabs[tabIndex];
             final isActive = tabIndex == _selectedTab;
-            final textStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: isActive ? Colors.black : Colors.grey.shade500,
+            final textStyle = theme.textTheme.titleMedium?.copyWith(
+              color: isActive
+                  ? colorScheme.onSurface
+                  : colorScheme.onSurface.withValues(alpha: 0.55),
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               fontSize: 14,
             );
@@ -99,12 +102,12 @@ class _InfoSummaryState extends State<InfoSummary> {
         ),
         DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(18),
               bottomRight: Radius.circular(18),
             ),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: theme.dividerColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),

@@ -334,7 +334,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         top: false,
         child: Column(

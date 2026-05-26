@@ -356,7 +356,6 @@ class _DisciplinesDirectoryStandalonePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         top: false,
         child: Column(

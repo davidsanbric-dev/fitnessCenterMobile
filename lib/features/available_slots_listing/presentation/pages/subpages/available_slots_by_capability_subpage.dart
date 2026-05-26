@@ -354,7 +354,6 @@ class _AvailableSlotsByCapabilityPageState
       return body;
     }
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(top: false, child: body),
     );
   }

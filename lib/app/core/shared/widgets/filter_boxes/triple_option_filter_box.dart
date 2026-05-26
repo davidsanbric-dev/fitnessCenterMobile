@@ -46,6 +46,7 @@ class TripleOptionFilterBox<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final topOptions = options.take(2).toList(growable: false);
     final bottomOption = options.last;
 
@@ -53,9 +54,9 @@ class TripleOptionFilterBox<T> extends StatelessWidget {
       decoration:
           decoration ??
           BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+            border: Border.all(color: theme.dividerColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),

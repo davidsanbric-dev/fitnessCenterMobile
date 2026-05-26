@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/reserve_cell_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
@@ -95,7 +94,9 @@ class AvailableSlotsTable extends StatelessWidget {
 
   Widget? _buildToolbar(BuildContext context) {
     final summary = _buildFiltersSummary();
-    final editButton = showEditFiltersButton ? _buildEditFiltersButton() : null;
+    final editButton = showEditFiltersButton
+        ? _buildEditFiltersButton(context)
+        : null;
 
     if (summary == null && editButton == null) {
       return null;
@@ -165,13 +166,15 @@ class AvailableSlotsTable extends StatelessWidget {
     return TableFiltersSummary.maybe(items: items);
   }
 
-  Widget? _buildEditFiltersButton() {
+  Widget? _buildEditFiltersButton(BuildContext context) {
     if (onEditFilters == null) {
       return null;
     }
     return TextButton.icon(
       onPressed: onEditFilters,
-      style: TextButton.styleFrom(foregroundColor: AppTheme.brandBlue),
+      style: TextButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.primary,
+      ),
       icon: const Icon(LucideIcons.chevronLeft, size: 18),
       label: const Text('Change filters'),
     );

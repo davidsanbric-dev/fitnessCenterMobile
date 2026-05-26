@@ -271,7 +271,6 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     final int currentStep = _currentStepIndex();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

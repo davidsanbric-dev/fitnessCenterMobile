@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/triple_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +7,13 @@ class SchedulingModeFilterBox extends StatelessWidget {
   const SchedulingModeFilterBox({
     super.key,
     this.title = 'Booking Options',
-    this.accentColor = AppTheme.brandBlue,
+    this.accentColor,
     required this.selectedMode,
     this.onChanged,
   });
 
   final String title;
-  final Color accentColor;
+  final Color? accentColor;
   final SchedulingMode? selectedMode;
   final ValueChanged<SchedulingMode>? onChanged;
 
@@ -41,9 +40,11 @@ class SchedulingModeFilterBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAccent =
+        accentColor ?? Theme.of(context).colorScheme.primary;
     return TripleOptionFilterBox<SchedulingMode>(
       title: title,
-      accentColor: accentColor,
+      accentColor: resolvedAccent,
       options: _options,
       selectedValue: selectedMode,
       onChanged: onChanged,
@@ -88,11 +89,14 @@ class _FixedHeightOptionButton<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isSelected ? accentColor : Colors.white;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = isSelected ? accentColor : colorScheme.surface;
     final borderColor = isSelected
         ? accentColor
         : accentColor.withValues(alpha: 0.6);
-    final foregroundColor = isSelected ? Colors.white : Colors.grey.shade700;
+    final foregroundColor = isSelected
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface.withValues(alpha: 0.8);
 
     return Material(
       color: Colors.transparent,

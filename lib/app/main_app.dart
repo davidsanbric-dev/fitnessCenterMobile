@@ -15,6 +15,8 @@ class MainApp extends StatelessWidget {
       title: 'FitnessCenter',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.dark,
       initialBinding: BindingsBuilder(() {
         AppBindings.ensureAuthDependencies();
         if (!Get.isRegistered<AuthService>()) {

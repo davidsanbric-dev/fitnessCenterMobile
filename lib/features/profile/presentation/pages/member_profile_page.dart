@@ -71,7 +71,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _closePersonalData();
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
           body: PersonalDataView(onBack: _closePersonalData),
         ),
       );
@@ -85,7 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _closeMfaSetup();
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
           body: MfaEnrollmentView(onBack: _closeMfaSetup),
         ),
       );
@@ -113,7 +111,6 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         top: false,
         child: Column(

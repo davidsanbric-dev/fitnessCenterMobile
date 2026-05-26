@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -72,6 +71,10 @@ class _ShortcutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accent = colorScheme.primary;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -81,9 +84,9 @@ class _ShortcutCard extends StatelessWidget {
           top: -1,
           child: Container(
             height: 12,
-            decoration: const BoxDecoration(
-              color: AppTheme.brandBlue,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            decoration: BoxDecoration(
+              color: accent,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             ),
           ),
         ),
@@ -96,10 +99,10 @@ class _ShortcutCard extends StatelessWidget {
               onTap: shortcut.onTap,
               child: Ink(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: AppTheme.brandBlue.withValues(alpha: 0.6),
+                    color: accent.withValues(alpha: 0.6),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -119,8 +122,8 @@ class _ShortcutCard extends StatelessWidget {
                         shortcut.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey.shade800,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurface.withValues(alpha: 0.85),
                           fontWeight: FontWeight.w500,
                           fontSize: 11,
                         ),
@@ -131,7 +134,7 @@ class _ShortcutCard extends StatelessWidget {
                             ? Icon(
                                 shortcut.iconData,
                                 size: shortcut.iconSize,
-                                color: AppTheme.brandBlue,
+                                color: accent,
                               )
                             : Image.asset(
                                 shortcut.iconPath!,
@@ -142,7 +145,7 @@ class _ShortcutCard extends StatelessWidget {
                                   return Icon(
                                     LucideIcons.dumbbell,
                                     size: shortcut.iconSize,
-                                    color: AppTheme.brandBlue,
+                                    color: accent,
                                   );
                                 },
                               ),

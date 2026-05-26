@@ -248,7 +248,6 @@ class _AvailableSlotsForOnlineSubPageState
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(top: false, child: body),
     );
   }

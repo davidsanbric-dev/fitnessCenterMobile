@@ -17,6 +17,28 @@ To reduce local project size, you can remove generated artifacts:
 flutter clean
 ```
 
+## Release workflow
+
+The repository includes a GitHub Actions workflow at [.github/workflows/android-release.yml](.github/workflows/android-release.yml).
+
+It can:
+
+- build the Android release APK once
+- publish the APK to GitHub Releases on tag pushes that match `v*`
+- upload the same APK to Firebase App Distribution when the Firebase secrets are present
+- fall back to debug signing when no release keystore secrets are provided
+
+Required secrets for full release signing and Firebase distribution:
+
+- `ANDROID_KEYSTORE_BASE64`
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
+- `FIREBASE_SERVICE_ACCOUNT_JSON`
+- `FIREBASE_APP_DISTRIBUTION_GROUPS`
+
+For manual runs, choose `firebase` to publish only to App Distribution, or `both` to publish to Firebase and GitHub Releases. When `github` is included, provide `release_tag`.
+
 ## Appointment/Class Booking Architecture (Fitness scope)
 
 Current fitness booking-related features are separated by responsibility:

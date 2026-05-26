@@ -1,0 +1,124 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to publish the APK
+        type: choice
+        default: both
+        options:
+          - both
+          - github
+          - firebase
+      release_tag:
+        description: Git tag to attach to GitHub Releases when target includes github
+        required: false
+        type: string
+      release_name:
+        description: Release title for GitHub Releases
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'both' }}
+      RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || '' }}
+      RELEASE_NAME_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_name || '' }}
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+      RELEASE_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.release_name || github.ref_name }}
+      FIREBASE_APP_ID: 1:291079672843:android:1702ad3c9d6c074ed4630e
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+      FIREBASE_APP_DISTRIBUTION_GROUPS: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GROUPS }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Configure release keystore
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        shell: bash
+        run: |
+          mkdir -p android/app
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storeFile=app/upload-keystore.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+
+      - name: Validate GitHub release inputs
+        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both') }}
+        shell: bash
+        run: |
+          if [ -z "$RELEASE_TAG_INPUT" ]; then
+            echo "release_tag is required when target includes GitHub Releases."
+            exit 1
+          fi
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Prepare release notes
+        shell: bash
+        run: |
+          cat > release-notes.txt <<EOF
+          Build: $RELEASE_NAME
+          Commit: $GITHUB_SHA
+          Ref: $GITHUB_REF
+          EOF
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publish to GitHub Releases
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both')) }}
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_NAME }}
+          body_path: release-notes.txt
+          files: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publish to Firebase App Distribution
+        if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.target == 'firebase' || inputs.target == 'both'))) && env.FIREBASE_SERVICE_ACCOUNT_JSON != '' && env.FIREBASE_APP_DISTRIBUTION_GROUPS != '' }}
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ env.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          groups: ${{ env.FIREBASE_APP_DISTRIBUTION_GROUPS }}
+          file: build/app/outputs/flutter-apk/app-release.apk
+          releaseNotesFile: release-notes.txt

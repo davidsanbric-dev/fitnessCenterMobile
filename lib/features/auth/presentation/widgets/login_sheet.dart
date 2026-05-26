@@ -34,9 +34,9 @@ class LoginSheet extends StatelessWidget {
         return Container(
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(66),
               topRight: Radius.circular(66),
             ),

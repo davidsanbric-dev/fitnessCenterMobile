@@ -159,7 +159,6 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
@@ -179,7 +178,6 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
                             greeting,
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: Colors.black87,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
                                 ),

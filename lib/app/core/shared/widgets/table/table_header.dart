@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/header_cell.dart';
 
 class TableHeader extends StatelessWidget {
@@ -15,7 +14,7 @@ class TableHeader extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.brandBlue.withValues(alpha: 0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 4),

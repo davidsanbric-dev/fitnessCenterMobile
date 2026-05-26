@@ -19,11 +19,14 @@ class ActiveFilterOptionButton<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isSelected ? accentColor : Colors.white;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = isSelected ? accentColor : colorScheme.surface;
     final borderColor = isSelected
         ? accentColor
         : accentColor.withValues(alpha: 0.6);
-    final foregroundColor = isSelected ? Colors.white : Colors.grey.shade700;
+    final foregroundColor = isSelected
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface.withValues(alpha: 0.8);
 
     return Material(
       color: Colors.transparent,

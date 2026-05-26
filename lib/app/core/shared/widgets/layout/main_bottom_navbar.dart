@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 
 class MainBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -16,16 +15,17 @@ class MainBottomNavBar extends StatelessWidget {
   });
 
   Widget _buildIconWidget(
+    BuildContext context,
     dynamic icon, {
     required bool isSelected,
     double size = 24,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final iconColor = isSelected
+        ? colorScheme.primary
+        : colorScheme.onSurface.withValues(alpha: 0.7);
     if (icon is IconData) {
-      return Icon(
-        icon,
-        color: isSelected ? AppTheme.brandBlue : Colors.grey[800],
-        size: size,
-      );
+      return Icon(icon, color: iconColor, size: size);
     }
     if (icon is String) {
       return Image.asset(
@@ -33,11 +33,7 @@ class MainBottomNavBar extends StatelessWidget {
         width: size,
         height: size,
         errorBuilder: (context, error, stackTrace) {
-          return Icon(
-            LucideIcons.imageOff,
-            color: isSelected ? AppTheme.brandBlue : Colors.grey[800],
-            size: size,
-          );
+          return Icon(LucideIcons.imageOff, color: iconColor, size: size);
         },
       );
     }
@@ -69,11 +65,13 @@ class MainBottomNavBar extends StatelessWidget {
         final menuIndex = menuItem['index'] as int;
         final isSelected = menuIndex == currentIndex;
 
+        final colorScheme = Theme.of(context).colorScheme;
         return PopupMenuItem<int>(
           value: menuIndex,
           child: Row(
             children: [
               _buildIconWidget(
+                context,
                 menuItem['icon'],
                 isSelected: isSelected,
                 size: 20,
@@ -82,7 +80,9 @@ class MainBottomNavBar extends StatelessWidget {
               Text(
                 menuItem['label'] as String,
                 style: TextStyle(
-                  color: isSelected ? AppTheme.brandBlue : Colors.grey.shade800,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface.withValues(alpha: 0.85),
                 ),
               ),
             ],
@@ -110,10 +110,15 @@ class MainBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accent = colorScheme.primary;
+    final labelMuted = colorScheme.onSurface.withValues(alpha: 0.7);
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE0E0E0))),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(top: BorderSide(color: theme.dividerColor)),
       ),
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -135,6 +140,7 @@ class MainBottomNavBar extends StatelessWidget {
                 ? baseLabel
                 : '$baseLabel/$activeLabel';
             final menuIcon = _buildIconWidget(
+              context,
               LucideIcons.menu,
               isSelected: isMenuSelected,
             );
@@ -151,15 +157,13 @@ class MainBottomNavBar extends StatelessWidget {
                           width: 30,
                           height: 30,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colorScheme.surface,
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppTheme.brandBlue,
-                              width: 2,
-                            ),
+                            border: Border.all(color: accent, width: 2),
                           ),
                           child: Center(
                             child: _buildIconWidget(
+                              context,
                               activeMenuItem['icon'],
                               isSelected: true,
                               size: 16,
@@ -181,7 +185,7 @@ class MainBottomNavBar extends StatelessWidget {
                       padding: item['padding'] ?? const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppTheme.brandBlue, width: 2),
+                        border: Border.all(color: accent, width: 2),
                       ),
                       child: menuIconWithBadge,
                     ),
@@ -195,9 +199,7 @@ class MainBottomNavBar extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isMenuSelected
-                        ? AppTheme.brandBlue
-                        : Colors.grey[800],
+                    color: isMenuSelected ? accent : labelMuted,
                   ),
                 ),
               ],
@@ -211,7 +213,11 @@ class MainBottomNavBar extends StatelessWidget {
 
           final icon = item['icon'];
           final route = item['route'] as String?;
-          final iconWidget = _buildIconWidget(icon, isSelected: isSelected);
+          final iconWidget = _buildIconWidget(
+            context,
+            icon,
+            isSelected: isSelected,
+          );
 
           final navItemWidget = GestureDetector(
             onTap: () {
@@ -226,7 +232,7 @@ class MainBottomNavBar extends StatelessWidget {
                   padding: item['padding'] ?? const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.brandBlue, width: 2),
+                    border: Border.all(color: accent, width: 2),
                   ),
                   child: iconWidget,
                 ),
@@ -238,7 +244,7 @@ class MainBottomNavBar extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isSelected ? AppTheme.brandBlue : Colors.grey[800],
+                    color: isSelected ? accent : labelMuted,
                   ),
                 ),
               ],

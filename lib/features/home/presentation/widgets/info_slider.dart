@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -53,7 +52,8 @@ class _InfoSliderState extends State<InfoSlider> {
       return const SizedBox.shrink();
     }
 
-    const accent = AppTheme.brandBlue;
+    final accent = Theme.of(context).colorScheme.primary;
+    final inactiveDot = Theme.of(context).dividerColor;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -99,7 +99,7 @@ class _InfoSliderState extends State<InfoSlider> {
                   height: 8,
                   width: isActive ? 18 : 8,
                   decoration: BoxDecoration(
-                    color: isActive ? accent : Colors.grey.shade400,
+                    color: isActive ? accent : inactiveDot,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 );
@@ -125,14 +125,18 @@ class _SlideCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const accent = AppTheme.brandBlue;
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accent = colorScheme.primary;
+    final textTheme = theme.textTheme;
+    final cardSurface = colorScheme.surface;
+    final captionColor = colorScheme.onSurface.withValues(alpha: 0.85);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardSurface,
           border: Border.all(color: accent.withValues(alpha: 0.3)),
           boxShadow: [
             BoxShadow(
@@ -154,15 +158,15 @@ class _SlideCard extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: colorScheme.surfaceContainerHighest,
                         border: Border.all(
                           color: accent.withValues(alpha: 0.4),
                         ),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           LucideIcons.imageOff,
-                          color: AppTheme.brandBlue,
+                          color: accent,
                           size: 36,
                         ),
                       ),
@@ -176,7 +180,7 @@ class _SlideCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.fromLTRB(10, 0, 16, 0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardSurface,
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -196,7 +200,7 @@ class _SlideCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: textTheme.titleMedium?.copyWith(
-                              color: Colors.grey.shade800,
+                              color: captionColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -205,7 +209,7 @@ class _SlideCard extends StatelessWidget {
                             slide.description,
                             maxLines: 1,
                             style: textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade800,
+                              color: captionColor,
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
                             ),

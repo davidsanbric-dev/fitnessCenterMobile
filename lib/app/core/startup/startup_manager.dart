@@ -79,7 +79,6 @@ class StartupManager {
     const timeout = Duration(seconds: 8);
     try {
       await action().timeout(timeout);
-    } on TimeoutException {
     } catch (error, stackTrace) {
       FlutterError.reportError(
         FlutterErrorDetails(

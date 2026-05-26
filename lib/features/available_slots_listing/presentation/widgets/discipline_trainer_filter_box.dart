@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,13 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 class DisciplineTrainerFilterBox extends StatelessWidget {
   const DisciplineTrainerFilterBox({
     super.key,
-    this.accentColor = AppTheme.brandBlue,
+    this.accentColor,
     this.bottomSpacing = 32,
     required this.selectedMode,
     this.onChanged,
   });
 
-  final Color accentColor;
+  final Color? accentColor;
   final double bottomSpacing;
   final DisciplineSearchMode selectedMode;
   final ValueChanged<DisciplineSearchMode>? onChanged;
@@ -33,12 +32,13 @@ class DisciplineTrainerFilterBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAccent = accentColor ?? Theme.of(context).colorScheme.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DoubleOptionFilterBox<DisciplineSearchMode>(
           title: 'How do you want to search?',
-          accentColor: accentColor,
+          accentColor: resolvedAccent,
           options: _options,
           selectedValue: selectedMode,
           onChanged: onChanged,

@@ -131,7 +131,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocProvider(
       create: (_) => RegisterBloc(),
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

@@ -412,7 +412,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
       return body;
     }
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(top: false, child: body),
     );
   }

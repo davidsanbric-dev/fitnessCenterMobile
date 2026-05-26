@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
@@ -122,12 +121,19 @@ class TableCard extends StatelessWidget {
       if (pagination != null) TablePagination(config: pagination!),
     ];
 
+    final theme = Theme.of(context);
     return Container(
       height: resolvedHeight,
       width: width,
       margin: margin,
       padding: padding,
-      decoration: AppTheme.tableCardDecoration,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: crossAxisAlignment,
         mainAxisSize: mainAxisSize,

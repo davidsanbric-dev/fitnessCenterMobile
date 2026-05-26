@@ -155,7 +155,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
         _schedulingMode == SchedulingMode.byDisciplineTrainer;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         top: false,
         child: showDisciplineFlow

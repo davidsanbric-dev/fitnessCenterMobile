@@ -15,6 +15,18 @@ mixin AppTheme {
   static const Color borderSoft = Color(0xFFE0E0E0);
   static const Color backgroundLight = Color(0xFFF6FAFC);
 
+  // Dark mode palette — mirrors the web app's [data-theme='dark'] CSS variables.
+  static const Color darkBg = Color(0xFF081622);
+  static const Color darkBgSoft = Color(0xFF0D2133);
+  static const Color darkPanel = Color(0xFF11273C);
+  static const Color darkPanelMuted = Color(0xFF17314A);
+  static const Color darkText = Color(0xFFECF3FA);
+  static const Color darkTextMuted = Color(0xFF9FB4CA);
+  static const Color darkPrimary = Color(0xFF2C6BA4);
+  static const Color darkPrimarySoft = Color(0xFF1F4F7C);
+  static const Color darkBorder = Color(0xFF23435F);
+  static const Color darkInputBg = Color(0xFF0F2438);
+
   static const Color textColorPrimary = brandTextPrimary;
   static const Color textColorSecondary = brandTextSecondary;
   static const Color textColorMuted = brandTextMuted;
@@ -83,22 +95,38 @@ mixin AppTheme {
     color: textColorPrimary,
   );
 
+  static bool _isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color primaryTextColor(BuildContext context) =>
+      _isDark(context) ? darkText : textColorPrimary;
+
+  static Color secondaryTextColor(BuildContext context) => _isDark(context)
+      ? darkText.withValues(alpha: 0.85)
+      : textColorSecondary;
+
+  static Color mutedTextColor(BuildContext context) =>
+      _isDark(context) ? darkTextMuted : textColorMuted;
+
+  static Color brandAccentColor(BuildContext context) =>
+      _isDark(context) ? darkPrimary : brandBlue;
+
   static TextStyle? bodyMediumMuted(BuildContext context) {
     return Theme.of(
       context,
-    ).textTheme.bodyMedium?.copyWith(color: textColorSecondary);
+    ).textTheme.bodyMedium?.copyWith(color: secondaryTextColor(context));
   }
 
   static TextStyle? bodySmallMuted(BuildContext context) {
     return Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: textColorMuted,
+      color: mutedTextColor(context),
       fontWeight: FontWeight.w500,
     );
   }
 
   static TextStyle? bodySmallLabel(BuildContext context) {
     return Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: textColorSecondary,
+      color: secondaryTextColor(context),
       fontWeight: FontWeight.w600,
     );
   }
@@ -106,21 +134,21 @@ mixin AppTheme {
   static TextStyle? titleMediumBrand(BuildContext context) {
     return Theme.of(context).textTheme.titleMedium?.copyWith(
       fontWeight: FontWeight.w600,
-      color: brandBlue,
+      color: brandAccentColor(context),
     );
   }
 
   static TextStyle? bodyMediumEmphasis(BuildContext context) {
     return Theme.of(context).textTheme.bodyMedium?.copyWith(
       fontWeight: FontWeight.w600,
-      color: textColorPrimary,
+      color: primaryTextColor(context),
     );
   }
 
   static TextStyle? titleMediumEmphasis(BuildContext context) {
     return Theme.of(context).textTheme.titleMedium?.copyWith(
       fontWeight: FontWeight.w600,
-      color: textColorPrimary,
+      color: primaryTextColor(context),
     );
   }
 
@@ -385,6 +413,36 @@ mixin AppTheme {
       displayColor: textColorPrimary,
     ),
     inputDecorationTheme: inputDecorationTheme,
+    useMaterial3: true,
+  );
+
+  static const InputDecorationTheme darkInputDecorationTheme =
+      InputDecorationTheme(
+        labelStyle: TextStyle(
+          color: darkPrimary,
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
+        ),
+      );
+
+  static final ThemeData dark = ThemeData(
+    colorScheme: const ColorScheme.dark(
+      primary: darkPrimary,
+      onPrimary: darkText,
+      secondary: darkPrimarySoft,
+      onSecondary: darkText,
+      surface: darkPanel,
+      onSurface: darkText,
+      error: danger,
+      onError: darkText,
+    ),
+    scaffoldBackgroundColor: darkBg,
+    cardColor: darkPanel,
+    dividerColor: darkBorder,
+    textTheme: GoogleFonts.poppinsTextTheme(
+      ThemeData(brightness: Brightness.dark).textTheme,
+    ).apply(bodyColor: darkText, displayColor: darkText),
+    inputDecorationTheme: darkInputDecorationTheme,
     useMaterial3: true,
   );
 }

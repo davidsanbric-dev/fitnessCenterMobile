@@ -20,16 +20,17 @@ class DualDataCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Expanded(
       child: Column(
         crossAxisAlignment: crossAxisAlignment,
         children: [
           Text(
             primaryText,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 13.5,
-              color: Colors.black87,
+              color: onSurface,
             ),
             maxLines: allowPrimaryWrap ? null : 1,
             overflow: allowPrimaryWrap
@@ -41,7 +42,10 @@ class DualDataCell extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             secondaryText,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: TextStyle(
+              fontSize: 12,
+              color: onSurface.withValues(alpha: 0.65),
+            ),
             maxLines: allowSecondaryWrap ? null : 1,
             overflow: allowSecondaryWrap
                 ? TextOverflow.visible
