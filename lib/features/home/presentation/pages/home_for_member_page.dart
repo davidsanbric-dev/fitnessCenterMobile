@@ -9,8 +9,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/fitness_directory_controller.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/disciplines_directory_controller.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/disciplines_directory_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
@@ -21,8 +20,9 @@ import 'package:portfolio_mobile_app/app/core/services/local_notification_servic
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
-const _sliderImage = 'assets/images/info_slider_image.png';
+const _sliderImage = 'assets/info_slider_image.png';
 
 class HomeForMemberPage extends StatefulWidget {
   const HomeForMemberPage({super.key});
@@ -94,17 +94,11 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
   }
 
   FitnessDirectoryController _ensureFitnessDirectoryController() {
-    if (Get.isRegistered<FitnessDirectoryController>()) {
-      return Get.find<FitnessDirectoryController>();
-    }
-    return Get.put(FitnessDirectoryController());
+    return FitnessDirectoryInjector.getFitnessDirectoryController();
   }
 
   DisciplinesDirectoryController _ensureDisciplinesController() {
-    if (Get.isRegistered<DisciplinesDirectoryController>()) {
-      return Get.find<DisciplinesDirectoryController>();
-    }
-    return Get.put(DisciplinesDirectoryController());
+    return FitnessDirectoryInjector.getDisciplinesDirectoryController();
   }
 
   void _handleDisciplinesNavigation() {
@@ -169,16 +163,16 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
     final shortcuts = [
       ShortcutCardData(
         title: 'Explore Disciplines',
-        iconData: Icons.fitness_center,
+        iconData: LucideIcons.dumbbell,
         onTap: _handleDisciplinesNavigation,
       ),
       const ShortcutCardData(
         title: 'Fitness Assessments',
-        iconData: Icons.monitor_heart_outlined,
+        iconData: LucideIcons.heartPulse,
       ),
       ShortcutCardData(
         title: 'Meet Trainers',
-        iconData: Icons.sports,
+        iconData: LucideIcons.activity,
         onTap: _handleTrainersNavigation,
       ),
     ];
@@ -265,7 +259,7 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
                         ];
                         return InfoSummary(
                           tabs: tabs,
-                          iconData: Icons.sports,
+                          iconData: LucideIcons.activity,
                           onActionPressed: _handleBookingsNavigation,
                           actionLabel: 'View bookings',
                         );

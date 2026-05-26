@@ -7,6 +7,7 @@ import 'package:portfolio_mobile_app/features/profile/bloc/profile_event.dart';
 import 'package:portfolio_mobile_app/features/profile/bloc/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class PersonalDataPage extends StatelessWidget {
   const PersonalDataPage({super.key});
@@ -109,7 +110,7 @@ class _PersonalDataViewState extends State<PersonalDataView> {
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(LucideIcons.arrowLeft),
               color: Colors.white,
               tooltip: 'Back',
               onPressed: widget.onBack,
@@ -148,7 +149,11 @@ class _PersonalDataViewState extends State<PersonalDataView> {
               shape: BoxShape.circle,
               border: Border.all(color: AppTheme.brandBlue, width: 3),
             ),
-            child: const Icon(Icons.add, size: 50, color: Colors.black87),
+            child: const Icon(
+              LucideIcons.plus,
+              size: 50,
+              color: Colors.black87,
+            ),
           ),
         ),
         const SizedBox(height: 30),

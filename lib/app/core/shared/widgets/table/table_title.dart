@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class TableTitle extends StatelessWidget {
   final String text;
@@ -8,7 +9,7 @@ class TableTitle extends StatelessWidget {
   const TableTitle({
     super.key,
     required this.text,
-    this.icon = Icons.admin_panel_settings,
+    this.icon = LucideIcons.shield,
     this.padding = const EdgeInsets.only(bottom: 8, left: 4, top: 4),
   });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_option.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ActiveFilterOptionButton<T> extends StatelessWidget {
   const ActiveFilterOptionButton({
@@ -59,7 +60,7 @@ class ActiveFilterOptionButton<T> extends StatelessWidget {
                           width: 28,
                           errorBuilder: (context, _, __) {
                             return Icon(
-                              Icons.fitness_center,
+                              LucideIcons.dumbbell,
                               color: foregroundColor,
                             );
                           },

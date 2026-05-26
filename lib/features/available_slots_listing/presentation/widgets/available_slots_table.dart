@@ -5,10 +5,11 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/dat
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableSlotsTable extends StatelessWidget {
   const AvailableSlotsTable({
@@ -62,7 +63,7 @@ class AvailableSlotsTable extends StatelessWidget {
 
       return TableCard(
         title: 'Available Time Slots',
-        icon: Icons.event_available_outlined,
+        icon: LucideIcons.calendarCheck,
         headers: [
           'Time',
           'Trainer / Discipline',
@@ -123,7 +124,7 @@ class AvailableSlotsTable extends StatelessWidget {
         TableFiltersSummaryItemData(
           label: 'Class type',
           value: service,
-          icon: Icons.fitness_center,
+          icon: LucideIcons.dumbbell,
         ),
       );
     }
@@ -135,7 +136,7 @@ class AvailableSlotsTable extends StatelessWidget {
         TableFiltersSummaryItemData(
           label: isDiscipline ? 'Discipline' : 'Trainer',
           value: primaryLabel,
-          icon: isDiscipline ? Icons.stars_outlined : Icons.person_outline,
+          icon: isDiscipline ? LucideIcons.star : LucideIcons.user,
         ),
       );
 
@@ -144,7 +145,7 @@ class AvailableSlotsTable extends StatelessWidget {
           const TableFiltersSummaryItemData(
             label: 'Discipline',
             value: 'All disciplines',
-            icon: Icons.stars_outlined,
+            icon: LucideIcons.star,
           ),
         );
       }
@@ -156,7 +157,7 @@ class AvailableSlotsTable extends StatelessWidget {
         TableFiltersSummaryItemData(
           label: 'Club',
           value: location,
-          icon: Icons.apartment,
+          icon: LucideIcons.building2,
         ),
       );
     }
@@ -171,7 +172,7 @@ class AvailableSlotsTable extends StatelessWidget {
     return TextButton.icon(
       onPressed: onEditFilters,
       style: TextButton.styleFrom(foregroundColor: AppTheme.brandBlue),
-      icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+      icon: const Icon(LucideIcons.chevronLeft, size: 18),
       label: const Text('Change filters'),
     );
   }

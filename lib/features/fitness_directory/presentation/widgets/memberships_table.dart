@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class MembershipsTable extends StatelessWidget {
   const MembershipsTable({
@@ -43,7 +44,7 @@ class MembershipsTable extends StatelessWidget {
 
     return TableCard(
       // title: 'Membershipes',
-      icon: Icons.card_membership,
+      icon: LucideIcons.creditCard,
       // headers: const ['Previsión'],
       heightFactor: 0.6,
       margin: const EdgeInsets.only(top: 8),

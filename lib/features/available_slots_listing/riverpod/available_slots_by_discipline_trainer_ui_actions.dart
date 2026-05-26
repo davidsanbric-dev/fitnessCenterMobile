@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_notifier.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_provider.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_state.dart';

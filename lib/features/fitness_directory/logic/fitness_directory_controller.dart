@@ -2,15 +2,15 @@ import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/memberships/membership_dto.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/services/memberships_service.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:get/get.dart';
 
 class FitnessDirectoryController extends ControllerBase {
-  FitnessDirectoryController({MembershipsService? service})
-    : _service = service ?? MembershipsService();
+  FitnessDirectoryController({MembershipsDirectoryRepository? repository})
+    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
-  final MembershipsService _service;
+  final MembershipsDirectoryRepository _repository;
   static const int _defaultMembershipsPageSize = 6;
 
   final view = FitnessDirectoryView.options.obs;
@@ -43,7 +43,7 @@ class FitnessDirectoryController extends ControllerBase {
     error.value = null;
 
     try {
-      final response = await _service.fetchMemberships();
+      final response = await _repository.fetchMemberships();
       memberships.assignAll(response);
       membershipsPageNumber.value = 1;
       _syncMembershipsPagination();

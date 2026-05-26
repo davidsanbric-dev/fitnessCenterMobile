@@ -2,6 +2,7 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/triple_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class SchedulingModeFilterBox extends StatelessWidget {
   const SchedulingModeFilterBox({
@@ -24,17 +25,17 @@ class SchedulingModeFilterBox extends StatelessWidget {
     FilterOption<SchedulingMode>(
       value: SchedulingMode.byDisciplineTrainer,
       label: 'By Discipline/Trainer',
-      iconPath: 'assets/icons/discipline_icon.png',
+      iconData: LucideIcons.users,
     ),
     FilterOption<SchedulingMode>(
       value: SchedulingMode.byService,
       label: 'By Class Type',
-      iconData: Icons.category_outlined,
+      iconData: LucideIcons.tags,
     ),
     FilterOption<SchedulingMode>(
       value: SchedulingMode.online,
       label: 'Online Sessions',
-      iconData: Icons.videocam_outlined,
+      iconData: LucideIcons.video,
     ),
   ];
 
@@ -129,7 +130,7 @@ class _FixedHeightOptionButton<T> extends StatelessWidget {
                           width: 28,
                           errorBuilder: (context, _, __) {
                             return Icon(
-                              Icons.fitness_center,
+                              LucideIcons.dumbbell,
                               color: foregroundColor,
                             );
                           },

@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class CreateButton extends StatelessWidget {
   const CreateButton({
@@ -8,7 +9,7 @@ class CreateButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.loadingLabel,
-    this.icon = const Icon(Icons.add),
+    this.icon = const Icon(LucideIcons.plus),
     this.loadingIcon,
     this.spacing = 12,
     this.alignment = Alignment.centerLeft,

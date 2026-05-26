@@ -1,13 +1,14 @@
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/widgets.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/controllers.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class CapabilitiesDirectoryPage extends StatefulWidget {
   const CapabilitiesDirectoryPage({super.key});
@@ -29,7 +30,7 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
       _controller = Get.find<CapabilitiesController>();
       _ownsController = false;
     } else {
-      _controller = Get.put(CapabilitiesController());
+      _controller = FitnessDirectoryInjector.getCapabilitiesController();
       _ownsController = true;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -57,15 +58,16 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
     _controller.loadBookingsForCapability(subgroupItem);
   }
 
-  void _handleReserveCapabilitySlot(AvailableSlotByCapabilityDto slot) {
-    final when = formatDateTimeLabel(slot.schedulingDate);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Book ${slot.capabilityDescription} on $when at ${slot.locationName}.',
-          style: const TextStyle(fontSize: 15),
-        ),
-      ),
+  Future<void> _handleReserveCapabilitySlot(
+    AvailableSlotByCapabilityDto slot,
+  ) async {
+    await ClassBookingFlow.bookByClassType(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      onBooked: () async {
+        _controller.removeBookedAvailabilitySlot(slot);
+      },
     );
   }
 
@@ -126,7 +128,10 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.error_outline, color: Colors.red),
+                          const Icon(
+                            LucideIcons.alertCircle,
+                            color: Colors.red,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -245,13 +250,13 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
                   TableFiltersSummaryItemData(
                     label: 'Group',
                     value: selectedGroup.description,
-                    icon: Icons.category_outlined,
+                    icon: LucideIcons.tags,
                   ),
                 if (selectedSubgroup != null)
                   TableFiltersSummaryItemData(
                     label: 'Subgroup',
                     value: selectedSubgroup.description.trim(),
-                    icon: Icons.directions_run,
+                    icon: LucideIcons.user,
                   ),
               ],
               onItemSelected: _handleSubgroupItemSelected,
@@ -282,19 +287,19 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
                   TableFiltersSummaryItemData(
                     label: 'Group',
                     value: selectedGroup.description,
-                    icon: Icons.category_outlined,
+                    icon: LucideIcons.tags,
                   ),
                 if (selectedSubgroup != null)
                   TableFiltersSummaryItemData(
                     label: 'Subgroup',
                     value: selectedSubgroup.description.trim(),
-                    icon: Icons.directions_run,
+                    icon: LucideIcons.user,
                   ),
                 if (selectedSubgroupItem != null)
                   TableFiltersSummaryItemData(
                     label: 'Class option',
                     value: selectedSubgroupItem.description.trim(),
-                    icon: Icons.sports_score_outlined,
+                    icon: LucideIcons.trophy,
                   ),
               ],
               onReserveBooking: _handleReserveCapabilitySlot,

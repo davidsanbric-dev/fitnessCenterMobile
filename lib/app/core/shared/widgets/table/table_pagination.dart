@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ResolvedTablePagination {
   const ResolvedTablePagination({
@@ -273,7 +274,7 @@ class TablePagination extends StatelessWidget {
           ? () => config.onPageChanged!(resolvedPageNumber - 1)
           : null,
       tooltip: config.previousTooltip,
-      icon: const Icon(Icons.chevron_left),
+      icon: const Icon(LucideIcons.chevronLeft),
       iconSize: 20,
       visualDensity: VisualDensity.compact,
     );
@@ -282,7 +283,7 @@ class TablePagination extends StatelessWidget {
           ? () => config.onPageChanged!(resolvedPageNumber + 1)
           : null,
       tooltip: config.nextTooltip,
-      icon: const Icon(Icons.chevron_right),
+      icon: const Icon(LucideIcons.chevronRight),
       iconSize: 20,
       visualDensity: VisualDensity.compact,
     );

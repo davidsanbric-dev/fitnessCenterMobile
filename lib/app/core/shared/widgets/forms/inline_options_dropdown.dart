@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class InlineOptionsDropdownTwoStage {
   const InlineOptionsDropdownTwoStage({
@@ -238,7 +239,7 @@ class _InlineDropdownHeader extends StatelessWidget {
               if (showBack)
                 IconButton(
                   onPressed: onBack,
-                  icon: const Icon(Icons.arrow_back_ios_new),
+                  icon: const Icon(LucideIcons.chevronLeft),
                   color: Colors.white,
                   iconSize: 18,
                   padding: const EdgeInsets.all(8),

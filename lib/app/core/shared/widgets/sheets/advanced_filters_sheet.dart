@@ -3,6 +3,7 @@ import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AdvancedFilterDropdownOption<T> {
   const AdvancedFilterDropdownOption({
@@ -182,7 +183,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                                           strokeWidth: 2,
                                         ),
                                       )
-                                    : const Icon(Icons.search),
+                                    : const Icon(LucideIcons.search),
                                 label: const Text('Search'),
                                 style: FilledButton.styleFrom(
                                   backgroundColor: AppTheme.brandBlue,
@@ -260,7 +261,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                                 );
                               });
                             },
-                            icon: const Icon(Icons.restart_alt),
+                            icon: const Icon(LucideIcons.refreshCw),
                             label: const Text('Reset'),
                             style: TextButton.styleFrom(
                               foregroundColor: AppTheme.brandBlue,

@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// 🧩 Actions dropdown (context menu)
 class ActionsDropdown extends StatelessWidget {
@@ -40,11 +41,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'viewFile',
           child: Row(
             children: [
-              Icon(
-                Icons.picture_as_pdf_outlined,
-                color: AppTheme.brandBlue,
-                size: 18,
-              ),
+              Icon(LucideIcons.fileText, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('View file'),
             ],
@@ -59,11 +56,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'viewDerivation',
           child: Row(
             children: [
-              Icon(
-                Icons.account_tree_outlined,
-                color: AppTheme.brandBlue,
-                size: 18,
-              ),
+              Icon(LucideIcons.gitBranch, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('View referral'),
             ],
@@ -78,11 +71,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'view',
           child: Row(
             children: [
-              Icon(
-                Icons.visibility_outlined,
-                color: AppTheme.brandBlue,
-                size: 18,
-              ),
+              Icon(LucideIcons.eye, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('View details'),
             ],
@@ -98,7 +87,7 @@ class ActionsDropdown extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                Icons.check_circle_outline,
+                LucideIcons.checkCircle,
                 color: AppTheme.brandBlue,
                 size: 18,
               ),
@@ -116,7 +105,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'cancelReservation',
           child: Row(
             children: [
-              Icon(Icons.cancel_outlined, color: AppTheme.brandBlue, size: 18),
+              Icon(LucideIcons.xCircle, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('CANCEL BOOKING'),
             ],
@@ -131,7 +120,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'updateBookingStatus',
           child: Row(
             children: [
-              Icon(Icons.sync_alt, color: AppTheme.brandBlue, size: 18),
+              Icon(LucideIcons.refreshCw, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('Actualizar Estado'),
             ],
@@ -146,7 +135,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'edit',
           child: Row(
             children: [
-              Icon(Icons.edit, color: AppTheme.brandBlue, size: 18),
+              Icon(LucideIcons.edit, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
               Text('Editar'),
             ],
@@ -161,7 +150,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'delete',
           child: Row(
             children: [
-              Icon(Icons.delete_outline, color: Colors.red[400], size: 18),
+              Icon(LucideIcons.trash2, color: Colors.red[400], size: 18),
               const SizedBox(width: 8),
               const Text('Eliminar'),
             ],
@@ -176,7 +165,7 @@ class ActionsDropdown extends StatelessWidget {
     //       value: 'assignRole',
     //       child: Row(
     //         children: const [
-    //           Icon(Icons.assignment_ind, color: Colors.blueGrey, size: 18),
+    //           Icon(LucideIcons.user, color: Colors.blueGrey, size: 18),
     //           SizedBox(width: 8),
     //           Text('Asignar rol'),
     //         ],
@@ -191,7 +180,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'assignPermission',
           child: Row(
             children: [
-              Icon(Icons.vpn_key, color: Colors.blueAccent, size: 18),
+              Icon(LucideIcons.key, color: Colors.blueAccent, size: 18),
               SizedBox(width: 8),
               Text('Asignar permiso'),
             ],
@@ -206,11 +195,7 @@ class ActionsDropdown extends StatelessWidget {
           value: 'removePermission',
           child: Row(
             children: [
-              Icon(
-                Icons.remove_circle_outline,
-                color: Colors.redAccent,
-                size: 18,
-              ),
+              Icon(LucideIcons.minusCircle, color: Colors.redAccent, size: 18),
               SizedBox(width: 8),
               Text('Remover permiso'),
             ],
@@ -227,7 +212,11 @@ class ActionsDropdown extends StatelessWidget {
       width: 48,
       child: Align(
         child: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_horiz, size: 20, color: Colors.black87),
+          icon: const Icon(
+            LucideIcons.moreHorizontal,
+            size: 20,
+            color: Colors.black87,
+          ),
           onSelected: (value) {
             switch (value) {
               case 'viewFile':

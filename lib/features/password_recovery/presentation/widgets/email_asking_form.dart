@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_icon_name_white_background.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_logo.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class EmailAskingForm extends StatefulWidget {
   const EmailAskingForm({
@@ -83,13 +84,13 @@ class _EmailAskingFormState extends State<EmailAskingForm> {
             child: TextButton.icon(
               onPressed:
                   widget.onBack ?? () => Navigator.of(context).maybePop(),
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(LucideIcons.arrowLeft),
               label: const Text('Back'),
               style: AppTheme.brandTextButtonStyle(),
             ),
           ),
           const SizedBox(height: 8),
-          const Center(child: BrandIconNameWhiteBackground()),
+          const Center(child: BrandLogo(height: 60)),
           const SizedBox(height: 18),
           Text(
             'We will help you recover your password.',
@@ -119,7 +120,7 @@ class _EmailAskingFormState extends State<EmailAskingForm> {
             decoration: AppTheme.outlinedDecoration(
               label: 'Email address',
               suffixIcon: const Icon(
-                Icons.email_outlined,
+                LucideIcons.mail,
                 color: AppTheme.brandBlue,
               ),
             ),
@@ -144,7 +145,7 @@ class _EmailAskingFormState extends State<EmailAskingForm> {
                         )
                       : ElevatedButton.icon(
                           onPressed: _handleContinue,
-                          icon: const Icon(Icons.arrow_forward),
+                          icon: const Icon(LucideIcons.arrowRight),
                           label: const Text('Send link'),
                           style: AppTheme.dialogPrimaryButtonStyle(),
                         ),
@@ -169,7 +170,7 @@ class _EmailAskingFormState extends State<EmailAskingForm> {
                           )
                         : ElevatedButton.icon(
                             onPressed: _handleContinue,
-                            icon: const Icon(Icons.arrow_forward),
+                            icon: const Icon(LucideIcons.arrowRight),
                             label: const Text('Send link'),
                             style: AppTheme.dialogPrimaryButtonStyle(),
                           ),

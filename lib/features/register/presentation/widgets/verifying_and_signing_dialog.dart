@@ -56,10 +56,6 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog> {
   final DocumentApi _documentApi = DocumentApi();
   final SignedTermsPdfBuilder _signedTermsPdfBuilder = SignedTermsPdfBuilder();
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _showIdentityResult({required bool isSuccess, String? message}) {
     if (_step != _DialogStep.identityForm) {

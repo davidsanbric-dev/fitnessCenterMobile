@@ -2,10 +2,10 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/inline_error_
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/loading_spinner.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/ui/snackbar_messenger.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_for_online_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,7 +60,10 @@ class _AvailableSlotsForOnlineSubPageState
   }
 
   void _initController() {
-    _controller = Get.put(AvailableSlotsController(), tag: _controllerTag);
+    _controller = Get.put(
+      AvailableSlotsListingInjector.createAvailableSlotsController(),
+      tag: _controllerTag,
+    );
 
     _locationsWorker = ever<List<String>>(
       _controller.locations,
@@ -150,19 +153,16 @@ class _AvailableSlotsForOnlineSubPageState
   }
 
   Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
-    try {
-      await _controller.reserveBooking(slot, online: '1');
-      if (!mounted) return;
-
-      final when = formatDateTimeLabel(slot.schedulingDate);
-      showAppSnackBar(context, 'Session booked for $when.');
-    } catch (_) {
-      if (!mounted) return;
-      showAppSnackBar(
-        context,
-        _controller.reserveBookingError.value ?? 'Could not book the session.',
-      );
-    }
+    await ClassBookingFlow.bookStandard(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      listingContext: _controller.lastSubmittedFilters.value,
+      online: '1',
+      onBooked: () async {
+        _controller.removeBookedAvailabilitySlot(slot);
+      },
+    );
   }
 
   @override

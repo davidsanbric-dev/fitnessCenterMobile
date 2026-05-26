@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class MenuTriggerButton extends StatelessWidget {
   const MenuTriggerButton({super.key, this.onPressed});
@@ -20,7 +21,7 @@ class MenuTriggerButton extends StatelessWidget {
         ],
       ),
       child: IconButton(
-        icon: const Icon(Icons.menu),
+        icon: const Icon(LucideIcons.menu),
         color: Colors.grey.shade800,
         onPressed: onPressed,
       ),

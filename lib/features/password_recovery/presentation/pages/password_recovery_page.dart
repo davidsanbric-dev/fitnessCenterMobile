@@ -9,6 +9,7 @@ import 'package:portfolio_mobile_app/features/password_recovery/presentation/wid
 import 'package:portfolio_mobile_app/features/password_recovery/presentation/widgets/password_reset_email_sent_message.dart';
 import 'package:portfolio_mobile_app/features/password_recovery/presentation/widgets/password_reset_form.dart';
 import 'package:portfolio_mobile_app/features/password_recovery/presentation/widgets/password_reset_success_message.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 enum _PasswordRecoveryStep {
   email,
@@ -332,7 +333,7 @@ class _VerifyingLinkMessage extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: onBack,
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(LucideIcons.arrowLeft),
             label: const Text('Back'),
             style: AppTheme.brandTextButtonStyle(),
           ),
@@ -393,7 +394,7 @@ class _InvalidLinkMessage extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: onBack,
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(LucideIcons.arrowLeft),
             label: const Text('Back'),
             style: AppTheme.brandTextButtonStyle(),
           ),

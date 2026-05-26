@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class NotificationTestCard extends StatelessWidget {
   const NotificationTestCard({super.key});
@@ -24,7 +25,7 @@ class NotificationTestCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const Icon(Icons.notifications_active_outlined, size: 28),
+            const Icon(LucideIcons.bellRing, size: 28),
             const SizedBox(width: 12),
             const Expanded(
               child: Column(

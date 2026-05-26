@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_icon_name_white_background.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_logo.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_bloc.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_event.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_state.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class SecurityVerificationBox extends StatefulWidget {
   const SecurityVerificationBox({
@@ -80,12 +81,12 @@ class _SecurityVerificationBoxState extends State<SecurityVerificationBox> {
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: widget.onBack ?? () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(LucideIcons.arrowLeft),
             label: const Text('Back'),
             style: AppTheme.brandTextButtonStyle(),
           ),
         ),
-        const BrandIconNameWhiteBackground(),
+        const BrandLogo(height: 60),
         const SizedBox(height: 16),
         Text(
           title,

@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_butt
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_title.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 export 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart'
     show TableCardPaginationConfig;
@@ -15,7 +16,7 @@ class TableCardCreateButtonConfig {
     this.onPressed,
     this.isLoading = false,
     this.loadingLabel,
-    this.icon = const Icon(Icons.add),
+    this.icon = const Icon(LucideIcons.plus),
     this.loadingIcon,
     this.spacing = 12,
     this.alignment = Alignment.centerLeft,
@@ -39,7 +40,7 @@ class TableCard extends StatelessWidget {
     this.title,
     this.headers,
     required this.body,
-    this.icon = Icons.admin_panel_settings,
+    this.icon = LucideIcons.shield,
     this.showTitle = true,
     this.showHeader = true,
     this.toolbar,

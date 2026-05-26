@@ -1,16 +1,16 @@
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_by_capability_table.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_group_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_subgroup_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_subgroup_items_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableSlotsByCapabilityPage extends StatefulWidget {
   const AvailableSlotsByCapabilityPage({
@@ -66,7 +66,9 @@ class _AvailableSlotsByCapabilityPageState
       _filtersController = Get.find<AvailableSlotsController>();
       _ownsFiltersController = false;
     } else {
-      _filtersController = Get.put(AvailableSlotsController());
+      _filtersController =
+          AvailableSlotsListingInjector.createAvailableSlotsController();
+      Get.put(_filtersController);
       _ownsFiltersController = true;
     }
   }
@@ -164,37 +166,13 @@ class _AvailableSlotsByCapabilityPageState
   Future<void> _handleReserveCapabilitySlot(
     AvailableSlotByCapabilityDto slot,
   ) async {
-    try {
-      await _filtersController.reserveCapabilitySlot(slot);
-    } catch (err) {
-      if (!mounted) {
-        return;
-      }
-      final message = err.userErrorMessageWith(
-        'Could not book this class slot.',
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
-      );
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
-
-    final when = formatDateTimeLabel(slot.schedulingDate);
-    final capability = slot.capabilityDescription.trim().isEmpty
-        ? 'Class option'
-        : slot.capabilityDescription.trim();
-    final location = slot.locationName.trim().isEmpty
-        ? 'Club pending confirmation'
-        : slot.locationName.trim();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Book $capability on $when at $location.'),
-        duration: const Duration(seconds: 3),
-      ),
+    await ClassBookingFlow.bookByClassType(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      onBooked: () async {
+        _filtersController.removeBookedCapabilitySlot(slot);
+      },
     );
   }
 
@@ -312,13 +290,13 @@ class _AvailableSlotsByCapabilityPageState
                             TableFiltersSummaryItemData(
                               label: 'Grupo',
                               value: _selectedGroup?.description ?? '',
-                              icon: Icons.category_outlined,
+                              icon: LucideIcons.tags,
                             ),
                           if (_selectedSubgroup != null)
                             TableFiltersSummaryItemData(
                               label: 'Subgrupo',
                               value: _selectedSubgroup!.description.trim(),
-                              icon: Icons.directions_run,
+                              icon: LucideIcons.activity,
                             ),
                         ],
                         onItemSelected: _handleSubgroupItemSelected,
@@ -339,19 +317,19 @@ class _AvailableSlotsByCapabilityPageState
                             TableFiltersSummaryItemData(
                               label: 'Grupo',
                               value: _selectedGroup?.description ?? '',
-                              icon: Icons.category_outlined,
+                              icon: LucideIcons.tags,
                             ),
                           if (_selectedSubgroup != null)
                             TableFiltersSummaryItemData(
                               label: 'Subgrupo',
                               value: _selectedSubgroup!.description.trim(),
-                              icon: Icons.directions_run,
+                              icon: LucideIcons.activity,
                             ),
                           if (_selectedSubgroupItem != null)
                             TableFiltersSummaryItemData(
                               label: 'Class option',
                               value: _selectedSubgroupItem!.description.trim(),
-                              icon: Icons.sports_score_outlined,
+                              icon: LucideIcons.trophy,
                             ),
                         ],
                         onReserveBooking: _handleReserveCapabilitySlot,

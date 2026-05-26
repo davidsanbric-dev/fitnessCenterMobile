@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ReserveCellButton<T> extends StatelessWidget {
   const ReserveCellButton({super.key, this.slot, this.onReserve});
@@ -31,7 +32,7 @@ class ReserveCellButton<T> extends StatelessWidget {
         height: 36,
         child: ElevatedButton.icon(
           onPressed: isDisabled ? null : () => handler(selectedSlot),
-          icon: const Icon(Icons.event_available_outlined, size: 18),
+          icon: const Icon(LucideIcons.calendarCheck, size: 18),
           label: const Text('Reservar'),
           style: AppTheme.tableActionButtonStyle(),
         ),

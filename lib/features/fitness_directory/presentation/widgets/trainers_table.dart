@@ -7,6 +7,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_toolbar
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_toolbar/table_toolbar.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class TrainersTable extends StatelessWidget {
   const TrainersTable({
@@ -97,7 +98,7 @@ class TrainersTable extends StatelessWidget {
     ];
 
     return TableCard(
-      icon: Icons.directions_run,
+      icon: LucideIcons.user,
       // headers: headers,
       heightFactor: 0.71,
       margin: EdgeInsets.zero,

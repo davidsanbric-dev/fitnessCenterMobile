@@ -4,17 +4,18 @@ import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/controllers.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/subpages.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class FitnessDirectoryPage extends StatefulWidget {
   const FitnessDirectoryPage({super.key});
@@ -38,16 +39,12 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
   @override
   void initState() {
     super.initState();
-    _controller = Get.isRegistered<FitnessDirectoryController>()
-        ? Get.find<FitnessDirectoryController>()
-        : Get.put(FitnessDirectoryController());
-    if (Get.isRegistered<DisciplinesDirectoryController>()) {
-      _disciplinesController = Get.find<DisciplinesDirectoryController>();
-      _ownsDisciplinesController = false;
-    } else {
-      _disciplinesController = Get.put(DisciplinesDirectoryController());
-      _ownsDisciplinesController = true;
-    }
+    _controller = FitnessDirectoryInjector.getFitnessDirectoryController();
+    final hasDisciplinesController =
+        Get.isRegistered<DisciplinesDirectoryController>();
+    _disciplinesController =
+        FitnessDirectoryInjector.getDisciplinesDirectoryController();
+    _ownsDisciplinesController = !hasDisciplinesController;
     if (Get.isRegistered<LocationController>()) {
       _locationController = Get.find<LocationController>();
       _ownsLocationController = false;
@@ -151,7 +148,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     if (Get.isRegistered<TrainersController>()) {
       return;
     }
-    Get.put(TrainersController());
+    FitnessDirectoryInjector.getTrainersController();
     _ownsTrainersController = true;
   }
 
@@ -159,26 +156,18 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     if (Get.isRegistered<CapabilitiesController>()) {
       return;
     }
-    Get.put(CapabilitiesController());
+    FitnessDirectoryInjector.getCapabilitiesController();
     _ownsCapabilitiesController = true;
   }
 
-  void _handleReserveBooking(AvailableSlotDto slot) {
-    final trainer = slot.trainerName.trim().isEmpty
-        ? 'Trainer pending confirmation'
-        : slot.trainerName.trim();
-    final location = slot.locationName.trim().isEmpty
-        ? 'Club pending confirmation'
-        : slot.locationName.trim();
-    final dateLabel = formatDateTimeLabel(slot.schedulingDate);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Book a session on $dateLabel with $trainer at $location.',
-        ),
-        duration: const Duration(seconds: 3),
-      ),
+  Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
+    await ClassBookingFlow.bookStandard(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      onBooked: () async {
+        _disciplinesController.removeBookedAvailabilitySlot(slot);
+      },
     );
   }
 
@@ -195,7 +184,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Discipline',
           value: disciplineName,
-          icon: Icons.stars_outlined,
+          icon: LucideIcons.star,
         ),
       );
     }
@@ -206,7 +195,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Club',
           value: locationLabel,
-          icon: Icons.apartment,
+          icon: LucideIcons.building2,
         ),
       );
     }
@@ -251,7 +240,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       return PageHeader(
         title: headerTitle,
         subtitle: 'Disciplines',
-        subtitleIcon: Icons.fitness_center,
+        subtitleIcon: LucideIcons.dumbbell,
         onBackButtonPressed: _showDirectoryOptions,
       );
     }
@@ -259,7 +248,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       return PageHeader(
         title: headerTitle,
         subtitle: 'Disciplines',
-        subtitleIcon: Icons.fitness_center,
+        subtitleIcon: LucideIcons.dumbbell,
         onBackButtonPressed: _handleBackFromDisciplineAvailability,
       );
     }
@@ -267,7 +256,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       return PageHeader(
         title: headerTitle,
         subtitle: 'Class Types',
-        subtitleIcon: Icons.sports_score_outlined,
+        subtitleIcon: LucideIcons.trophy,
         onBackButtonPressed: _handleBackFromCapabilities,
       );
     }
@@ -279,7 +268,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       return PageHeader(
         title: headerTitle,
         subtitle: 'Trainers',
-        subtitleIcon: Icons.person_outline,
+        subtitleIcon: LucideIcons.user,
         onBackButtonPressed: isAvailability
             ? _handleBackFromTrainerAvailability
             : _showDirectoryOptions,
@@ -289,7 +278,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       return PageHeader(
         title: headerTitle,
         subtitle: 'Membership Plans',
-        subtitleIcon: Icons.card_membership,
+        subtitleIcon: LucideIcons.creditCard,
         onBackButtonPressed: _showDirectoryOptions,
       );
     }

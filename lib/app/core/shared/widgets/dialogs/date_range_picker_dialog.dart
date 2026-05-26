@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Centralized wrapper around [showDateRangePicker] that applies the project
 /// theme and handles invoking the provided callbacks when the user confirms
@@ -128,7 +129,7 @@ class DateRangePickerField extends StatelessWidget {
             InputDecoration(
               labelText: labelText,
               border: const OutlineInputBorder(),
-              suffixIcon: const Icon(Icons.date_range_outlined),
+              suffixIcon: const Icon(LucideIcons.calendarRange),
             ),
         onTap: isDisabled ? null : openPicker,
       ),

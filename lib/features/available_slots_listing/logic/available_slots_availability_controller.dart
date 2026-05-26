@@ -1,23 +1,28 @@
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
-import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_filters_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:get/get.dart';
 
 class AvailableSlotsAvailabilityController extends ControllerBase {
   AvailableSlotsAvailabilityController({
     required this.filtersController,
-    required AvailableSlotsService service,
-  }) : _service = service;
+    required AvailabilityListingRepository repository,
+    ClassBookingController? bookingController,
+  }) : _repository = repository,
+       _bookingController =
+           bookingController ??
+           ClassBookingInjector.getSharedClassBookingController();
 
   static const int _defaultAvailabilityPageSize = 6;
 
   final AvailableSlotsFiltersController filtersController;
-  final AvailableSlotsService _service;
+  final AvailabilityListingRepository _repository;
+  final ClassBookingController _bookingController;
 
   int _availabilitySequence = 0;
 
@@ -77,7 +82,7 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isAvailabilityLoading,
       error: availabilityError,
-      loader: () => _service.fetchAvailableBookings(filters: filters),
+      loader: () => _repository.fetchAvailableBookings(filters: filters),
       onSuccess: (slots) {
         availableSlots.assignAll(slots);
         availableSlots.refresh();
@@ -102,14 +107,13 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
     isReservingBooking.value = true;
     reserveBookingError.value = null;
     try {
-      await _service.reserveBooking(
+      await _bookingController.bookStandard(
         slot: slot,
-        lastFilters: lastSubmittedFilters.value,
+        listingContext: lastSubmittedFilters.value,
         online: online,
       );
       availableSlots.remove(slot);
       _syncAvailabilityPagination();
-      await _refreshAgendaIfAvailable();
     } catch (err, stackTrace) {
       final message = err.userErrorMessageWith('Could not book the session');
       reserveBookingError.value = message;
@@ -150,10 +154,9 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
     syncPagination: _syncAvailabilityPagination,
   );
 
-  Future<void> _refreshAgendaIfAvailable() async {
-    if (Get.isRegistered<BookingsController>()) {
-      await Get.find<BookingsController>().reload();
-    }
+  void removeBookedAvailabilitySlot(AvailableSlotDto slot) {
+    availableSlots.remove(slot);
+    _syncAvailabilityPagination();
   }
 
   void _syncAvailabilityPagination() {

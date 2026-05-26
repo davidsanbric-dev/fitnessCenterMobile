@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class PasswordResetSuccessMessage extends StatefulWidget {
   const PasswordResetSuccessMessage({super.key, this.onContinue});
@@ -57,7 +58,7 @@ class _PasswordResetSuccessMessageState
             height: 48,
             child: ElevatedButton.icon(
               onPressed: widget.onContinue == null ? null : _handleContinue,
-              icon: const Icon(Icons.arrow_forward, size: 18),
+              icon: const Icon(LucideIcons.arrowRight, size: 18),
               label: const Text('Go to sign in'),
               style: AppTheme.dialogPrimaryButtonStyle(),
             ),
@@ -79,7 +80,7 @@ class _PasswordResetSuccessIllustration extends StatelessWidget {
         height: 120,
         child: Center(
           child: Icon(
-            Icons.check_circle,
+            LucideIcons.checkCircle,
             size: 120,
             color: Color.fromARGB(255, 84, 173, 87),
           ),

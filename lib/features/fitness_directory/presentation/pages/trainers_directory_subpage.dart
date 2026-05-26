@@ -3,18 +3,19 @@ import 'dart:math' as math;
 
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/inline_options_dropdown.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/trainers_directory_controller.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_trainer_table.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/trainers_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class TrainersDirectoryPage extends StatefulWidget {
   const TrainersDirectoryPage({
@@ -54,7 +55,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       _controller = Get.find<TrainersController>();
       _ownsController = false;
     } else {
-      _controller = Get.put(TrainersController());
+      _controller = FitnessDirectoryInjector.getTrainersController();
       _ownsController = true;
     }
     _selectedFilterWorker = ever<String?>(
@@ -227,18 +228,14 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
     );
   }
 
-  void _handleReserveBooking(AvailableSlotDto slot) {
-    final trainer = slot.trainerName.trim().isEmpty
-        ? 'Trainer pending confirmation'
-        : slot.trainerName.trim();
-    final location = slot.locationName.trim().isEmpty
-        ? 'Club pending confirmation'
-        : slot.locationName.trim();
-    final dateLabel = formatDateTimeLabel(slot.schedulingDate);
-
-    _showSnackBar(
-      'Book a session on $dateLabel with $trainer at $location.',
-      duration: const Duration(seconds: 3),
+  Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
+    await ClassBookingFlow.bookStandard(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      onBooked: () async {
+        _controller.removeBookedAvailabilitySlot(slot);
+      },
     );
   }
 
@@ -403,7 +400,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Trainer',
           value: trainerName,
-          icon: Icons.person_outline,
+          icon: LucideIcons.user,
         ),
       );
     }
@@ -413,7 +410,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Discipline',
           value: discipline,
-          icon: Icons.stars_outlined,
+          icon: LucideIcons.star,
         ),
       );
     }
@@ -423,7 +420,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Membership plan',
           value: membership,
-          icon: Icons.card_membership,
+          icon: LucideIcons.creditCard,
         ),
       );
     }
@@ -433,7 +430,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         TableFiltersSummaryItemData(
           label: 'Club',
           value: locationLabel,
-          icon: Icons.apartment,
+          icon: LucideIcons.building2,
         ),
       );
     }
@@ -748,7 +745,7 @@ class _TrainersDirectoryStandalonePageState
             PageHeader(
               title: 'Fitness Directory',
               subtitle: 'Trainers',
-              subtitleIcon: Icons.person_outline,
+              subtitleIcon: LucideIcons.user,
               onBackButtonPressed: _handleBack,
             ),
             Expanded(

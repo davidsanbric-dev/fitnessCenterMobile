@@ -3,17 +3,19 @@ import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/disciplines_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
 import 'package:get/get.dart';
 
 class DisciplinesDirectoryController extends ControllerBase {
-  DisciplinesDirectoryController({this.locationId, DisciplinesService? service})
-    : _service = service ?? DisciplinesService();
+  DisciplinesDirectoryController({
+    this.locationId,
+    DisciplinesDirectoryRepository? repository,
+  }) : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
   final int? locationId;
   static const int _defaultPageSize = 6;
-  final DisciplinesService _service;
+  final DisciplinesDirectoryRepository _repository;
   int _disciplineAvailabilitySequence = 0;
 
   final selectedLocationId = RxnInt();
@@ -62,7 +64,7 @@ class DisciplinesDirectoryController extends ControllerBase {
     error.value = null;
 
     try {
-      final response = await _service.fetchDisciplines(
+      final response = await _repository.fetchDisciplines(
         pageNumber: pageNumber.value,
         pageSize: pageSize.value,
       );
@@ -114,7 +116,7 @@ class DisciplinesDirectoryController extends ControllerBase {
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isDisciplineAvailabilityLoading,
       error: disciplineAvailabilityError,
-      loader: () => _service.fetchAvailableBookingsByDiscipline(
+      loader: () => _repository.fetchAvailableBookingsByDiscipline(
         disciplineId: disciplineId,
         locationId: activeLocationId,
       ),
@@ -146,6 +148,11 @@ class DisciplinesDirectoryController extends ControllerBase {
     selectedDiscipline.value = null;
     disciplineAvailabilityPageNumber.value = 1;
     disciplineAvailabilityPageSize.value = _defaultPageSize;
+    _syncDisciplineAvailabilityPagination();
+  }
+
+  void removeBookedAvailabilitySlot(AvailableSlotDto slot) {
+    availableByDiscipline.remove(slot);
     _syncDisciplineAvailabilityPagination();
   }
 

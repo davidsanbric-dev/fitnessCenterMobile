@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_icon_name_white_background.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_logo.dart';
 import 'package:portfolio_mobile_app/features/register/presentation/widgets/signing_message.dart';
 import 'package:portfolio_mobile_app/features/register/presentation/widgets/verifying_and_signing_dialog.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class SecondStepPage extends StatefulWidget {
   const SecondStepPage({super.key, this.onBack, this.onContinue});
@@ -63,7 +64,7 @@ class _SecondStepPageState extends State<SecondStepPage> {
         Center(
           child: Column(
             children: [
-              const BrandIconNameWhiteBackground(),
+              const BrandLogo(height: 60),
               const SizedBox(height: 18),
               Text(
                 'We are about to verify your identity.',
@@ -92,7 +93,7 @@ class _SecondStepPageState extends State<SecondStepPage> {
           height: 48,
           child: ElevatedButton.icon(
             onPressed: _openTermsDialog,
-            icon: const Icon(Icons.arrow_forward),
+            icon: const Icon(LucideIcons.arrowRight),
             label: const Text('Verify and sign'),
             style: AppTheme.dialogPrimaryButtonStyle(),
           ),
@@ -100,7 +101,7 @@ class _SecondStepPageState extends State<SecondStepPage> {
         const SizedBox(height: 20),
         TextButton.icon(
           onPressed: widget.onBack ?? () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(LucideIcons.arrowLeft),
           label: const Text('Back'),
           style: TextButton.styleFrom(
             foregroundColor: AppTheme.brandBlue,

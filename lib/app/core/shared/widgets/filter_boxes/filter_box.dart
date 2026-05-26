@@ -73,7 +73,7 @@ class FilterBox extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
               child: FilterBoxOptionButton(
                 label: option.label,
-                iconPath: option.iconPath,
+                iconData: option.iconData,
                 onTap: () => onOptionSelected(option.label),
               ),
             ),
@@ -86,8 +86,8 @@ class FilterBox extends StatelessWidget {
 }
 
 class FilterBoxOptionData {
-  const FilterBoxOptionData({required this.label, required this.iconPath});
+  const FilterBoxOptionData({required this.label, required this.iconData});
 
   final String label;
-  final String iconPath;
+  final IconData iconData;
 }

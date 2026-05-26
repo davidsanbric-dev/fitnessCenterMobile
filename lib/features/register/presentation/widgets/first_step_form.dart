@@ -7,6 +7,7 @@ import 'package:portfolio_mobile_app/app/core/utils/date_time.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_bloc.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_event.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_state.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class FirstStepForm extends StatelessWidget {
   const FirstStepForm({super.key, this.onContinue, this.onBack});
@@ -33,7 +34,7 @@ class FirstStepForm extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const BrandAvatar(icon: Icons.person_outline),
+                const BrandAvatar(icon: LucideIcons.user),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -69,7 +70,7 @@ class FirstStepForm extends StatelessWidget {
                     : Colors.grey.shade700,
                 errorText: rutError,
                 suffixIcon: showRutErrorIcon
-                    ? Icon(Icons.error, color: Colors.red.shade400)
+                    ? Icon(LucideIcons.alertCircle, color: Colors.red.shade400)
                     : null,
               ),
             ),
@@ -77,7 +78,7 @@ class FirstStepForm extends StatelessWidget {
             Row(
               children: [
                 const Icon(
-                  Icons.calendar_today_outlined,
+                  LucideIcons.calendar,
                   color: AppTheme.brandBlue,
                   size: 20,
                 ),
@@ -152,7 +153,7 @@ class FirstStepForm extends StatelessWidget {
               decoration: AppTheme.outlinedDecoration(
                 label: 'Enter your email',
                 suffixIcon: const Icon(
-                  Icons.email_outlined,
+                  LucideIcons.mail,
                   color: AppTheme.brandBlue,
                 ),
               ),
@@ -165,7 +166,7 @@ class FirstStepForm extends StatelessWidget {
                       TextButton.icon(
                         onPressed:
                             onBack ?? () => Navigator.of(context).maybePop(),
-                        icon: const Icon(Icons.arrow_back),
+                        icon: const Icon(LucideIcons.arrowLeft),
                         label: const Text('Back'),
                         style: AppTheme.brandTextButtonStyle(),
                       ),
@@ -181,7 +182,7 @@ class FirstStepForm extends StatelessWidget {
                                   onContinue?.call();
                                 }
                               : null,
-                          icon: const Icon(Icons.arrow_forward),
+                          icon: const Icon(LucideIcons.arrowRight),
                           label: const Text('Continue'),
                           style: AppTheme.dialogPrimaryButtonStyle(),
                         ),
@@ -193,7 +194,7 @@ class FirstStepForm extends StatelessWidget {
                       TextButton.icon(
                         onPressed:
                             onBack ?? () => Navigator.of(context).maybePop(),
-                        icon: const Icon(Icons.arrow_back),
+                        icon: const Icon(LucideIcons.arrowLeft),
                         label: const Text('Back'),
                         style: AppTheme.brandTextButtonStyle(),
                       ),
@@ -210,7 +211,7 @@ class FirstStepForm extends StatelessWidget {
                                   onContinue?.call();
                                 }
                               : null,
-                          icon: const Icon(Icons.arrow_forward),
+                          icon: const Icon(LucideIcons.arrowRight),
                           label: const Text('Continue'),
                           style: AppTheme.dialogPrimaryButtonStyle(),
                         ),

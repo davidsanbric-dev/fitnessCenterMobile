@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_avatar.
 import 'package:portfolio_mobile_app/features/register/bloc/register_bloc.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_event.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_state.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class FourthStepForm extends StatefulWidget {
   const FourthStepForm({
@@ -44,7 +45,7 @@ class _FourthStepFormState extends State<FourthStepForm> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const BrandAvatar(icon: Icons.lock_outline, iconSize: 24),
+                const BrandAvatar(icon: LucideIcons.lock, iconSize: 24),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -87,7 +88,7 @@ class _FourthStepFormState extends State<FourthStepForm> {
                     setState(() => _obscurePassword = !_obscurePassword);
                   },
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
                     color: AppTheme.brandBlue,
                   ),
                 ),
@@ -96,7 +97,11 @@ class _FourthStepFormState extends State<FourthStepForm> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Icon(Icons.list_alt, color: AppTheme.brandBlue, size: 20),
+                const Icon(
+                  LucideIcons.clipboardList,
+                  color: AppTheme.brandBlue,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -164,7 +169,7 @@ class _FourthStepFormState extends State<FourthStepForm> {
                     setState(() => _obscureConfirm = !_obscureConfirm);
                   },
                   icon: Icon(
-                    _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                    _obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye,
                     color: AppTheme.brandBlue,
                   ),
                 ),
@@ -179,7 +184,7 @@ class _FourthStepFormState extends State<FourthStepForm> {
                         onPressed:
                             widget.onBack ??
                             () => Navigator.of(context).maybePop(),
-                        icon: const Icon(Icons.arrow_back),
+                        icon: const Icon(LucideIcons.arrowLeft),
                         label: const Text('Back'),
                         style: AppTheme.brandTextButtonStyle(),
                       ),
@@ -211,7 +216,7 @@ class _FourthStepFormState extends State<FourthStepForm> {
                         onPressed:
                             widget.onBack ??
                             () => Navigator.of(context).maybePop(),
-                        icon: const Icon(Icons.arrow_back),
+                        icon: const Icon(LucideIcons.arrowLeft),
                         label: const Text('Back'),
                         style: AppTheme.brandTextButtonStyle(),
                       ),
@@ -264,7 +269,7 @@ class _RequirementRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
-          satisfied ? Icons.check_circle : Icons.radio_button_unchecked,
+          satisfied ? LucideIcons.checkCircle : LucideIcons.circle,
           color: iconColor,
           size: 18,
         ),

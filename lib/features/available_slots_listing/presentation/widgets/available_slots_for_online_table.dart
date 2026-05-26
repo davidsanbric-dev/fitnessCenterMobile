@@ -10,6 +10,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_toolbar
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_dropdown_layout.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_dropdown_overlay.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableSlotsForOnlineTable extends StatefulWidget {
   const AvailableSlotsForOnlineTable({
@@ -138,7 +139,7 @@ class _AvailableBookingsForOnlineTableState
           children: [
             TableCard(
               title: 'Available Time Slots',
-              icon: Icons.event_available_outlined,
+              icon: LucideIcons.calendarCheck,
               headers: headers,
               toolbar: _buildToolbar(context),
               toolbarSpacing: 12,

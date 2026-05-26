@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/config/config.dart';
 import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/app/core/services/deep_link_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
@@ -38,7 +38,7 @@ class _BootstrapAppState extends State<BootstrapApp> {
         data: 'firebase-ready=false',
       );
     }
-    _logEffectiveBaseUrl();
+    // _logEffectiveBaseUrl();
     RuntimeDiagnostics.breadcrumb('bootstrap-critical-ready');
   }
 
@@ -93,7 +93,11 @@ class StartupFailureApp extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const Icon(
+                    LucideIcons.alertCircle,
+                    size: 48,
+                    color: Colors.red,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'Startup failed',
@@ -121,18 +125,18 @@ class StartupFailureApp extends StatelessWidget {
   }
 }
 
-void _logEffectiveBaseUrl() {
-  try {
-    debugPrint('[APP] effective BASE_URL=${AppStrings.baseUrl}');
-    RuntimeDiagnostics.breadcrumb(
-      'base-url',
-      data: 'value=${AppStrings.baseUrl}',
-    );
-  } catch (error) {
-    debugPrint('[APP] BASE_URL resolution failed: $error');
-    RuntimeDiagnostics.breadcrumb('base-url-error', data: 'error=$error');
-  }
-}
+// void _logEffectiveBaseUrl() {
+//   try {
+//     debugPrint('[APP] effective BASE_URL=${AppStrings.baseUrl}');
+//     RuntimeDiagnostics.breadcrumb(
+//       'base-url',
+//       data: 'value=${AppStrings.baseUrl}',
+//     );
+//   } catch (error) {
+//     debugPrint('[APP] BASE_URL resolution failed: $error');
+//     RuntimeDiagnostics.breadcrumb('base-url-error', data: 'error=$error');
+//   }
+// }
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -189,10 +193,9 @@ Future<void> _startApp() async {
 Future<void> _runStartupAssetPreflight() async {
   const criticalAssets = <String>[
     AppAssets.logo,
-    AppAssets.profileIcon,
-    AppAssets.bookingIcon,
-    'assets/images/info_slider_image.png',
+    'assets/info_slider_image.png',
   ];
+  const timeout = Duration(seconds: 2);
 
   RuntimeDiagnostics.breadcrumb(
     'startup-assets-preflight-start',
@@ -201,7 +204,12 @@ Future<void> _runStartupAssetPreflight() async {
 
   for (final asset in criticalAssets) {
     try {
-      await rootBundle.load(asset).timeout(const Duration(seconds: 2));
+      final isSvg = asset.toLowerCase().endsWith('.svg');
+      if (isSvg) {
+        await rootBundle.loadString(asset).timeout(timeout);
+      } else {
+        await rootBundle.load(asset).timeout(timeout);
+      }
       RuntimeDiagnostics.breadcrumb('startup-asset-ok', data: 'path=$asset');
     } catch (error) {
       RuntimeDiagnostics.missingAsset(

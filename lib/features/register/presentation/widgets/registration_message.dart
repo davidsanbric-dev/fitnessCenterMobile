@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class RegistrationMessage extends StatefulWidget {
   const RegistrationMessage({
@@ -79,7 +80,7 @@ class _RegistrationMessageState extends State<RegistrationMessage> {
                   ? (widget.onRetry == null ? null : _handleRetry)
                   : (widget.onContinue == null ? null : _handleContinue),
               icon: Icon(
-                hasError ? Icons.refresh : Icons.arrow_forward,
+                hasError ? LucideIcons.refreshCw : LucideIcons.arrowRight,
                 size: 18,
               ),
               label: Text(hasError ? 'Retry' : 'Go to sign in'),
@@ -105,7 +106,7 @@ class _RegistrationStatusIllustration extends StatelessWidget {
         height: 120,
         child: Center(
           child: Icon(
-            hasError ? Icons.error : Icons.check_circle,
+            hasError ? LucideIcons.alertCircle : LucideIcons.checkCircle,
             size: 120,
             color: hasError
                 ? const Color.fromARGB(255, 201, 64, 64)

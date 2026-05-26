@@ -1,7 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
 
 mixin ApiUrls {
-  static String get _apiV1BaseUrl => '${AppStrings.baseUrl}/api/v1';
+  static String get _apiV1BaseUrl => AppStrings.baseUrl;
 
   static String get authUrl => '$_apiV1BaseUrl/auth';
   static String get usersUrl => '$_apiV1BaseUrl/users';

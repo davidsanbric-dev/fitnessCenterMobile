@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class IdentityVerificationMessage extends StatefulWidget {
   const IdentityVerificationMessage({
@@ -40,7 +41,9 @@ class _IdentityVerificationMessageState
         ? 'Identity verified successfully!'
         : 'Could not verify your identity.';
     final String buttonLabel = isSuccess ? 'Continue' : 'Verify again';
-    final IconData buttonIcon = isSuccess ? Icons.arrow_forward : Icons.refresh;
+    final IconData buttonIcon = isSuccess
+        ? LucideIcons.arrowRight
+        : LucideIcons.refreshCw;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,7 +90,7 @@ class _IdentityVerificationIllustration extends StatelessWidget {
         height: 120,
         child: Center(
           child: Icon(
-            isSuccess ? Icons.verified_user : Icons.error_outline,
+            isSuccess ? LucideIcons.badgeCheck : LucideIcons.alertCircle,
             size: 120,
             color: isSuccess
                 ? const Color.fromARGB(255, 84, 173, 87)

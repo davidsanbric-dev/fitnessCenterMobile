@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:pdfx/pdfx.dart';
 
 /// Dialog that renders a PDF-like viewer for medical orders, accepting either
@@ -193,17 +194,17 @@ class _DocumentViewerDialogState extends State<DocumentViewerDialog> {
       children: [
         IconButton(
           onPressed: () => _changeZoom(controller, 1 / _zoomStep),
-          icon: const Icon(Icons.zoom_out),
+          icon: const Icon(LucideIcons.zoomOut),
           tooltip: 'Alejar',
         ),
         IconButton(
           onPressed: () => _fitToWidth(controller),
-          icon: const Icon(Icons.fit_screen_outlined),
+          icon: const Icon(LucideIcons.maximize),
           tooltip: 'Ajustar a ancho',
         ),
         IconButton(
           onPressed: () => _changeZoom(controller, _zoomStep),
-          icon: const Icon(Icons.zoom_in),
+          icon: const Icon(LucideIcons.zoomIn),
           tooltip: 'Acercar',
         ),
         const SizedBox(width: 12),

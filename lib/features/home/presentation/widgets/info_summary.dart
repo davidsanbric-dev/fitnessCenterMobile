@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class InfoSummaryTab {
   const InfoSummaryTab({required this.label, required this.description});
@@ -141,7 +142,7 @@ class _InfoSummaryState extends State<InfoSummary> {
                                   error: error,
                                 );
                                 return Icon(
-                                  Icons.fitness_center,
+                                  LucideIcons.dumbbell,
                                   color: accentColor,
                                 );
                               },

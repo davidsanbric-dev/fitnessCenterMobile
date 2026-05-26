@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_icon_name_white_background.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_logo.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class PasswordResetEmailSentMessage extends StatelessWidget {
   const PasswordResetEmailSentMessage({
@@ -27,12 +28,12 @@ class PasswordResetEmailSentMessage extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: onBack ?? () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(LucideIcons.arrowLeft),
             label: const Text('Back'),
             style: AppTheme.brandTextButtonStyle(),
           ),
         ),
-        const BrandIconNameWhiteBackground(),
+        const BrandLogo(height: 60),
         const SizedBox(height: 16),
         Text(
           'Check your email',

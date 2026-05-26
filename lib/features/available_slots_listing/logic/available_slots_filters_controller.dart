@@ -1,10 +1,10 @@
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/disciplines_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/utils/lookup.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/capabilities_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
@@ -14,19 +14,22 @@ class AvailableSlotsFiltersController extends ControllerBase {
   AvailableSlotsFiltersController({
     LocationController? locationController,
     CapabilitiesController? capabilitiesController,
-    DisciplinesService? disciplinesService,
+    MemberFiltersRepository? memberFiltersRepository,
   }) : locationController =
            locationController ??
            (Get.isRegistered<LocationController>()
                ? Get.find<LocationController>()
                : Get.put(LocationController())),
        capabilitiesController =
-           capabilitiesController ?? CapabilitiesController(),
-       _disciplinesService = disciplinesService ?? DisciplinesService();
+           capabilitiesController ??
+           (throw ArgumentError.notNull('capabilitiesController')),
+       _memberFiltersRepository =
+           memberFiltersRepository ??
+           (throw ArgumentError.notNull('memberFiltersRepository'));
 
   final LocationController locationController;
   final CapabilitiesController capabilitiesController;
-  final DisciplinesService _disciplinesService;
+  final MemberFiltersRepository _memberFiltersRepository;
 
   final RxList<String> disciplines = <String>[].obs;
   final RxList<String> locations = <String>[].obs;
@@ -88,7 +91,7 @@ class AvailableSlotsFiltersController extends ControllerBase {
     filtersError.value = null;
 
     try {
-      final disciplinesData = await _disciplinesService
+      final disciplinesData = await _memberFiltersRepository
           .fetchDisciplinesFilterData();
       await locationController.loadLocations();
       final locationOptions = _sanitizeLocationOptions(
@@ -145,8 +148,8 @@ class AvailableSlotsFiltersController extends ControllerBase {
   Future<void> loadBookingsByCapability(CapabilityDto capability) =>
       capabilitiesController.loadBookingsByCapability(capability);
 
-  Future<void> reserveCapabilitySlot(AvailableSlotByCapabilityDto slot) =>
-      capabilitiesController.reserveCapabilitySlot(slot);
+  void removeBookedCapabilitySlot(AvailableSlotByCapabilityDto slot) =>
+      capabilitiesController.removeBookedCapabilitySlot(slot);
 
   void resetCapabilityAvailability() =>
       capabilitiesController.resetAvailability();

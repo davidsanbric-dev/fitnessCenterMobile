@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_avatar.
 import 'package:portfolio_mobile_app/features/register/bloc/register_bloc.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_event.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_state.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ThirdStepForm extends StatelessWidget {
   const ThirdStepForm({super.key, this.onContinue, this.onBack});
@@ -24,7 +25,7 @@ class ThirdStepForm extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const BrandAvatar(icon: Icons.person_outline),
+                const BrandAvatar(icon: LucideIcons.user),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -131,7 +132,7 @@ class ThirdStepForm extends StatelessWidget {
               children: [
                 TextButton.icon(
                   onPressed: onBack ?? () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(LucideIcons.arrowLeft),
                   label: const Text('Back'),
                   style: AppTheme.brandTextButtonStyle(),
                 ),

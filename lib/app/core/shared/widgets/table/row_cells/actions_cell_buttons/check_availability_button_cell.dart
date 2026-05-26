@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class CheckAvailabilityButtonCell extends StatelessWidget {
   const CheckAvailabilityButtonCell({
@@ -30,7 +31,7 @@ class CheckAvailabilityButtonCell extends StatelessWidget {
                   final callback = handler;
                   callback(row);
                 },
-          icon: const Icon(Icons.event_available_outlined, size: 18),
+          icon: const Icon(LucideIcons.calendarCheck, size: 18),
           label: Text(label),
           style: AppTheme.tableActionButtonStyle(),
         ),

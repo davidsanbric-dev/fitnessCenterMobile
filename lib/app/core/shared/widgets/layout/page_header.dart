@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AppBackButton extends StatelessWidget {
   const AppBackButton({
@@ -24,7 +25,7 @@ class AppBackButton extends StatelessWidget {
     final resolvedLabel = label?.trim();
     if (resolvedLabel == null || resolvedLabel.isEmpty) {
       return IconButton(
-        icon: Icon(Icons.arrow_back_ios_new, size: iconSize),
+        icon: Icon(LucideIcons.chevronLeft, size: iconSize),
         color: color ?? Colors.white,
         tooltip: tooltip,
         onPressed: onPressed,
@@ -34,7 +35,7 @@ class AppBackButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: onPressed,
       style: style,
-      icon: Icon(Icons.arrow_back_ios_new, size: iconSize, color: color),
+      icon: Icon(LucideIcons.chevronLeft, size: iconSize, color: color),
       label: Text(resolvedLabel),
     );
   }

@@ -5,17 +5,17 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/memberships/members
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/services/trainers_service.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:get/get.dart';
 
 class TrainersController extends ControllerBase {
-  TrainersController({this.locationId, TrainersService? service})
-    : _service = service ?? TrainersService();
+  TrainersController({this.locationId, TrainersDirectoryRepository? repository})
+    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
   final int? locationId;
   static const int _defaultPageSize = 6;
-  final TrainersService _service;
+  final TrainersDirectoryRepository _repository;
   int _trainersLoadSequence = 0;
   int _trainerAvailabilitySequence = 0;
   String? _loadedTrainersFilter;
@@ -102,7 +102,9 @@ class TrainersController extends ControllerBase {
     _loadedTrainersLocationId = null;
 
     try {
-      final filters = await _service.fetchTrainersFilterData(mode: targetMode);
+      final filters = await _repository.fetchTrainersFilterData(
+        mode: targetMode,
+      );
       disciplines.assignAll(filters.disciplines);
       memberships.assignAll(filters.memberships);
       trainerFilterOptions.assignAll(filters.options);
@@ -181,13 +183,13 @@ class TrainersController extends ControllerBase {
       error: error,
       loader: () async {
         if (mode == TrainersSearchMode.discipline) {
-          return _service.fetchTrainersByDiscipline(
+          return _repository.fetchTrainersByDiscipline(
             filterLabel: filterLabel,
             locationId: activeLocationId,
             disciplines: disciplines,
           );
         }
-        return _service.fetchTrainersByMembership(
+        return _repository.fetchTrainersByMembership(
           filterLabel: filterLabel,
           locationId: activeLocationId,
           memberships: memberships,
@@ -276,7 +278,7 @@ class TrainersController extends ControllerBase {
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isTrainerAvailabilityLoading,
       error: trainerAvailabilityError,
-      loader: () => _service.fetchTrainerAvailability(
+      loader: () => _repository.fetchTrainerAvailability(
         trainerId: trainerId,
         disciplineId: disciplineId,
         locationId: activeLocationId,
@@ -308,6 +310,11 @@ class TrainersController extends ControllerBase {
     selectedTrainer.value = null;
     trainerAvailabilityPageNumber.value = 1;
     trainerAvailabilityPageSize.value = _defaultPageSize;
+    _syncTrainerAvailabilityPagination();
+  }
+
+  void removeBookedAvailabilitySlot(AvailableSlotDto slot) {
+    availableByTrainer.remove(slot);
     _syncTrainerAvailabilityPagination();
   }
 

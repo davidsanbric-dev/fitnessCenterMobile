@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
@@ -8,6 +7,7 @@ import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookin
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/member_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/main_bottom_navbar.dart';
@@ -42,14 +42,14 @@ class _HomeWrapperState extends State<HomeWrapper> {
       }
 
       final menuItems = [
-        {'icon': AppAssets.profileIcon, 'label': 'Profile', 'index': 5},
-        {'icon': Icons.fitness_center, 'label': 'Directory', 'index': 6},
+        {'icon': LucideIcons.user, 'label': 'Profile', 'index': 5},
+        {'icon': LucideIcons.dumbbell, 'label': 'Directory', 'index': 6},
       ];
 
       final navItems = [
-        {'icon': Icons.home_outlined, 'label': 'Home', 'index': 0},
-        {'icon': AppAssets.bookingIcon, 'label': 'Book', 'index': 4},
-        {'icon': Icons.event_note_outlined, 'label': 'Bookings', 'index': 1},
+        {'icon': LucideIcons.home, 'label': 'Home', 'index': 0},
+        {'icon': LucideIcons.calendar, 'label': 'Book', 'index': 4},
+        {'icon': LucideIcons.calendar, 'label': 'Bookings', 'index': 1},
         {'label': 'More', 'menuItems': menuItems},
       ];
 

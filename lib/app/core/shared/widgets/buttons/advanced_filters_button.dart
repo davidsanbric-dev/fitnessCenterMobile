@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Reusable button that toggles advanced filter sheets or dialogs. It handles
 /// the active state, tooltip messaging, dynamic icon, and padding so every
@@ -51,8 +52,8 @@ class AdvancedFiltersButton extends StatelessWidget {
         ? activeTooltip
         : inactiveTooltip;
     final Widget resolvedIcon = hasActiveFilters
-        ? (activeIcon ?? const Icon(Icons.filter_alt))
-        : (inactiveIcon ?? const Icon(Icons.tune));
+        ? (activeIcon ?? const Icon(LucideIcons.filter))
+        : (inactiveIcon ?? const Icon(LucideIcons.slidersHorizontal));
     final String resolvedLabel = hasActiveFilters ? activeLabel : inactiveLabel;
     final EdgeInsetsGeometry resolvedPadding = hasActiveFilters
         ? activePadding

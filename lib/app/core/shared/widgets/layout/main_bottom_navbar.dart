@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 
@@ -39,7 +40,7 @@ class MainBottomNavBar extends StatelessWidget {
             error: error,
           );
           return Icon(
-            Icons.image_not_supported_outlined,
+            LucideIcons.imageOff,
             color: isSelected ? AppTheme.brandBlue : Colors.grey[800],
             size: size,
           );
@@ -140,7 +141,7 @@ class MainBottomNavBar extends StatelessWidget {
                 ? baseLabel
                 : '$baseLabel/$activeLabel';
             final menuIcon = _buildIconWidget(
-              Icons.menu,
+              LucideIcons.menu,
               isSelected: isMenuSelected,
             );
             final menuIconWithBadge = activeMenuItem == null

@@ -47,6 +47,8 @@ dependencies:
   firebase_auth: ^6.1.2
   flutter_local_notifications: ^17.2.3
   flutter_markdown: ^0.7.6
+  flutter_svg: ^2.0.10
+  lucide_flutter: ^1.16.0
   scribble: ^0.10.0+1
   device_preview: ^1.2.0
   url_launcher: ^6.3.2
@@ -75,8 +77,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/
-    - assets/icons/
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

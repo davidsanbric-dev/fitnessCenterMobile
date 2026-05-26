@@ -1,5 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/consult_button.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
 

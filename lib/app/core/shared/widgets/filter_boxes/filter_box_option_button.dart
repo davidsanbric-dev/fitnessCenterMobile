@@ -5,7 +5,7 @@ class FilterBoxOptionButton extends StatelessWidget {
   const FilterBoxOptionButton({
     super.key,
     required this.label,
-    required this.iconPath,
+    required this.iconData,
     // required this.accentColor,
     required this.onTap,
     this.iconContainerSize = 40,
@@ -16,7 +16,7 @@ class FilterBoxOptionButton extends StatelessWidget {
   });
 
   final String label;
-  final String iconPath;
+  final IconData iconData;
   // final Color accentColor;
   final VoidCallback onTap;
   final double iconContainerSize;
@@ -81,13 +81,7 @@ class FilterBoxOptionButton extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(7),
-                        child: Image.asset(
-                          iconPath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, _, __) {
-                            return const Icon(Icons.medical_services);
-                          },
-                        ),
+                        child: Icon(iconData, color: Colors.white),
                       ),
                     ),
                   ),

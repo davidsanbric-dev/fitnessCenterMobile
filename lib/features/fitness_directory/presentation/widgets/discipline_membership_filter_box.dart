@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class DisciplineMembershipFilterBox extends StatelessWidget {
   const DisciplineMembershipFilterBox({
@@ -20,12 +21,12 @@ class DisciplineMembershipFilterBox extends StatelessWidget {
     FilterOption<TrainersSearchMode>(
       value: TrainersSearchMode.discipline,
       label: 'By Discipline',
-      iconData: Icons.fitness_center,
+      iconData: LucideIcons.dumbbell,
     ),
     FilterOption<TrainersSearchMode>(
       value: TrainersSearchMode.membership,
       label: 'By Membership Plan',
-      iconData: Icons.card_membership,
+      iconData: LucideIcons.creditCard,
     ),
   ];
 

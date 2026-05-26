@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ShortcutCardData {
   const ShortcutCardData({
@@ -140,7 +141,7 @@ class _ShortcutCard extends StatelessWidget {
                                     error: error,
                                   );
                                   return Icon(
-                                    Icons.fitness_center,
+                                    LucideIcons.dumbbell,
                                     size: shortcut.iconSize,
                                     color: AppTheme.brandBlue,
                                   );

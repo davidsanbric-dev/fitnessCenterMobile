@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ConsultButton extends StatelessWidget {
   const ConsultButton({
@@ -8,7 +9,7 @@ class ConsultButton extends StatelessWidget {
     this.horizontalPadding = 16,
     this.bottom = 16,
     this.label = 'Search',
-    this.icon = const Icon(Icons.search),
+    this.icon = const Icon(LucideIcons.search),
     this.alignment = Alignment.center,
     this.spacing = 0,
   });

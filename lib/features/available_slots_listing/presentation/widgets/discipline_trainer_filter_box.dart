@@ -2,6 +2,7 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class DisciplineTrainerFilterBox extends StatelessWidget {
   const DisciplineTrainerFilterBox({
@@ -21,12 +22,12 @@ class DisciplineTrainerFilterBox extends StatelessWidget {
     FilterOption<DisciplineSearchMode>(
       value: DisciplineSearchMode.discipline,
       label: 'By Discipline',
-      iconPath: 'assets/icons/discipline_icon.png',
+      iconData: LucideIcons.dumbbell,
     ),
     FilterOption<DisciplineSearchMode>(
       value: DisciplineSearchMode.trainer,
       label: 'By Trainer',
-      iconPath: 'assets/icons/trainer_icon.png',
+      iconData: LucideIcons.user,
     ),
   ];
 

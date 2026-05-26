@@ -3,11 +3,21 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 mixin AppTheme {
-  // Primary brand color used across login page
-  static const Color brandBlue = Color.fromARGB(255, 10, 48, 85);
-  static final Color textColorPrimary = _shadeBrandBlue(0.08);
-  static final Color textColorSecondary = _tintBrandBlue(0.22);
-  static final Color textColorMuted = _tintBrandBlue(0.35);
+  // Brand palette aligned with the admin web app.
+  static const Color brandBlue = Color(0xFF0A3055);
+  static const Color brandTextPrimary = Color(0xFF092C4E);
+  static const Color brandTextSecondary = Color(0xFF405D7B);
+  static const Color brandTextMuted = Color(0xFF607891);
+  static const Color brandInfoSoft = Color(0xFFEAF4F4);
+  static const Color brandAccent = Color(0xFFA1D8E3);
+  static const Color success = Color(0xFF54AD57);
+  static const Color danger = Color(0xFFC94040);
+  static const Color borderSoft = Color(0xFFE0E0E0);
+  static const Color backgroundLight = Color(0xFFF6FAFC);
+
+  static const Color textColorPrimary = brandTextPrimary;
+  static const Color textColorSecondary = brandTextSecondary;
+  static const Color textColorMuted = brandTextMuted;
 
   static Color _tintBrandBlue(double amount) {
     return Color.alphaBlend(Colors.white.withValues(alpha: amount), brandBlue);
@@ -24,22 +34,25 @@ mixin AppTheme {
   );
 
   // Text styles
-  static final TextStyle brandNameLarge = GoogleFonts.poppins(
+  static final TextStyle brandNameLarge = GoogleFonts.chakraPetch(
     fontSize: 25,
     fontWeight: FontWeight.w700,
-    color: Colors.white,
+    fontStyle: FontStyle.italic,
+    color: brandAccent,
   ).copyWith(height: 0.9);
 
-  static final TextStyle brandNameExtraLarge = GoogleFonts.poppins(
+  static final TextStyle brandNameExtraLarge = GoogleFonts.chakraPetch(
     fontSize: 34,
-    fontWeight: FontWeight.w800,
-    color: Colors.white,
+    fontWeight: FontWeight.w700,
+    fontStyle: FontStyle.italic,
+    color: brandAccent,
   ).copyWith(height: 0.9);
 
-  static final TextStyle brandNameSmall = GoogleFonts.poppins(
+  static final TextStyle brandNameSmall = GoogleFonts.chakraPetch(
     fontSize: 20,
     fontWeight: FontWeight.w700,
-    color: Colors.white,
+    fontStyle: FontStyle.italic,
+    color: brandAccent,
   ).copyWith(height: 0.9);
 
   static final TextStyle cardHeading = GoogleFonts.poppins(
@@ -359,8 +372,18 @@ mixin AppTheme {
 
   // Provide the ThemeData to be consumed by MaterialApp
   static final ThemeData light = ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-    textTheme: GoogleFonts.poppinsTextTheme(),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: brandBlue,
+      primary: brandBlue,
+      secondary: brandTextSecondary,
+      surface: Colors.white,
+      error: danger,
+    ),
+    scaffoldBackgroundColor: backgroundLight,
+    textTheme: GoogleFonts.poppinsTextTheme().apply(
+      bodyColor: textColorPrimary,
+      displayColor: textColorPrimary,
+    ),
     inputDecorationTheme: inputDecorationTheme,
     useMaterial3: true,
   );

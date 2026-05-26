@@ -7,6 +7,7 @@ import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_bloc.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_event.dart';
 import 'package:portfolio_mobile_app/features/register/bloc/register_state.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 typedef IdentityVerificationResultCallback =
     void Function({required bool isSuccess, String? message});
@@ -129,7 +130,7 @@ class _SecondStepFormState extends State<SecondStepForm> {
                   border: Border.all(color: Colors.grey.shade400),
                 ),
                 child: Icon(
-                  Icons.help_outline,
+                  LucideIcons.helpCircle,
                   size: 14,
                   color: Colors.grey.shade500,
                 ),

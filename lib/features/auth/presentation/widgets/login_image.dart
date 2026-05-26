@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_logo.dart';
 
 class LoginImage extends StatelessWidget {
   const LoginImage({super.key});
@@ -17,11 +17,7 @@ class LoginImage extends StatelessWidget {
           ).createShader(bounds);
         },
         blendMode: BlendMode.dstIn,
-        child: Image.asset(
-          AppAssets.loginImage,
-          fit: BoxFit.contain,
-          alignment: Alignment.bottomCenter,
-        ),
+        child: const BrandLogo(),
       ),
     );
   }

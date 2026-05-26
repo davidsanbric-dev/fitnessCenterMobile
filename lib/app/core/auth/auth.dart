@@ -2,7 +2,7 @@ export 'application/auth_api/auth_api.dart'
     show
         AuthApi,
         ApplyEmailVerificationActionCodeUseCase,
-        AuthApiMfaApi,
+        // AuthApiMfaApi,
         AuthApiPasswordApi,
         AuthApiRegisterApi,
         AuthApiSessionApi,

@@ -2,6 +2,7 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class CapabilitiesSubgroupFilterBox extends StatelessWidget {
   const CapabilitiesSubgroupFilterBox({
@@ -77,7 +78,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8, top: 2),
                         child: Icon(
-                          Icons.category_outlined,
+                          LucideIcons.tags,
                           size: 16,
                           color: accentColor,
                         ),
@@ -127,7 +128,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
 
                 return FilterBoxOptionButton(
                   label: item.description,
-                  iconPath: 'assets/icons/discipline_icon.png',
+                  iconData: LucideIcons.tags,
                   iconContainerSize: 34,
                   iconAlignment: Alignment.bottomRight,
                   iconOffset: const Offset(2, 2),

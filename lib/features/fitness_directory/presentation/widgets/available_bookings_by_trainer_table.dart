@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.da
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableBookingsByTrainerTable extends StatelessWidget {
   const AvailableBookingsByTrainerTable({
@@ -68,7 +69,7 @@ class AvailableBookingsByTrainerTable extends StatelessWidget {
       padding: outerPadding,
       child: TableCard(
         title: 'Availability',
-        icon: Icons.event_available_outlined,
+        icon: LucideIcons.calendarCheck,
         // headers: headers,
         toolbar: toolbarContent,
         heightFactor: 0.68,

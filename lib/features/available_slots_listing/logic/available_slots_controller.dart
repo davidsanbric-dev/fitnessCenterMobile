@@ -2,8 +2,8 @@ import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/data/repositories/repositories.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_availability_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_filters_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
@@ -13,25 +13,31 @@ import 'package:get/get.dart';
 
 class AvailableSlotsController extends ControllerBase {
   factory AvailableSlotsController({
-    AvailableSlotsService? service,
     LocationController? locationController,
     CapabilitiesController? capabilitiesController,
   }) {
-    final resolvedService = service ?? AvailableSlotsService();
+    final availabilityRepository = AvailabilityListingRepositoryImpl();
+    final memberFiltersRepository = MemberFiltersRepositoryImpl();
+    final capabilitiesCatalogRepository = CapabilitiesCatalogRepositoryImpl();
     final LocationController resolvedLocationController =
         locationController ??
         (Get.isRegistered<LocationController>()
             ? Get.find<LocationController>()
             : Get.put(LocationController()));
     final CapabilitiesController resolvedCapabilitiesController =
-        capabilitiesController ?? CapabilitiesController();
+        capabilitiesController ??
+        CapabilitiesController(
+          catalogRepository: capabilitiesCatalogRepository,
+          availabilityRepository: availabilityRepository,
+        );
     final filtersController = AvailableSlotsFiltersController(
       locationController: resolvedLocationController,
       capabilitiesController: resolvedCapabilitiesController,
+      memberFiltersRepository: memberFiltersRepository,
     );
     final availabilityController = AvailableSlotsAvailabilityController(
       filtersController: filtersController,
-      service: resolvedService,
+      repository: availabilityRepository,
     );
 
     return AvailableSlotsController._(
@@ -125,8 +131,8 @@ class AvailableSlotsController extends ControllerBase {
   Future<void> consultAvailability(MemberAvailabilityParams params) =>
       availabilityController.consultAvailability(params);
 
-  Future<void> reserveBooking(AvailableSlotDto slot, {String? online}) =>
-      availabilityController.reserveBooking(slot, online: online);
+  void removeBookedAvailabilitySlot(AvailableSlotDto slot) =>
+      availabilityController.removeBookedAvailabilitySlot(slot);
 
   Future<void> loadCapabilitySubgroupFor(CapabilityDto group) =>
       filtersController.loadCapabilitySubgroupFor(group);
@@ -156,8 +162,8 @@ class AvailableSlotsController extends ControllerBase {
   Future<void> loadBookingsByCapability(CapabilityDto capability) =>
       filtersController.loadBookingsByCapability(capability);
 
-  Future<void> reserveCapabilitySlot(AvailableSlotByCapabilityDto slot) =>
-      filtersController.reserveCapabilitySlot(slot);
+  void removeBookedCapabilitySlot(AvailableSlotByCapabilityDto slot) =>
+      filtersController.removeBookedCapabilitySlot(slot);
 
   void resetCapabilityAvailability() =>
       filtersController.resetCapabilityAvailability();

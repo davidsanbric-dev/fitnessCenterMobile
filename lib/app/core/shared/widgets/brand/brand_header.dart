@@ -56,7 +56,7 @@ class BrandHeader extends StatelessWidget {
             text: TextSpan(
               style: textStyle,
               children: const [
-                TextSpan(text: AppStrings.brandSubtitle),
+                // TextSpan(text: AppStrings.brandSubtitle),
                 TextSpan(text: AppStrings.brandName),
               ],
             ),

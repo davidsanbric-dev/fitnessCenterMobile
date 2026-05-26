@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.da
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class CapabilitiesSubgroupItemsTable extends StatelessWidget {
   const CapabilitiesSubgroupItemsTable({
@@ -54,7 +55,7 @@ class CapabilitiesSubgroupItemsTable extends StatelessWidget {
 
     return TableCard(
       title: 'Class Options',
-      icon: Icons.fact_check_outlined,
+      icon: LucideIcons.listChecks,
       headers: headers,
       toolbar: _buildFiltersSummary(),
       heightFactor: 0.7,
@@ -125,7 +126,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () =>
                   _showPreparationDialog(context, item.preparation),
-              icon: const Icon(Icons.description_outlined, size: 16),
+              icon: const Icon(LucideIcons.fileText, size: 16),
               label: const Text('Preparation'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.brandBlue,
@@ -149,7 +150,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
               onPressed: onItemSelected == null
                   ? null
                   : () => onItemSelected!(item),
-              icon: const Icon(Icons.event_available_outlined, size: 16),
+              icon: const Icon(LucideIcons.calendarCheck, size: 16),
               label: const Text('Time Slots'),
               style: AppTheme.tableActionButtonStyle(),
             ),

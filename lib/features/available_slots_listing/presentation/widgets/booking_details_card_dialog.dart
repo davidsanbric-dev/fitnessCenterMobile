@@ -6,6 +6,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/row_details
 import 'package:portfolio_mobile_app/app/core/shared/widgets/ui/snackbar_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 mixin BookingDetailsCardDialog {
   static Future<void> show(
@@ -52,29 +53,29 @@ mixin BookingDetailsCardDialog {
       RowDetailsItem(
         label: 'Status',
         value: detail.state.isEmpty ? 'No status' : detail.state,
-        icon: Icons.flag_outlined,
+        icon: LucideIcons.flag,
       ),
       RowDetailsItem(
         label: 'Created At',
         value: formatDateTimeLabel(detail.creationDate),
-        icon: Icons.schedule,
+        icon: LucideIcons.clock,
       ),
       RowDetailsItem(
         label: 'Scheduled At',
         value: formatDateTimeLabel(detail.schedulingDate),
-        icon: Icons.event_available,
+        icon: LucideIcons.calendarCheck,
       ),
       RowDetailsItem(
         label: 'Duration',
         value: detail.duration > 0 ? '${detail.duration} min' : 'Not defined',
-        icon: Icons.timelapse,
+        icon: LucideIcons.timer,
       ),
       RowDetailsItem(
         label: 'Club',
         value: locationParts.isEmpty
             ? 'Not available'
             : locationParts.join(' · '),
-        icon: Icons.apartment,
+        icon: LucideIcons.building2,
       ),
     ];
   }
@@ -83,17 +84,17 @@ mixin BookingDetailsCardDialog {
     RowDetailsItem(
       label: 'Name',
       value: detail.memberName.isEmpty ? 'No name' : detail.memberName,
-      icon: Icons.person_outline,
+      icon: LucideIcons.user,
     ),
     RowDetailsItem(
       label: 'RUT',
       value: detail.memberRut.isEmpty ? 'Not available' : detail.memberRut,
-      icon: Icons.badge_outlined,
+      icon: LucideIcons.idCard,
     ),
     RowDetailsItem(
       label: 'Phone',
       value: detail.memberPhone.isEmpty ? 'Not available' : detail.memberPhone,
-      icon: Icons.phone_outlined,
+      icon: LucideIcons.phone,
     ),
   ];
 
@@ -105,7 +106,7 @@ mixin BookingDetailsCardDialog {
         RowDetailsItem(
           label: 'Trainer',
           value: detail.trainerName!,
-          icon: Icons.sports,
+          icon: LucideIcons.dumbbell,
         ),
       );
     }
@@ -115,7 +116,7 @@ mixin BookingDetailsCardDialog {
         RowDetailsItem(
           label: 'Discipline',
           value: detail.disciplineName!,
-          icon: Icons.stars_outlined,
+          icon: LucideIcons.star,
         ),
       );
     }
@@ -134,7 +135,7 @@ mixin BookingDetailsCardDialog {
         RowDetailsItem(
           label: 'Class',
           value: detail.serviceName!,
-          icon: Icons.fitness_center,
+          icon: LucideIcons.dumbbell,
         ),
       );
     }
@@ -145,7 +146,7 @@ mixin BookingDetailsCardDialog {
         RowDetailsItem(
           label: 'Preparation',
           value: 'View Preparation',
-          icon: Icons.description_outlined,
+          icon: LucideIcons.fileText,
           onTap: () => _showPreparationDialog(context, preparation),
         ),
       );
@@ -171,7 +172,7 @@ mixin BookingDetailsCardDialog {
       RowDetailsItem(
         label: 'Link',
         value: 'Open in browser',
-        icon: Icons.videocam_outlined,
+        icon: LucideIcons.video,
         onTap: () => _openOnlineUrl(context, onlineUrl),
       ),
     ];

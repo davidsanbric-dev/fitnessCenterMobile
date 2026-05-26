@@ -2,16 +2,17 @@ import 'dart:async';
 
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/disciplines_directory_controller.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/disciplines_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class DisciplinesDirectoryPage extends StatefulWidget {
   const DisciplinesDirectoryPage({
@@ -205,7 +206,8 @@ class _DisciplinesDirectoryStandalonePageState
       _controller = Get.find<DisciplinesDirectoryController>();
       _ownsController = false;
     } else {
-      _controller = Get.put(DisciplinesDirectoryController());
+      _controller =
+          FitnessDirectoryInjector.getDisciplinesDirectoryController();
       _ownsController = true;
     }
     if (Get.isRegistered<LocationController>()) {
@@ -285,22 +287,14 @@ class _DisciplinesDirectoryStandalonePageState
     Get.back();
   }
 
-  void _handleReserveBooking(AvailableSlotDto slot) {
-    final trainer = slot.trainerName.trim().isEmpty
-        ? 'Trainer pending confirmation'
-        : slot.trainerName.trim();
-    final location = slot.locationName.trim().isEmpty
-        ? 'Club pending confirmation'
-        : slot.locationName.trim();
-    final dateLabel = formatDateTimeLabel(slot.schedulingDate);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Book a session on $dateLabel with $trainer at $location.',
-        ),
-        duration: const Duration(seconds: 3),
-      ),
+  Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
+    await ClassBookingFlow.bookStandard(
+      context: context,
+      controller: ClassBookingInjector.getSharedClassBookingController(),
+      slot: slot,
+      onBooked: () async {
+        _controller.removeBookedAvailabilitySlot(slot);
+      },
     );
   }
 
@@ -317,7 +311,7 @@ class _DisciplinesDirectoryStandalonePageState
         TableFiltersSummaryItemData(
           label: 'Discipline',
           value: disciplineName,
-          icon: Icons.stars_outlined,
+          icon: LucideIcons.star,
         ),
       );
     }
@@ -327,7 +321,7 @@ class _DisciplinesDirectoryStandalonePageState
         TableFiltersSummaryItemData(
           label: 'Club',
           value: locationLabel,
-          icon: Icons.apartment,
+          icon: LucideIcons.building2,
         ),
       );
     }
@@ -371,7 +365,7 @@ class _DisciplinesDirectoryStandalonePageState
             PageHeader(
               title: 'Fitness Directory',
               subtitle: 'Disciplines',
-              subtitleIcon: Icons.fitness_center,
+              subtitleIcon: LucideIcons.dumbbell,
               onBackButtonPressed: _handleBack,
             ),
             Expanded(

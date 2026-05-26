@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 
@@ -9,16 +11,31 @@ class BrandLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      AppAssets.logo,
-      height: height,
-      errorBuilder: (context, error, stackTrace) {
-        RuntimeDiagnostics.missingAsset(
-          AppAssets.logo,
-          scope: 'BrandLogo',
-          error: error,
+    return FutureBuilder<String>(
+      future: DefaultAssetBundle.of(context).loadString(AppAssets.logo),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          RuntimeDiagnostics.missingAsset(
+            AppAssets.logo,
+            scope: 'BrandLogo',
+            error: snapshot.error,
+          );
+          return Icon(LucideIcons.imageOff, size: height * 0.7);
+        }
+
+        if (!snapshot.hasData) {
+          return SizedBox(
+            height: height,
+            width: height,
+            child: Icon(LucideIcons.image, size: height * 0.7),
+          );
+        }
+
+        return SvgPicture.string(
+          snapshot.data!,
+          height: height,
+          fit: BoxFit.contain,
         );
-        return Icon(Icons.image_not_supported_outlined, size: height * 0.7);
       },
     );
   }

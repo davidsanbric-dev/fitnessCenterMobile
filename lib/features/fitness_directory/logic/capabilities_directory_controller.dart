@@ -1,9 +1,8 @@
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/capabilities_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:get/get.dart';
 
@@ -12,15 +11,11 @@ class CapabilitiesController extends ControllerBase {
   static const int _defaultCapabilityAvailabilityPageSize = 6;
 
   CapabilitiesController({
-    CapabilitiesService? service,
-    AvailableSlotsService? availableSlotsService,
+    CapabilitiesDirectoryRepository? repository,
     this.locationId = 1,
-  }) : _service = service ?? CapabilitiesService(),
-       _availableSlotsService =
-           availableSlotsService ?? AvailableSlotsService();
+  }) : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
-  final CapabilitiesService _service;
-  final AvailableSlotsService _availableSlotsService;
+  final CapabilitiesDirectoryRepository _repository;
   final int locationId;
 
   final stage = CapabilitiesViewStage.groupSelection.obs;
@@ -60,7 +55,7 @@ class CapabilitiesController extends ControllerBase {
     error.value = null;
 
     try {
-      final items = await _service.fetchGroups(locationId: locationId);
+      final items = await _repository.fetchGroups(locationId: locationId);
       groups.assignAll(items);
       _resetSubgroupState();
       stage.value = CapabilitiesViewStage.groupSelection;
@@ -84,7 +79,7 @@ class CapabilitiesController extends ControllerBase {
     error.value = null;
 
     try {
-      final items = await _service.fetchSubgroup(
+      final items = await _repository.fetchSubgroup(
         locationId: locationId,
         groupId: group.id,
       );
@@ -131,7 +126,7 @@ class CapabilitiesController extends ControllerBase {
     stage.value = CapabilitiesViewStage.subgroupItemsSelection;
 
     try {
-      final items = await _service.fetchSubgroupItems(
+      final items = await _repository.fetchSubgroupItems(
         locationId: locationId,
         groupId: groupId,
         subgroupId: subgroup.id,
@@ -165,11 +160,10 @@ class CapabilitiesController extends ControllerBase {
     _syncCapabilityAvailabilityPagination();
 
     try {
-      final items = await _availableSlotsService
-          .fetchAvailableBookingsByCapability(
-            locationId: locationId,
-            capability: capability,
-          );
+      final items = await _repository.fetchAvailableBookingsByCapability(
+        locationId: locationId,
+        capability: capability,
+      );
       availableByCapability.assignAll(items);
       _syncCapabilityAvailabilityPagination();
       stage.value = CapabilitiesViewStage.capabilityAvailability;
@@ -204,6 +198,11 @@ class CapabilitiesController extends ControllerBase {
     selectedCapability.value = null;
     availableByCapability.clear();
     stage.value = CapabilitiesViewStage.subgroupItemsSelection;
+  }
+
+  void removeBookedAvailabilitySlot(AvailableSlotByCapabilityDto slot) {
+    availableByCapability.remove(slot);
+    _syncCapabilityAvailabilityPagination();
   }
 
   List<Map<String, dynamic>> get capabilityBookingsTableRows => sliceTablePage(

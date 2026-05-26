@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -57,7 +58,7 @@ class SearchField extends StatelessWidget {
         hintText: hintText,
         hintStyle: fontSize != null ? TextStyle(fontSize: fontSize) : null,
         contentPadding: const EdgeInsets.only(bottom: 8),
-        suffixIcon: const Icon(Icons.search, color: AppTheme.brandBlue),
+        suffixIcon: const Icon(LucideIcons.search, color: AppTheme.brandBlue),
         enabledBorder: underlineBorder,
         focusedBorder: focusedUnderlineBorder,
       ),

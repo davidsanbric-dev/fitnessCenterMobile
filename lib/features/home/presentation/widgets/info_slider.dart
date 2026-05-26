@@ -2,6 +2,7 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/diagnostics/runtime_diagnostics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class InfoSlide {
   const InfoSlide({
@@ -166,7 +167,7 @@ class _SlideCard extends StatelessWidget {
                       ),
                       child: const Center(
                         child: Icon(
-                          Icons.broken_image_outlined,
+                          LucideIcons.imageOff,
                           color: AppTheme.brandBlue,
                           size: 36,
                         ),

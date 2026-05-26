@@ -1,6 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_controller.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_for_online_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
@@ -8,6 +8,7 @@ import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/scheduling_mode_filter_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableSlotsPage extends StatefulWidget {
   const AvailableSlotsPage({
@@ -162,14 +163,14 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
                 isEmbedded: true,
                 onBack: _backToSchedulingMode,
                 headerSubtitle: _byDisciplineTrainerHeaderSubtitle,
-                headerSubtitleIcon: Icons.fitness_center,
+                headerSubtitleIcon: LucideIcons.dumbbell,
               )
             : showOnlineFlow
             ? AvailableSlotsForOnlineSubPage(
                 isEmbedded: true,
                 onBack: _backToSchedulingMode,
                 headerSubtitle: _onlineHeaderSubtitle,
-                headerSubtitleIcon: Icons.videocam_outlined,
+                headerSubtitleIcon: LucideIcons.video,
               )
             : LayoutBuilder(
                 builder: (context, constraints) {
@@ -189,7 +190,7 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
                             horizontalPadding: horizontalPadding,
                             onBack: _backToSchedulingMode,
                             headerSubtitle: _byServiceHeaderSubtitle,
-                            headerSubtitleIcon: Icons.sports_score_outlined,
+                            headerSubtitleIcon: LucideIcons.trophy,
                           )
                         else
                           Padding(

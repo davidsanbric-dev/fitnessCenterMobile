@@ -1,24 +1,33 @@
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/capabilities_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:flutter/material.dart';
 
 class CapabilitiesController extends ControllerBase {
   CapabilitiesController({
-    CapabilitiesService? service,
-    AvailableSlotsService? availableSlotsService,
-  }) : _service = service ?? CapabilitiesService(),
-       _availableSlotsService =
-           availableSlotsService ?? AvailableSlotsService();
+    CapabilitiesCatalogRepository? catalogRepository,
+    AvailabilityListingRepository? availabilityRepository,
+    ClassBookingController? bookingController,
+  }) : _catalogRepository =
+           catalogRepository ??
+           (throw ArgumentError.notNull('catalogRepository')),
+       _availabilityRepository =
+           availabilityRepository ??
+           (throw ArgumentError.notNull('availabilityRepository')),
+       _bookingController =
+           bookingController ??
+           ClassBookingInjector.getSharedClassBookingController();
 
-  final CapabilitiesService _service;
-  final AvailableSlotsService _availableSlotsService;
+  final CapabilitiesCatalogRepository _catalogRepository;
+  final AvailabilityListingRepository _availabilityRepository;
+  final ClassBookingController _bookingController;
   static const int _defaultCapabilityAvailabilityPageSize = 6;
   static const int _defaultCapabilitySubgroupItemsPageSize = 6;
 
@@ -50,7 +59,7 @@ class CapabilitiesController extends ControllerBase {
     required Iterable<BookingsLocationOption> locationOptions,
   }) async {
     _capabilitiesLocationId = _resolveCapabilitiesLocationId(locationOptions);
-    final capabilitiesData = await _service.fetchCapabilities();
+    final capabilitiesData = await _catalogRepository.fetchCapabilities();
     _applyCapabilities(capabilitiesData);
   }
 
@@ -93,7 +102,7 @@ class CapabilitiesController extends ControllerBase {
     capabilitySubgroup.clear();
 
     try {
-      final items = await _service.fetchSubgroup(
+      final items = await _catalogRepository.fetchSubgroup(
         locationId: locationId,
         groupId: group.id,
       );
@@ -136,7 +145,7 @@ class CapabilitiesController extends ControllerBase {
     _syncCapabilitySubgroupItemsPagination();
 
     try {
-      final items = await _service.fetchSubgroupItems(
+      final items = await _catalogRepository.fetchSubgroupItems(
         locationId: locationId,
         groupId: group.id,
         subgroupId: subgroup.id,
@@ -173,7 +182,7 @@ class CapabilitiesController extends ControllerBase {
     _syncCapabilityAvailabilityPagination();
 
     try {
-      final items = await _availableSlotsService
+      final items = await _availabilityRepository
           .fetchAvailableBookingsByCapability(
             locationId: locationId,
             capability: capability,
@@ -192,7 +201,12 @@ class CapabilitiesController extends ControllerBase {
   }
 
   Future<void> reserveCapabilitySlot(AvailableSlotByCapabilityDto slot) async {
-    await _availableSlotsService.reserveBookingByCapability(slot: slot);
+    await _bookingController.bookByClassType(slot: slot);
+    availableByCapability.remove(slot);
+    _syncCapabilityAvailabilityPagination();
+  }
+
+  void removeBookedCapabilitySlot(AvailableSlotByCapabilityDto slot) {
     availableByCapability.remove(slot);
     _syncCapabilityAvailabilityPagination();
   }
@@ -264,7 +278,7 @@ class CapabilitiesController extends ControllerBase {
         .map(
           (capability) => FilterBoxOptionData(
             label: capability.description,
-            iconPath: _resolveServiceIcon(capability.description),
+            iconData: _resolveServiceIcon(capability.description),
           ),
         )
         .toList(growable: true);
@@ -275,11 +289,11 @@ class CapabilitiesController extends ControllerBase {
     return options.toList(growable: false);
   }
 
-  String _resolveServiceIcon(String name) {
+  IconData _resolveServiceIcon(String name) {
     if (name.trim().isEmpty) {
-      return AppAssets.disciplineIcon;
+      return LucideIcons.dumbbell;
     }
-    return AppAssets.disciplineIcon;
+    return LucideIcons.dumbbell;
   }
 
   int? _resolveCapabilitiesLocationId(

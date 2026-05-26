@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class MfaEnrollmentPage extends StatelessWidget {
   const MfaEnrollmentPage({super.key});
@@ -392,7 +393,7 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
     return PageHeader(
       title: 'Security',
       subtitle: 'SMS verification',
-      subtitleIcon: Icons.sms_outlined,
+      subtitleIcon: LucideIcons.messageSquare,
       onBackButtonPressed: widget.onBack,
     );
   }
@@ -533,7 +534,7 @@ class _MfaEnrollmentViewState extends State<MfaEnrollmentView> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.verified_user_outlined, color: AppTheme.brandBlue),
+          const Icon(LucideIcons.badgeCheck, color: AppTheme.brandBlue),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
