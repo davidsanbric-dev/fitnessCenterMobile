@@ -31,8 +31,7 @@ class AuthController extends GetxController with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-  }
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
 
   Future<void> login({required AuthRequest request}) async {
     isLoading.value = true;

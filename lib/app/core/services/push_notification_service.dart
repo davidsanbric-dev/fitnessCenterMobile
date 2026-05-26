@@ -34,7 +34,6 @@ class PushNotificationService extends GetxService {
 
   Future<void> _requestPermission() async {
     await _messaging.requestPermission();
-
   }
 
   Future<void> _syncToken() async {

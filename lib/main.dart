@@ -4,17 +4,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:portfolio_mobile_app/app/config/config.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/services/deep_link_service.dart';
-import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
 import 'package:portfolio_mobile_app/app/main_app.dart';
+import 'package:portfolio_mobile_app/app/core/startup/startup_manager.dart';
 import 'package:portfolio_mobile_app/firebase_options.dart';
 
 class BootstrapApp extends StatefulWidget {
@@ -29,8 +24,10 @@ class _BootstrapAppState extends State<BootstrapApp> {
   bool _startupDispatched = false;
 
   Future<void> _initializeCriticalStartup() async {
-    await _ensureFirebaseReady();
-    // _logEffectiveBaseUrl();
+    final firebaseReady = await _ensureFirebaseReady();
+    if (!firebaseReady) {
+      throw Exception('Firebase initialization failed during startup');
+    }
   }
 
   @override
@@ -52,7 +49,7 @@ class _BootstrapAppState extends State<BootstrapApp> {
         if (!_startupDispatched) {
           _startupDispatched = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            unawaited(_startApp());
+            unawaited(const StartupManager().run());
           });
         }
 
@@ -117,76 +114,13 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await PushNotificationService.handleBackgroundMessage(message);
 }
 
-Future<void> _startApp() async {
-  unawaited(_runStartupAssetPreflight());
-  AppBindings.ensureAuthDependencies();
-
-  final authService = Get.isRegistered<AuthService>()
-      ? Get.find<AuthService>()
-      : Get.put(
-          AuthService(
-            authApi: Get.find<AuthApi>(),
-            cache: Get.find<AuthSessionCache>(),
-          ),
-        );
-  await _runStartupStep('AuthService.init', authService.init);
-
-  final localNotifications = Get.isRegistered<LocalNotificationService>()
-      ? Get.find<LocalNotificationService>()
-      : Get.put(LocalNotificationService());
-  await _runStartupStep(
-    'LocalNotificationService.init',
-    localNotifications.init,
-  );
-
-  if (Firebase.apps.isEmpty) {
-  } else {
-    final pushService = Get.isRegistered<PushNotificationService>()
-        ? Get.find<PushNotificationService>()
-        : Get.put(
-            PushNotificationService(
-              localNotificationService: localNotifications,
-            ),
-          );
-    await _runStartupStep('PushNotificationService.init', pushService.init);
-  }
-
-  final deepLinkService = Get.isRegistered<DeepLinkService>()
-      ? Get.find<DeepLinkService>()
-      : Get.put(DeepLinkService());
-  await _runStartupStep('DeepLinkService.init', deepLinkService.init);
-}
-
-Future<void> _runStartupAssetPreflight() async {
-  const criticalAssets = <String>[
-    AppAssets.logo,
-    'assets/info_slider_image.png',
-  ];
-  const timeout = Duration(seconds: 2);
-
-  for (final asset in criticalAssets) {
-    try {
-      final isSvg = asset.toLowerCase().endsWith('.svg');
-      if (isSvg) {
-        await rootBundle.loadString(asset).timeout(timeout);
-      } else {
-        await rootBundle.load(asset).timeout(timeout);
-      }
-    } catch (_) {}
-  }
-}
+/* StartupManager is implemented in
+   lib/app/core/startup/startup_manager.dart */
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    // kEnableDevicePreview
-    //     ? DevicePreview(
-    //         builder: (context) => const ProviderScope(child: BootstrapApp()),
-    //       )
-    //     :
-    const ProviderScope(child: BootstrapApp()),
-  );
+  runApp(const ProviderScope(child: BootstrapApp()));
 }
 
 Future<bool> _ensureFirebaseReady() async {
@@ -222,25 +156,5 @@ Future<bool> _ensureFirebaseReady() async {
       ),
     );
     return false;
-  }
-}
-
-Future<void> _runStartupStep(
-  String name,
-  Future<void> Function() action,
-) async {
-  const timeout = Duration(seconds: 8);
-  try {
-    await action().timeout(timeout);
-  } on TimeoutException {
-  } catch (error, stackTrace) {
-    FlutterError.reportError(
-      FlutterErrorDetails(
-        exception: error,
-        stack: stackTrace,
-        library: 'main.dart',
-        context: ErrorDescription('during startup step: $name'),
-      ),
-    );
   }
 }

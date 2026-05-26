@@ -25,12 +25,9 @@ class DeepLinkService extends GetxService {
       }
     } catch (_) {}
 
-    _subscription = _appLinks.uriLinkStream.listen(
-      (uri) {
-        _handleUri(uri);
-      },
-      onError: (_) {},
-    );
+    _subscription = _appLinks.uriLinkStream.listen((uri) {
+      _handleUri(uri);
+    }, onError: (_) {});
 
     return this;
   }
