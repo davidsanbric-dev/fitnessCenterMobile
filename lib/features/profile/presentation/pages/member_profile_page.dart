@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const PageHeader(title: 'My Profile'),
+            PageHeader(title: 'My Profile', onLogout: () => _handleLogout(context)),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(

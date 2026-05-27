@@ -1,6 +1,9 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:get/get.dart';
+import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
+import 'package:portfolio_mobile_app/app/config/app_routes.dart';
 
 class AppBackButton extends StatelessWidget {
   const AppBackButton({
@@ -51,6 +54,7 @@ class PageHeader extends StatelessWidget {
     this.subtitleIconSize = 18,
     this.subtitleSpacing = 6,
     this.onBackButtonPressed,
+    this.onLogout,
     this.leadingPadding = EdgeInsets.zero,
     this.leadingSlotWidth = kMinInteractiveDimension,
   }) : assert(
@@ -65,6 +69,7 @@ class PageHeader extends StatelessWidget {
   final double subtitleIconSize;
   final double subtitleSpacing;
   final VoidCallback? onBackButtonPressed;
+  final VoidCallback? onLogout;
   final EdgeInsets leadingPadding;
   final double leadingSlotWidth;
 
@@ -77,8 +82,55 @@ class PageHeader extends StatelessWidget {
     final resolvedLeading = onBackPressed == null
         ? null
         : AppBackButton(onPressed: onBackPressed);
+    // Determine the effective logout callback: use explicit `onLogout` if provided,
+    // otherwise auto-wire to `AuthService` logout flow when available.
+    VoidCallback? effectiveOnLogout = onLogout;
+    if (effectiveOnLogout == null && Get.isRegistered<AuthService>()) {
+      Future<void> _performLogout() async {
+        final messenger = ScaffoldMessenger.of(context);
+        final authService = Get.find<AuthService>();
+        try {
+          await authService.logout();
+          await Get.offAllNamed(AppRoutes.login);
+        } catch (error) {
+          messenger.showSnackBar(
+            SnackBar(content: Text('Could not sign out: $error')),
+          );
+        }
+      }
+
+      effectiveOnLogout = () {
+        _performLogout();
+      };
+    }
+    // Build an optional trailing logout button slot when `onLogout` is provided.
+    final Widget trailingSlot = effectiveOnLogout == null
+        ? SizedBox(width: leadingSlotWidth)
+        : SizedBox(
+            width: leadingSlotWidth,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(LucideIcons.logOut, size: 20, color: Colors.white),
+                tooltip: 'Sign out',
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(
+                  minWidth: leadingSlotWidth,
+                  minHeight: kMinInteractiveDimension,
+                ),
+                visualDensity: VisualDensity.compact,
+                onPressed: effectiveOnLogout,
+              ),
+            ),
+          );
+
     final headerContent = resolvedLeading == null
-        ? content
+        ? Row(
+            children: [
+              Expanded(child: Align(child: content)),
+              trailingSlot,
+            ],
+          )
         : Row(
             children: [
               SizedBox(
@@ -92,7 +144,7 @@ class PageHeader extends StatelessWidget {
                 ),
               ),
               Expanded(child: Align(child: content)),
-              SizedBox(width: leadingSlotWidth),
+              trailingSlot,
             ],
           );
 
