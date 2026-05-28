@@ -86,7 +86,7 @@ class PageHeader extends StatelessWidget {
     // otherwise auto-wire to `AuthService` logout flow when available.
     VoidCallback? effectiveOnLogout = onLogout;
     if (effectiveOnLogout == null && Get.isRegistered<AuthService>()) {
-      Future<void> _performLogout() async {
+      Future<void> performLogout() async {
         final messenger = ScaffoldMessenger.of(context);
         final authService = Get.find<AuthService>();
         try {
@@ -100,7 +100,7 @@ class PageHeader extends StatelessWidget {
       }
 
       effectiveOnLogout = () {
-        _performLogout();
+        performLogout();
       };
     }
     // Build an optional trailing logout button slot when `onLogout` is provided.

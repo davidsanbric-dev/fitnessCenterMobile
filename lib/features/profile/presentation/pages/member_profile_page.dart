@@ -70,9 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (didPop) return;
           _closePersonalData();
         },
-        child: Scaffold(
-          body: PersonalDataView(onBack: _closePersonalData),
-        ),
+        child: Scaffold(body: PersonalDataView(onBack: _closePersonalData)),
       );
     }
 
@@ -83,9 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (didPop) return;
           _closeMfaSetup();
         },
-        child: Scaffold(
-          body: MfaEnrollmentView(onBack: _closeMfaSetup),
-        ),
+        child: Scaffold(body: MfaEnrollmentView(onBack: _closeMfaSetup)),
       );
     }
 
@@ -107,7 +103,6 @@ class _ProfilePageState extends State<ProfilePage> {
         title: 'Gym Locations',
         onTap: () => _showComingSoon(context),
       ),
-      _ProfileOption(title: 'Sign Out', onTap: () => _handleLogout(context)),
     ];
 
     return Scaffold(
@@ -116,7 +111,10 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PageHeader(title: 'My Profile', onLogout: () => _handleLogout(context)),
+            PageHeader(
+              title: 'My Profile',
+              onLogout: () => _handleLogout(context),
+            ),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(
