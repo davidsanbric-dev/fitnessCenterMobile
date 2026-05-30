@@ -94,3 +94,5 @@ flutter_01.png
 .env.*.secret
 .env.secret
 .dart-defines.local.json
+.dart-defines.*.json
+RELEASING.md

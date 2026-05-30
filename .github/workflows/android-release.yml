@@ -29,6 +29,7 @@ permissions:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    environment: deployment
     env:
       PUBLISH_TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'both' }}
       RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || '' }}
@@ -84,6 +85,18 @@ jobs:
             exit 1
           fi
 
+      - name: Decode Firebase service account JSON
+        id: firebase-sa
+        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON != '' }}
+        shell: bash
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" | base64 --decode > /tmp/firebase-sa.json
+          {
+            echo "content<<__SAEOF__"
+            cat /tmp/firebase-sa.json
+            echo "__SAEOF__"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build release APK
         run: flutter build apk --release
 
@@ -118,7 +131,7 @@ jobs:
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ env.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          serviceCredentialsFileContent: ${{ steps.firebase-sa.outputs.content }}
           groups: ${{ env.FIREBASE_APP_DISTRIBUTION_GROUPS }}
           file: build/app/outputs/flutter-apk/app-release.apk
           releaseNotesFile: release-notes.txt
