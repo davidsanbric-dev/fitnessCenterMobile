@@ -24,7 +24,3 @@
 # --- Firebase (core / auth / messaging) ---
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
-
-# --- pdfx (native PDF rendering) ---
--keep class io.github.classgraph.** { *; }
--dontwarn io.github.classgraph.**
