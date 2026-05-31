@@ -8,12 +8,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/form_title.da
 import 'package:portfolio_mobile_app/features/auth/logic/auth_controller.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({
-    super.key,
-    required this.onForgotPasswordTap,
-  });
-
-  final VoidCallback onForgotPasswordTap;
+  const LoginForm({super.key});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -125,13 +120,6 @@ class _LoginFormState extends State<LoginForm> {
                           ? const SizedBox.shrink()
                           : Column(
                               children: [
-                                if (!isMfa) ...[
-                                  TextButton(
-                                    onPressed: widget.onForgotPasswordTap,
-                                    style: AppTheme.brandTextButtonStyle(),
-                                    child: const Text('Forgot your password?'),
-                                  ),
-                                ],
                                 if (isMfa) ...[
                                   TextButton(
                                     onPressed: controller.isLoading.value

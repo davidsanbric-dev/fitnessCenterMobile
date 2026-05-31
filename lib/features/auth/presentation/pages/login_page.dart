@@ -5,12 +5,10 @@ import 'package:portfolio_mobile_app/features/auth/presentation/widgets/greeting
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_image.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_routes.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_slogan_bar.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_form.dart';
-import 'package:get/get.dart';
 
 const double _sloganHorizontalInset = 0.0;
 const double _sloganWidthFactor = 0.8;
@@ -59,11 +57,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    final Widget authForm = LoginForm(
-      onForgotPasswordTap: () {
-        Get.toNamed(AppRoutes.passwordRecovery);
-      },
-    );
+    final Widget authForm = const LoginForm();
 
     return Scaffold(
       backgroundColor: AppTheme.brandBlue,

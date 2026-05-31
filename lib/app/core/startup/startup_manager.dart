@@ -9,7 +9,6 @@ import 'package:portfolio_mobile_app/app/config/app_bindings.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
-import 'package:portfolio_mobile_app/app/core/services/deep_link_service.dart';
 
 class StartupManager {
   const StartupManager();
@@ -46,11 +45,6 @@ class StartupManager {
             );
       await _runStartupStep('PushNotificationService.init', pushService.init);
     }
-
-    final deepLinkService = Get.isRegistered<DeepLinkService>()
-        ? Get.find<DeepLinkService>()
-        : Get.put(DeepLinkService());
-    await _runStartupStep('DeepLinkService.init', deepLinkService.init);
   }
 
   Future<void> _runAssetPreflight() async {
