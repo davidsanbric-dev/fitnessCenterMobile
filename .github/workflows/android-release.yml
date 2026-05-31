@@ -52,7 +52,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # This workflow only runs on tag pushes / manual dispatch (never a
+          # plain push to main), and releases are infrequent and serialized,
+          # so allow every run to read and update the build cache.
+          cache-read-only: false
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
