@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for the app to access the network in release builds. The debug/profile
+         manifests declare this for tooling, but release builds rely on the main manifest. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="portfolio_mobile_app"
         android:name="${applicationName}"
