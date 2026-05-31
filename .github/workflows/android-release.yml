@@ -43,6 +43,15 @@ jobs:
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      # Compile-time dart-defines consumed by the app. BASE_URL is required:
+      # without it the release build crashes at startup (blank white screen).
+      # The password-recovery keys are optional and degrade gracefully if unset.
+      BASE_URL: ${{ secrets.BASE_URL }}
+      PASSWORD_RESET_CONTINUE_URL: ${{ secrets.PASSWORD_RESET_CONTINUE_URL }}
+      ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+      ANDROID_MIN_VERSION: ${{ secrets.ANDROID_MIN_VERSION }}
+      IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+      FIREBASE_DYNAMIC_LINK_DOMAIN: ${{ secrets.FIREBASE_DYNAMIC_LINK_DOMAIN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -104,8 +113,31 @@ jobs:
             echo "__SAEOF__"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Assemble dart-defines from secrets
+        shell: bash
+        run: |
+          if [ -z "$BASE_URL" ]; then
+            echo "::error::BASE_URL secret is empty. The release build would crash at startup (blank white screen). Set BASE_URL in the deployment environment secrets."
+            exit 1
+          fi
+          jq -n \
+            --arg base_url "$BASE_URL" \
+            --arg pw_url "$PASSWORD_RESET_CONTINUE_URL" \
+            --arg apkg "$ANDROID_PACKAGE_NAME" \
+            --arg amin "$ANDROID_MIN_VERSION" \
+            --arg ios "$IOS_BUNDLE_ID" \
+            --arg domain "$FIREBASE_DYNAMIC_LINK_DOMAIN" \
+            '{
+              BASE_URL: $base_url,
+              PASSWORD_RESET_CONTINUE_URL: $pw_url,
+              ANDROID_PACKAGE_NAME: $apkg,
+              ANDROID_MIN_VERSION: $amin,
+              IOS_BUNDLE_ID: $ios,
+              FIREBASE_DYNAMIC_LINK_DOMAIN: $domain
+            }' > .dart-defines.ci.json
+
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define-from-file=.dart-defines.ci.json
 
       - name: Prepare release notes
         shell: bash
