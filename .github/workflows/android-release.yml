@@ -56,42 +56,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          # This workflow only runs on tag pushes / manual dispatch (never a
-          # plain push to main), and releases are infrequent and serialized,
-          # so allow every run to read and update the build cache.
-          cache-read-only: false
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Configure release keystore
-        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
-        shell: bash
-        run: |
-          mkdir -p android/app
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
-          cat > android/key.properties <<EOF
-          storeFile=app/upload-keystore.jks
-          storePassword=$ANDROID_KEYSTORE_PASSWORD
-          keyAlias=$ANDROID_KEY_ALIAS
-          keyPassword=$ANDROID_KEY_PASSWORD
-          EOF
-
+      # Validate configuration up front so misconfigured runs fail in seconds,
+      # before the expensive Java/Gradle/Flutter setup and build.
       - name: Validate GitHub release inputs
         if: ${{ github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both') }}
         shell: bash
@@ -100,18 +66,6 @@ jobs:
             echo "release_tag is required when target includes GitHub Releases."
             exit 1
           fi
-
-      - name: Decode Firebase service account JSON
-        id: firebase-sa
-        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON != '' }}
-        shell: bash
-        run: |
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" | base64 --decode > /tmp/firebase-sa.json
-          {
-            echo "content<<__SAEOF__"
-            cat /tmp/firebase-sa.json
-            echo "__SAEOF__"
-          } >> "$GITHUB_OUTPUT"
 
       - name: Assemble dart-defines from secrets
         shell: bash
@@ -136,6 +90,58 @@ jobs:
               FIREBASE_DYNAMIC_LINK_DOMAIN: $domain
             }' > .dart-defines.ci.json
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # This workflow only runs on tag pushes / manual dispatch (never a
+          # plain push to main), and releases are infrequent and serialized,
+          # so allow every run to read and update the build cache.
+          cache-read-only: false
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Pin the version so the SDK cache key stays stable (an unpinned
+          # 'stable' re-downloads whenever the channel advances) and releases
+          # are reproducible. Bump deliberately when upgrading Flutter.
+          flutter-version: 3.44.0
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Configure release keystore
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        shell: bash
+        run: |
+          mkdir -p android/app
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storeFile=app/upload-keystore.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+
+      - name: Decode Firebase service account JSON
+        id: firebase-sa
+        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON != '' }}
+        shell: bash
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" | base64 --decode > /tmp/firebase-sa.json
+          {
+            echo "content<<__SAEOF__"
+            cat /tmp/firebase-sa.json
+            echo "__SAEOF__"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build release APK
         run: flutter build apk --release --dart-define-from-file=.dart-defines.ci.json
 
@@ -153,6 +159,9 @@ jobs:
         with:
           name: app-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+          # The APK is already a compressed archive; skip re-compression to
+          # speed up the upload (default level 6 wastes CPU for ~0% gain).
+          compression-level: 0
 
       - name: Publish to GitHub Releases
         if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both')) }}
