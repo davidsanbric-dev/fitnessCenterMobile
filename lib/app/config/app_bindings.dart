@@ -2,7 +2,6 @@ import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/api/user_api.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_dependencies.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
-import 'package:portfolio_mobile_app/app/core/services/register_email_verification_service.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,38 +51,6 @@ class AppBindings {
           cache: Get.find<AuthSessionCache>(),
           firebaseErrorMapper: Get.find<FirebaseAuthExceptionMapper>(),
         ),
-        permanent: true,
-      );
-    }
-
-    if (!Get.isRegistered<EnsureRegisterEmailSessionUseCase>()) {
-      Get.put<EnsureRegisterEmailSessionUseCase>(
-        EnsureRegisterEmailSessionUseCase(authApi: Get.find<AuthApi>()),
-        permanent: true,
-      );
-    }
-
-    if (!Get.isRegistered<EnsureRegisterUserCredentialsUseCase>()) {
-      Get.put<EnsureRegisterUserCredentialsUseCase>(
-        EnsureRegisterUserCredentialsUseCase(
-          authApi: Get.find<AuthApi>(),
-          ensureRegisterEmailSessionUseCase:
-              Get.find<EnsureRegisterEmailSessionUseCase>(),
-        ),
-        permanent: true,
-      );
-    }
-
-    if (!Get.isRegistered<ApplyEmailVerificationActionCodeUseCase>()) {
-      Get.put<ApplyEmailVerificationActionCodeUseCase>(
-        ApplyEmailVerificationActionCodeUseCase(authApi: Get.find<AuthApi>()),
-        permanent: true,
-      );
-    }
-
-    if (!Get.isRegistered<RegisterEmailVerificationService>()) {
-      Get.put<RegisterEmailVerificationService>(
-        RegisterEmailVerificationService(),
         permanent: true,
       );
     }

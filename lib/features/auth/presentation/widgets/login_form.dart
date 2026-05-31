@@ -10,11 +10,9 @@ import 'package:portfolio_mobile_app/features/auth/logic/auth_controller.dart';
 class LoginForm extends StatefulWidget {
   const LoginForm({
     super.key,
-    required this.onRegisterTap,
     required this.onForgotPasswordTap,
   });
 
-  final VoidCallback onRegisterTap;
   final VoidCallback onForgotPasswordTap;
 
   @override
@@ -128,29 +126,6 @@ class _LoginFormState extends State<LoginForm> {
                           : Column(
                               children: [
                                 if (!isMfa) ...[
-                                  Center(
-                                    child: Wrap(
-                                      alignment: WrapAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Don\'t have an account? ',
-                                          style: AppTheme.cardSubHeading,
-                                        ),
-                                        GestureDetector(
-                                          onTap: widget.onRegisterTap,
-                                          child: Text(
-                                            'Sign up',
-                                            style: AppTheme.cardSubHeading
-                                                .copyWith(
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
                                   TextButton(
                                     onPressed: widget.onForgotPasswordTap,
                                     style: AppTheme.brandTextButtonStyle(),

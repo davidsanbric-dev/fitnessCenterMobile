@@ -10,7 +10,6 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_slogan_bar.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_form.dart';
-import 'package:portfolio_mobile_app/features/auth/presentation/widgets/register_form.dart';
 import 'package:get/get.dart';
 
 const double _sloganHorizontalInset = 0.0;
@@ -33,7 +32,6 @@ class _LoginPageState extends State<LoginPage>
   late final AnimationController _controller;
   late final Animation<double> _progress;
   Timer? _animationStartTimer;
-  bool _showRegister = false;
 
   static const _transitionDuration = Duration(milliseconds: 900);
   static const _initialDelay = Duration(seconds: 3);
@@ -61,20 +59,11 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    final Widget authForm = _showRegister
-        ? RegisterForm(
-            onLoginTap: () {
-              setState(() => _showRegister = false);
-            },
-          )
-        : LoginForm(
-            onRegisterTap: () {
-              Get.toNamed(AppRoutes.register);
-            },
-            onForgotPasswordTap: () {
-              Get.toNamed(AppRoutes.passwordRecovery);
-            },
-          );
+    final Widget authForm = LoginForm(
+      onForgotPasswordTap: () {
+        Get.toNamed(AppRoutes.passwordRecovery);
+      },
+    );
 
     return Scaffold(
       backgroundColor: AppTheme.brandBlue,

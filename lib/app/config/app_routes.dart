@@ -6,13 +6,11 @@ import 'package:portfolio_mobile_app/features/auth/presentation/pages/unauthoriz
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/home_wrapper.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
 import 'package:portfolio_mobile_app/features/password_recovery/presentation/pages/password_recovery_page.dart';
-import 'package:portfolio_mobile_app/features/register/presentation/pages/register_page.dart';
 import 'package:get/get.dart';
 
 mixin AppRoutes {
   static const login = RoutePaths.login;
   static const postLogin = RoutePaths.postLogin;
-  static const register = RoutePaths.register;
   static const passwordRecovery = RoutePaths.passwordRecovery;
   static const home = RoutePaths.home;
   static const adminBookings = RoutePaths.adminBookings;
@@ -23,15 +21,6 @@ mixin AppRoutes {
   static final pages = [
     GetPage(name: login, page: () => const LoginPage()),
     GetPage(name: postLogin, page: () => const PostLoginTransitionPage()),
-    GetPage(
-      name: register,
-      page: () {
-        final args = Get.arguments as Map<String, dynamic>?;
-        return RegisterPage(
-          emailVerificationOobCode: args?['oobCode'] as String?,
-        );
-      },
-    ),
     GetPage(
       name: passwordRecovery,
       page: () {

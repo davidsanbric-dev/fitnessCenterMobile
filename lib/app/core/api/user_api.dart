@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/app/core/api/shared/api_shared.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_exception_messages.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/user/create_user_request.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/user/user_dto.dart';
 
 class UserApi extends ApiBase {
@@ -55,18 +54,6 @@ class UserApi extends ApiBase {
     }
 
     return user;
-  }
-
-  Future<void> createUser({required CreateUserRequest request}) async {
-    final requestBody = request.toRegisterRequestBody();
-
-    await createAsync<void>(
-      url: '${ApiUrls.authUrl}/register',
-      requestErrorMessage: 'Error al crear usuario',
-      requestBody: requestBody,
-      requireSession: false,
-      includeOptionalSessionToken: false,
-    );
   }
 
   Future<Map<String, dynamic>?> syncFirebaseClaims({

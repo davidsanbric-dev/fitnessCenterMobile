@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationService {
@@ -37,6 +39,23 @@ class LocalNotificationService {
           AndroidFlutterLocalNotificationsPlugin
         >();
     await androidPlugin?.createNotificationChannel(_defaultChannel);
+
+    // Permission prompts wait for user interaction and can take arbitrarily
+    // long, so they must not block startup (which is bounded by an 8s timeout).
+    // Fire them without awaiting.
+    unawaited(requestPermissions());
+  }
+
+  /// Requests notification permissions on each platform.
+  ///
+  /// This may surface a system dialog and only completes once the user
+  /// responds, so it is kept separate from [init] and is not awaited during
+  /// startup.
+  Future<void> requestPermissions() async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await androidPlugin?.requestNotificationsPermission();
 
     final iosPlugin = _plugin

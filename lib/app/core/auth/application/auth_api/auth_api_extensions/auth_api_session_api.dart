@@ -53,14 +53,6 @@ extension AuthApiSessionApi on AuthApi {
     return password;
   }
 
-  String _requirePhoneNumber(String phoneNumber) {
-    final trimmed = phoneNumber.trim();
-    if (trimmed.isEmpty) {
-      throw const ApiException('Phone number is required.');
-    }
-    return trimmed;
-  }
-
   User _requireUser() {
     final user = _firebaseAuthGateway.currentUser;
     if (user == null) {

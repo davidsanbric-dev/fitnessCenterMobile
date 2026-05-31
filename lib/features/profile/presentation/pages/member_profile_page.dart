@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/personal_member_data_page.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/pages/mfa_enrollment_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,7 +15,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _showPersonalData = false;
-  bool _showMfaSetup = false;
 
   Future<void> _handleLogout(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -43,18 +41,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _openMfaSetup() {
-    setState(() {
-      _showMfaSetup = true;
-    });
-  }
-
-  void _closeMfaSetup() {
-    setState(() {
-      _showMfaSetup = false;
-    });
-  }
-
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('This section will be available soon.')),
@@ -74,23 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    if (_showMfaSetup) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          _closeMfaSetup();
-        },
-        child: Scaffold(body: MfaEnrollmentView(onBack: _closeMfaSetup)),
-      );
-    }
-
     final options = [
       _ProfileOption(title: 'Personal Information', onTap: _openPersonalData),
-      _ProfileOption(
-        title: 'Security and SMS verification',
-        onTap: _openMfaSetup,
-      ),
       _ProfileOption(
         title: 'Training History',
         onTap: () => _showComingSoon(context),

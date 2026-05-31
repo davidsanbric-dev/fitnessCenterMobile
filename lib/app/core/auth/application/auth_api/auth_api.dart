@@ -9,14 +9,12 @@ import 'package:portfolio_mobile_app/app/core/auth/domain/types.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 part 'auth_api_extensions/auth_api_mfa_api.dart';
 part 'auth_api_extensions/auth_api_password_api.dart';
 part 'auth_api_extensions/auth_api_register_api.dart';
-part '../auth_register_use_cases.dart';
 part 'auth_api_extensions/auth_api_session_api.dart';
 
 class AuthApi {
@@ -52,15 +50,6 @@ class AuthApi {
   final AuthSessionCache _cache;
   final FirebaseAuthExceptionMapper _firebaseErrorMapper;
   final Map<String, PendingMfaChallenge> _pendingMfaChallenges = {};
-  late final EnsureRegisterEmailSessionUseCase
-  _ensureRegisterEmailSessionUseCase = EnsureRegisterEmailSessionUseCase(
-    authApi: this,
-  );
-  late final EnsureRegisterUserCredentialsUseCase
-  _ensureRegisterUserCredentialsUseCase = EnsureRegisterUserCredentialsUseCase(
-    authApi: this,
-    ensureRegisterEmailSessionUseCase: _ensureRegisterEmailSessionUseCase,
-  );
 
   bool get hasFirebaseSession => _firebaseAuthGateway.hasSession;
 

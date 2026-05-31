@@ -15,38 +15,6 @@ class CachedCredentials {
   final String token;
 }
 
-class AuthEnrolledPhoneFactor {
-  const AuthEnrolledPhoneFactor({
-    required this.uid,
-    this.displayName,
-    this.phoneNumber,
-  });
-
-  final String uid;
-  final String? displayName;
-  final String? phoneNumber;
-}
-
-class AuthActionCodeSettings {
-  const AuthActionCodeSettings({
-    required this.url,
-    this.handleCodeInApp = false,
-    this.androidPackageName,
-    this.androidInstallApp = false,
-    this.androidMinimumVersion,
-    this.iOSBundleId,
-    this.linkDomain,
-  });
-
-  final String url;
-  final bool handleCodeInApp;
-  final String? androidPackageName;
-  final bool androidInstallApp;
-  final String? androidMinimumVersion;
-  final String? iOSBundleId;
-  final String? linkDomain;
-}
-
 abstract class AuthLoginResult {
   const AuthLoginResult();
 }

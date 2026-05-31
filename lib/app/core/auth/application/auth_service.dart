@@ -166,50 +166,6 @@ class AuthService extends GetxService {
     _clearMfaContext();
   }
 
-  Future<List<AuthEnrolledPhoneFactor>> getEnrolledPhoneFactors() {
-    return _authApi.getEnrolledPhoneFactors();
-  }
-
-  Future<MfaCodeDelivery> sendMfaEnrollmentCode({
-    required String phoneNumber,
-    int? forceResendingToken,
-  }) {
-    return _authApi.sendMfaEnrollmentCode(
-      phoneNumber: phoneNumber,
-      forceResendingToken: forceResendingToken,
-    );
-  }
-
-  Future<void> enrollPhoneFactor({
-    required String verificationId,
-    required String smsCode,
-    String? displayName,
-  }) {
-    return _authApi.enrollPhoneFactor(
-      verificationId: verificationId,
-      smsCode: smsCode,
-      displayName: displayName,
-    );
-  }
-
-  Future<void> unenrollPhoneFactor({required String factorUid}) {
-    return _authApi.unenrollPhoneFactor(factorUid: factorUid);
-  }
-
-  bool get isEmailVerified => _authApi.isCurrentUserEmailVerified();
-
-  Future<void> sendEmailVerification({
-    AuthActionCodeSettings? actionCodeSettings,
-  }) {
-    return _authApi.sendCurrentUserEmailVerification(
-      actionCodeSettings: actionCodeSettings,
-    );
-  }
-
-  Future<bool> reloadAndCheckEmailVerified() {
-    return _authApi.reloadAndCheckEmailVerified();
-  }
-
   Future<void> logout() async {
     try {
       await _authApi.logout();
