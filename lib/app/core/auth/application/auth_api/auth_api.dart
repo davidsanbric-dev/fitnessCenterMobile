@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:portfolio_mobile_app/app/core/api/user_api.dart';
 import 'package:portfolio_mobile_app/app/core/auth/application/auth_session_claims_mapper.dart';
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
@@ -11,7 +8,6 @@ import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-part 'auth_api_extensions/auth_api_mfa_api.dart';
 part 'auth_api_extensions/auth_api_password_api.dart';
 part 'auth_api_extensions/auth_api_register_api.dart';
 part 'auth_api_extensions/auth_api_session_api.dart';
@@ -34,20 +30,15 @@ class AuthApi {
        _firebaseErrorMapper =
            firebaseErrorMapper ?? const DefaultFirebaseAuthExceptionMapper();
 
-  static const Duration _mfaCallbackHardTimeout = Duration(seconds: 25);
-  static const Duration _mfaChallengeTtl = Duration(minutes: 10);
-
   final UserApi _userApi;
   final AuthSessionClaimsMapper _sessionClaimsMapper;
   final FirebaseAuthGateway _firebaseAuthGateway;
   final AuthSessionCache _cache;
   final FirebaseAuthExceptionMapper _firebaseErrorMapper;
-  final Map<String, PendingMfaChallenge> _pendingMfaChallenges = {};
 
   bool get hasFirebaseSession => _firebaseAuthGateway.hasSession;
 
-  /// Validates Firebase credentials and returns a JWT token.
-  Future<AuthLoginResult> login({required AuthRequest request}) async {
+  Future<SessionData> login({required AuthRequest request}) async {
     try {
       final email = request.mail.trim();
       final password = request.password;
@@ -61,8 +52,7 @@ class AuthApi {
       }
 
       try {
-        final session = await _cacheSessionForUser(user);
-        return AuthLoginSuccess(session);
+        return await _cacheSessionForUser(user);
       } on EmailNotVerifiedException {
         // Keep the Firebase session so the user can resend / re-check.
         rethrow;
@@ -76,8 +66,6 @@ class AuthApi {
         await _safeSignOut();
         throw ApiException('Internal error: $error');
       }
-    } on FirebaseAuthMultiFactorException catch (error) {
-      return _buildMfaRequiredResult(error);
     } on FirebaseAuthException catch (error) {
       throw ApiException(_firebaseErrorMapper.map(error));
     } on ApiException {

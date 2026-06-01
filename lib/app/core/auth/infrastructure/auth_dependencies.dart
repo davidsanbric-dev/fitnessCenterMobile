@@ -34,17 +34,6 @@ abstract class FirebaseAuthGateway {
   Future<ActionCodeInfo> checkActionCode({required String code});
   Future<void> applyActionCode({required String code});
 
-  Future<void> verifyPhoneNumber({
-    String? phoneNumber,
-    MultiFactorSession? multiFactorSession,
-    PhoneMultiFactorInfo? multiFactorInfo,
-    int? forceResendingToken,
-    Duration timeout = const Duration(seconds: 30),
-    required PhoneVerificationCompleted verificationCompleted,
-    required PhoneVerificationFailed verificationFailed,
-    required PhoneCodeSent codeSent,
-    required PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout,
-  });
 }
 
 class DefaultFirebaseAuthGateway implements FirebaseAuthGateway {
@@ -166,28 +155,4 @@ class DefaultFirebaseAuthGateway implements FirebaseAuthGateway {
     return _auth.applyActionCode(code);
   }
 
-  @override
-  Future<void> verifyPhoneNumber({
-    String? phoneNumber,
-    MultiFactorSession? multiFactorSession,
-    PhoneMultiFactorInfo? multiFactorInfo,
-    int? forceResendingToken,
-    Duration timeout = const Duration(seconds: 30),
-    required PhoneVerificationCompleted verificationCompleted,
-    required PhoneVerificationFailed verificationFailed,
-    required PhoneCodeSent codeSent,
-    required PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout,
-  }) {
-    return _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      multiFactorSession: multiFactorSession,
-      multiFactorInfo: multiFactorInfo,
-      forceResendingToken: forceResendingToken,
-      timeout: timeout,
-      verificationCompleted: verificationCompleted,
-      verificationFailed: verificationFailed,
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-    );
-  }
 }

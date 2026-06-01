@@ -17,16 +17,13 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final AuthController controller = Get.put(AuthController());
   final _formKey = GlobalKey<FormState>();
-  final _mfaFormKey = GlobalKey<FormState>();
   final TextEditingController mailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController smsCodeController = TextEditingController();
 
   @override
   void dispose() {
     mailController.dispose();
     passwordController.dispose();
-    smsCodeController.dispose();
     super.dispose();
   }
 
@@ -43,12 +40,6 @@ class _LoginFormState extends State<LoginForm> {
     await controller.login(request: req);
   }
 
-  Future<void> _submitMfa() async {
-    if (!(_mfaFormKey.currentState?.validate() ?? false)) return;
-    FocusScope.of(context).unfocus();
-    await controller.verifyMfaCode(smsCodeController.text);
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -60,14 +51,13 @@ class _LoginFormState extends State<LoginForm> {
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: width),
             child: Obx(() {
-              final isMfa = controller.isMfaRequired.value;
               final isVerifyEmail = controller.isEmailVerificationRequired.value;
               final isLoading = controller.isLoading.value;
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: AppTheme.cardDecoration,
                 child: Form(
-                  key: isMfa ? _mfaFormKey : _formKey,
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -106,7 +96,6 @@ class _LoginFormState extends State<LoginForm> {
                             style: const TextStyle(color: Colors.red),
                           ),
                       ] else ...[
-                      if (!isMfa) ...[
                         CustomTextField(
                           labelText: 'Email',
                           controller: mailController,
@@ -120,72 +109,20 @@ class _LoginFormState extends State<LoginForm> {
                           isPassword: true,
                           enabled: !isLoading,
                         ),
-                      ],
-                      if (isMfa) ...[
-                        Text(
-                          controller.mfaInfo.value,
-                          textAlign: TextAlign.center,
-                          style: AppTheme.cardSubHeading,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: smsCodeController,
-                          enabled: !isLoading,
-                          decoration: const InputDecoration(
-                            labelText: 'SMS code',
+                        const SizedBox(height: 10),
+                        isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : AppButton(
+                                text: 'Sign in',
+                                onPressed: _submit,
+                              ),
+                        const SizedBox(height: 16),
+                        if (controller.error.isNotEmpty)
+                          Text(
+                            controller.error.value,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
                           ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Enter the received code';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                      const SizedBox(height: 10),
-                      isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : AppButton(
-                              text: isMfa ? 'Verify code' : 'Sign in',
-                              onPressed: isMfa ? _submitMfa : _submit,
-                            ),
-                      isLoading
-                          ? const SizedBox.shrink()
-                          : Column(
-                              children: [
-                                if (isMfa) ...[
-                                  TextButton(
-                                    onPressed: controller.isLoading.value
-                                        ? null
-                                        : controller.resendMfaCode,
-                                    style: AppTheme.brandTextButtonStyle(),
-                                    child: const Text('Resend code'),
-                                  ),
-                                  TextButton(
-                                    onPressed: isLoading
-                                        ? null
-                                        : controller.cancelMfa,
-                                    style: AppTheme.brandTextButtonStyle(),
-                                    child: const Text('Back'),
-                                  ),
-                                ],
-                              ],
-                            ),
-                      const SizedBox(height: 16),
-                      if (!isMfa && controller.error.isNotEmpty)
-                        Text(
-                          controller.error.value,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      if (isMfa && controller.mfaError.isNotEmpty)
-                        Text(
-                          controller.mfaError.value,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
-                        ),
                       ],
                     ],
                   ),
