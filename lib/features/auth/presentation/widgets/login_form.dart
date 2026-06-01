@@ -61,6 +61,7 @@ class _LoginFormState extends State<LoginForm> {
             constraints: BoxConstraints(maxWidth: width),
             child: Obx(() {
               final isMfa = controller.isMfaRequired.value;
+              final isVerifyEmail = controller.isEmailVerificationRequired.value;
               final isLoading = controller.isLoading.value;
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -71,6 +72,40 @@ class _LoginFormState extends State<LoginForm> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SectionTitle(text: 'Access your account'),
+                      if (isVerifyEmail) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          controller.emailVerificationInfo.value,
+                          textAlign: TextAlign.center,
+                          style: AppTheme.cardSubHeading,
+                        ),
+                        const SizedBox(height: 12),
+                        isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : AppButton(
+                                text: 'I have verified',
+                                onPressed: controller.confirmEmailVerified,
+                              ),
+                        if (!isLoading) ...[
+                          TextButton(
+                            onPressed: controller.resendVerificationEmail,
+                            style: AppTheme.brandTextButtonStyle(),
+                            child: const Text('Resend verification email'),
+                          ),
+                          TextButton(
+                            onPressed: controller.cancelEmailVerification,
+                            style: AppTheme.brandTextButtonStyle(),
+                            child: const Text('Back'),
+                          ),
+                        ],
+                        const SizedBox(height: 8),
+                        if (controller.emailVerificationError.isNotEmpty)
+                          Text(
+                            controller.emailVerificationError.value,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                      ] else ...[
                       if (!isMfa) ...[
                         CustomTextField(
                           labelText: 'Email',
@@ -151,6 +186,7 @@ class _LoginFormState extends State<LoginForm> {
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.red),
                         ),
+                      ],
                     ],
                   ),
                 ),

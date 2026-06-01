@@ -63,6 +63,9 @@ class AuthApi {
       try {
         final session = await _cacheSessionForUser(user);
         return AuthLoginSuccess(session);
+      } on EmailNotVerifiedException {
+        // Keep the Firebase session so the user can resend / re-check.
+        rethrow;
       } on FirebaseAuthException catch (error) {
         await _safeSignOut();
         throw ApiException(_firebaseErrorMapper.map(error));

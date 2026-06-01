@@ -15,6 +15,10 @@ class AuthController extends GetxController with WidgetsBindingObserver {
   var isMfaRequired = false.obs;
   var mfaError = ''.obs;
   var mfaInfo = ''.obs;
+  var isEmailVerificationRequired = false.obs;
+  var emailVerificationInfo = ''.obs;
+  var emailVerificationError = ''.obs;
+  var verificationEmail = ''.obs;
 
   static const Duration _mfaControllerTimeout = Duration(seconds: 95);
 
@@ -52,6 +56,8 @@ class AuthController extends GetxController with WidgetsBindingObserver {
       isMfaRequired.value = false;
       shouldClearLoading = false;
       await _navigateToHome();
+    } on EmailNotVerifiedException catch (e) {
+      _enterEmailVerification(e.email);
     } on ApiException catch (e) {
       error.value = _mapBackendError(e.message);
     } catch (e, s) {
@@ -61,6 +67,69 @@ class AuthController extends GetxController with WidgetsBindingObserver {
         isLoading.value = false;
       }
     }
+  }
+
+  void _enterEmailVerification(String email) {
+    isMfaRequired.value = false;
+    isEmailVerificationRequired.value = true;
+    verificationEmail.value = email;
+    emailVerificationError.value = '';
+    emailVerificationInfo.value = email.isEmpty
+        ? 'Your email is not verified yet. Open the verification link we sent, '
+              'then tap "I have verified".'
+        : 'Your email is not verified yet. Open the verification link we sent to '
+              '$email, then tap "I have verified".';
+  }
+
+  Future<void> resendVerificationEmail() async {
+    isLoading.value = true;
+    emailVerificationError.value = '';
+    try {
+      await _authService.resendEmailVerification();
+      final email = verificationEmail.value;
+      emailVerificationInfo.value = email.isEmpty
+          ? 'Verification email sent. Check your inbox and spam folder.'
+          : 'Verification email sent to $email. Check your inbox and spam folder.';
+    } on ApiException catch (e) {
+      emailVerificationError.value = _mapBackendError(e.message);
+    } catch (e) {
+      emailVerificationError.value = 'Could not send the email: $e';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> confirmEmailVerified() async {
+    isLoading.value = true;
+    emailVerificationError.value = '';
+    var shouldClearLoading = true;
+    try {
+      final verified = await _authService.retryEmailVerification();
+      if (!verified) {
+        emailVerificationError.value =
+            'Your email is still not verified. Open the link we emailed you and try again.';
+        return;
+      }
+      isEmailVerificationRequired.value = false;
+      shouldClearLoading = false;
+      await _navigateToHome();
+    } on ApiException catch (e) {
+      emailVerificationError.value = _mapBackendError(e.message);
+    } catch (e, s) {
+      emailVerificationError.value = 'Could not verify the session: $e/$s';
+    } finally {
+      if (shouldClearLoading) {
+        isLoading.value = false;
+      }
+    }
+  }
+
+  void cancelEmailVerification() {
+    isEmailVerificationRequired.value = false;
+    emailVerificationError.value = '';
+    emailVerificationInfo.value = '';
+    verificationEmail.value = '';
+    _authService.cancelEmailVerification();
   }
 
   Future<void> resendMfaCode() async {
@@ -106,6 +175,12 @@ class AuthController extends GetxController with WidgetsBindingObserver {
         normalized.contains('credenciales') ||
         normalized.contains('incorrecto')) {
       return 'Incorrect email or password.';
+    }
+    if (normalized.contains('not verified')) {
+      return 'Your email is not verified. Open the verification link we emailed you.';
+    }
+    if (normalized.contains('not provisioned')) {
+      return 'Your account is not set up yet. Please contact support.';
     }
     if (normalized.contains('token')) {
       return 'Could not validate the session. Please try again.';

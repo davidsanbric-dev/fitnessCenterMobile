@@ -52,7 +52,38 @@ extension AuthApiSessionApi on AuthApi {
     return user;
   }
 
+  /// Re-checks the live Firebase user and, if its email is now verified,
+  /// establishes the app session. Returns `false` when still unverified.
+  Future<bool> refreshEmailVerified() async {
+    final user = _requireUser();
+    await user.reload();
+    return _firebaseAuthGateway.currentUser?.emailVerified ?? false;
+  }
+
+  /// Sends a fresh verification email to the currently signed-in user.
+  Future<void> resendEmailVerification() async {
+    final user = _requireUser();
+    try {
+      await user.sendEmailVerification();
+    } on FirebaseAuthException catch (error) {
+      throw ApiException(_firebaseErrorMapper.map(error));
+    } catch (error) {
+      throw ApiException('Internal error: $error');
+    }
+  }
+
+  /// Completes the app session for the already signed-in Firebase user. Used to
+  /// resume a login that was paused on the email-verification step.
+  Future<Map<String, dynamic>> completeSessionForCurrentUser() async {
+    final session = await _cacheSessionForUser(_requireUser());
+    return session.claims;
+  }
+
   Future<SessionData> _cacheSessionForUser(User user) async {
+    if (!user.emailVerified) {
+      throw EmailNotVerifiedException(email: user.email ?? '');
+    }
+
     final idTokenResult = await user.getIdTokenResult(true);
     final token = (idTokenResult.token ?? '').trim();
     if (token.isEmpty) {
@@ -116,6 +147,9 @@ extension AuthApiSessionApi on AuthApi {
   Future<SessionData> _cacheSessionForUserWithFallback(User user) async {
     try {
       return await _cacheSessionForUser(user);
+    } on EmailNotVerifiedException {
+      // An unverified user must not get even a degraded offline session.
+      rethrow;
     } catch (_) {
       return _cacheFirebaseOnlySession(user);
     }

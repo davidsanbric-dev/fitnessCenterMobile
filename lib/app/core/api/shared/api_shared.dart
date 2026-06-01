@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_exception_messages.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
@@ -9,13 +10,40 @@ import 'package:http/http.dart' as http;
 class ApiShared {
   const ApiShared._();
 
-  /// Obtains the cached token or throws a standardized [ApiException].
+  /// Resolves the bearer token for a protected call.
+  ///
+  /// Under the Firebase-only backend the bearer must be a current Firebase ID
+  /// token (spec §5.3). The SDK's [User.getIdToken] auto-refreshes the token
+  /// when it is near or past expiry, so fetching it per request keeps sessions
+  /// alive instead of sending a stale, login-time token that the backend would
+  /// reject with `401` after ~1h. The cached token is used only as a fallback
+  /// when there is no live Firebase user (e.g. offline restart).
   static Future<String> requireToken(AuthSessionCache cache) async {
+    final liveToken = await _liveFirebaseIdToken();
+    if (liveToken != null) {
+      return liveToken;
+    }
+
     final token = (await cache.getToken())?.trim();
     if (token == null || token.isEmpty) {
       throw const ApiException(ApiExceptionMessages.sessionMissing);
     }
     return token;
+  }
+
+  /// Returns the current Firebase ID token (auto-refreshed by the SDK) or
+  /// `null` when there is no signed-in user or it cannot be obtained (offline).
+  static Future<String?> _liveFirebaseIdToken() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return null;
+      }
+      final token = (await user.getIdToken())?.trim();
+      return (token == null || token.isEmpty) ? null : token;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Creates default JSON headers with an optional bearer token.

@@ -166,6 +166,28 @@ class AuthService extends GetxService {
     _clearMfaContext();
   }
 
+  /// Sends another verification email to the signed-in (but unverified) user.
+  Future<void> resendEmailVerification() {
+    return _authApi.resendEmailVerification();
+  }
+
+  /// Re-checks email verification; on success completes the app session and
+  /// returns `true`. Returns `false` while the email remains unverified.
+  Future<bool> retryEmailVerification() async {
+    final verified = await _authApi.refreshEmailVerified();
+    if (!verified) {
+      return false;
+    }
+    final claims = await _authApi.completeSessionForCurrentUser();
+    await _setSession(claims: Map<String, dynamic>.from(claims));
+    return true;
+  }
+
+  /// Abandons a paused email-verification login and clears the session.
+  Future<void> cancelEmailVerification() {
+    return logout();
+  }
+
   Future<void> logout() async {
     try {
       await _authApi.logout();
