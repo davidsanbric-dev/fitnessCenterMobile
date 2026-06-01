@@ -31,13 +31,6 @@ class AppBindings {
       );
     }
 
-    if (!Get.isRegistered<UserAccessGateway>()) {
-      Get.put<UserAccessGateway>(
-        HttpUserAccessGateway(client: Get.find<http.Client>()),
-        permanent: true,
-      );
-    }
-
     if (!Get.isRegistered<UserApi>()) {
       Get.put<UserApi>(UserApi(), permanent: true);
     }
@@ -46,7 +39,6 @@ class AppBindings {
       Get.put<AuthApi>(
         AuthApi(
           userApi: Get.find<UserApi>(),
-          userAccessGateway: Get.find<UserAccessGateway>(),
           firebaseAuthGateway: Get.find<FirebaseAuthGateway>(),
           cache: Get.find<AuthSessionCache>(),
           firebaseErrorMapper: Get.find<FirebaseAuthExceptionMapper>(),

@@ -6,20 +6,11 @@ extension AuthApiSessionApi on AuthApi {
     return _cache.getUser();
   }
 
+  /// Firebase-only logout: sign out client-side and drop the local session.
+  /// The backend exposes no logout endpoint under the Firebase-only model.
   Future<void> logout() async {
-    try {
-      final credentials = await _cache.getCachedCredentials();
-      if (credentials == null) {
-        return;
-      }
-      await _userAccessGateway.logout(
-        mail: credentials.mail,
-        token: credentials.token,
-      );
-    } finally {
-      await _cache.clearSession();
-      await _safeSignOut();
-    }
+    await _cache.clearSession();
+    await _safeSignOut();
   }
 
   Future<Map<String, dynamic>?> restoreSessionFromFirebase() async {

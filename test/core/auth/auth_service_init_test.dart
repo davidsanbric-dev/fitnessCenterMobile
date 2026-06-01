@@ -65,10 +65,7 @@ void main() {
 }
 
 AuthApi _unusedAuthApi() {
-  return AuthApi(
-    userAccessGateway: _TestUserAccessGateway(),
-    firebaseAuthGateway: _TestFirebaseAuthGateway(),
-  );
+  return AuthApi(firebaseAuthGateway: _TestFirebaseAuthGateway());
 }
 
 class _FakeAuthSessionCache extends AuthSessionCache {
@@ -85,11 +82,6 @@ class _FakeAuthSessionCache extends AuthSessionCache {
     clearSessionCalls += 1;
     _user = null;
   }
-}
-
-class _TestUserAccessGateway implements UserAccessGateway {
-  @override
-  Future<void> logout({required String mail, required String token}) async {}
 }
 
 class _TestFirebaseAuthGateway implements FirebaseAuthGateway {

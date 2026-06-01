@@ -8,13 +8,6 @@ class SessionData {
   final String token;
 }
 
-class CachedCredentials {
-  const CachedCredentials({required this.mail, required this.token});
-
-  final String mail;
-  final String token;
-}
-
 abstract class AuthLoginResult {
   const AuthLoginResult();
 }

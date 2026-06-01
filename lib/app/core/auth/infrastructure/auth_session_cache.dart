@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:portfolio_mobile_app/app/core/auth/domain/types.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthSessionCache {
@@ -29,22 +28,6 @@ class AuthSessionCache {
   /// Recupera el token
   Future<String?> getToken() async {
     return await _storage.read(key: _tokenKey);
-  }
-
-  /// Recupera credenciales mínimas requeridas para operaciones autenticadas.
-  Future<CachedCredentials?> getCachedCredentials() async {
-    final token = (await getToken())?.trim();
-    if (token == null || token.isEmpty) {
-      return null;
-    }
-
-    final cachedUser = await getUser();
-    final mail = cachedUser?['mail']?.toString().trim();
-    if (mail == null || mail.isEmpty) {
-      return null;
-    }
-
-    return CachedCredentials(mail: mail, token: token);
   }
 
   /// Elimina todos los datos de sesión

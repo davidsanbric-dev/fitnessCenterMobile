@@ -10,7 +10,6 @@ import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_c
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 
 part 'auth_api_extensions/auth_api_mfa_api.dart';
 part 'auth_api_extensions/auth_api_password_api.dart';
@@ -19,18 +18,13 @@ part 'auth_api_extensions/auth_api_session_api.dart';
 
 class AuthApi {
   AuthApi({
-    http.Client? client,
     FirebaseAuth? firebaseAuth,
     AuthSessionCache? cache,
     UserApi? userApi,
     AuthSessionClaimsMapper? sessionClaimsMapper,
-    UserAccessGateway? userAccessGateway,
     FirebaseAuthGateway? firebaseAuthGateway,
     FirebaseAuthExceptionMapper? firebaseErrorMapper,
-  }) : _userAccessGateway =
-           userAccessGateway ??
-           HttpUserAccessGateway(client: client ?? http.Client()),
-       _userApi = userApi ?? UserApi(),
+  }) : _userApi = userApi ?? UserApi(),
        _sessionClaimsMapper =
            sessionClaimsMapper ?? const AuthSessionClaimsMapper(),
        _firebaseAuthGateway =
@@ -43,7 +37,6 @@ class AuthApi {
   static const Duration _mfaCallbackHardTimeout = Duration(seconds: 25);
   static const Duration _mfaChallengeTtl = Duration(minutes: 10);
 
-  final UserAccessGateway _userAccessGateway;
   final UserApi _userApi;
   final AuthSessionClaimsMapper _sessionClaimsMapper;
   final FirebaseAuthGateway _firebaseAuthGateway;
