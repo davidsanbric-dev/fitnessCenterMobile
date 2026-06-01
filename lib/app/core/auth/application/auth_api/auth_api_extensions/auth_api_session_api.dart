@@ -80,9 +80,37 @@ extension AuthApiSessionApi on AuthApi {
       userDto: userDto,
       firebaseUser: user,
     );
+    // Role and display name are no longer returned by /users/me under the
+    // Firebase-only backend; they live in the custom claims the backend wrote
+    // and that the force-refreshed token now carries (see spec §7).
+    _applyCustomClaims(sessionClaims, refreshedTokenResult.claims);
     await _cache.saveSession(token: refreshedToken, user: sessionClaims);
 
     return SessionData(claims: sessionClaims, token: refreshedToken);
+  }
+
+  void _applyCustomClaims(
+    Map<String, dynamic> sessionClaims,
+    Map<String, dynamic>? tokenClaims,
+  ) {
+    if (tokenClaims == null) {
+      return;
+    }
+
+    final role = tokenClaims['app_role'];
+    if (role is String && role.trim().isNotEmpty) {
+      final normalizedRole = role.trim();
+      sessionClaims['roleName'] = normalizedRole;
+      final roleObject = sessionClaims['role'];
+      if (roleObject is Map) {
+        roleObject['name'] = normalizedRole;
+      }
+    }
+
+    final displayName = tokenClaims['app_display_name'];
+    if (displayName is String && displayName.trim().isNotEmpty) {
+      sessionClaims['userName'] = displayName.trim();
+    }
   }
 
   Future<SessionData> _cacheSessionForUserWithFallback(User user) async {

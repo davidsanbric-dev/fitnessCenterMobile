@@ -123,7 +123,7 @@ class UserDto {
     final roleMap = normReqMap(json['role']);
     final detailsMap = normReqMap(json['details']);
     final details = detailsMap.isEmpty
-        ? null
+        ? _detailsFromFlatJson(json)
         : UserDetailsDto.fromJson(detailsMap);
     final firstName =
         normOptString(json['first_name']) ?? normOptString(json['name']) ?? '';
@@ -152,9 +152,51 @@ class UserDto {
           '',
       rut: details?.memberId ?? normOptString(json['rut']) ?? '',
       isEliminated: parseBool(json['isEliminated']),
-      creationDate: parseDateTime(json['creationDate']),
+      creationDate: parseDateTime(json['creationDate'] ?? json['created_at']),
       dateLastModified: parseDateTime(json['dateLastModified']),
       details: details,
+    );
+  }
+
+  /// Builds a [UserDetailsDto] from the flat snake_case `/users/me` response
+  /// (Firebase-only backend), which no longer nests a `details` object.
+  /// Returns `null` when no relevant fields are present so callers keep their
+  /// existing "no details" behavior.
+  static UserDetailsDto? _detailsFromFlatJson(Map<String, dynamic> json) {
+    final firstName = normOptString(json['first_name']);
+    final paternal = normOptString(json['paternal_surname']);
+    final maternal = normOptString(json['maternal_surname']);
+    final mobile = normOptString(json['mobile_phone']);
+    final landline = normOptString(json['landline_phone']);
+    final email = normOptString(json['email']);
+    final birthDate = normOptString(json['birth_date']);
+    final address = normOptString(json['address']);
+    final membership = normOptString(normReqMap(json['membership_plan'])['name']);
+
+    final hasAnyField = [
+      firstName,
+      paternal,
+      maternal,
+      mobile,
+      landline,
+      birthDate,
+      address,
+      membership,
+    ].any((value) => value != null);
+    if (!hasAnyField) {
+      return null;
+    }
+
+    return UserDetailsDto(
+      firstName: firstName ?? '',
+      paternalLastName: paternal ?? '',
+      maternalLastName: maternal ?? '',
+      mobilePhone: mobile ?? '',
+      landlinePhone: landline ?? '',
+      email: email ?? '',
+      dateOfBirth: birthDate ?? '',
+      address: address ?? '',
+      membership: membership ?? '',
     );
   }
 
