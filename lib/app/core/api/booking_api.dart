@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_request.dart';
@@ -72,7 +73,7 @@ class BookingsApi extends ApiBase {
     final queryParameters = await request.toQueryParameters(
       defaultLocationCode: includeAllLocations ? '' : null,
     );
-    final normalizedLocationCode = _toLocationCode(
+    final normalizedLocationCode = LocationCodeRegistry.instance.resolve(
       queryParameters['locationCode'] ?? '',
     );
 
@@ -112,7 +113,9 @@ class BookingsApi extends ApiBase {
       requestBody: <String, dynamic>{
         'booking_date': _toApiDate(request.trimmedDate),
         'booking_time': _toApiTime(request.trimmedTime),
-        'location_code': _toLocationCode(request.trimmedLocationCode),
+        'location_code': LocationCodeRegistry.instance.resolve(
+          request.trimmedLocationCode,
+        ),
         'session_duration_minutes': request.bookingDuration,
         'discipline_code': request.disciplineCode.toString(),
         'trainer_code': request.trainerCode,
@@ -131,7 +134,9 @@ class BookingsApi extends ApiBase {
       requestBody: <String, dynamic>{
         'booking_date': _toApiDate(request.bookingDate),
         'booking_time': _toApiTime(request.bookingTime),
-        'location_code': _toLocationCode(request.locationCode),
+        'location_code': LocationCodeRegistry.instance.resolve(
+          request.locationCode,
+        ),
         'trainer_code': request.trainerCode,
         'slot_assignment_code': request.slotAssignmentCode,
         'class_type_id': request.classTypeId,
@@ -142,16 +147,6 @@ class BookingsApi extends ApiBase {
     );
   }
 
-  String _toLocationCode(String locationCode) {
-    switch (locationCode.trim()) {
-      case '1':
-        return 'LOC001';
-      case '2':
-        return 'LOC002';
-      default:
-        return locationCode.trim();
-    }
-  }
 
   String _toApiDate(String rawDate) {
     final normalized = rawDate.trim();

@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_state_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_request.dart';
@@ -23,11 +24,12 @@ class BookingsApi extends ApiBase {
   Future<BookingDto> getBooking(BookingRequest request) async {
     final bookings = await getDataListAsync<BookingDto>(
       url: '${ApiUrls.bookingsUrl}/${request.bookingId.trim()}',
-      requireSession: false,
       requestErrorMessage: 'Error al obtener cita.',
       extractItems: ApiBase.extractSingleItemList,
       queryParameters: {
-        'location_code': _toLocationCode(request.locationCode.trim()),
+        'location_code': LocationCodeRegistry.instance.resolve(
+          request.locationCode.trim(),
+        ),
       },
       fromJson: BookingDto.fromJson,
     );
@@ -40,7 +42,7 @@ class BookingsApi extends ApiBase {
       url: '${ApiUrls.bookingsUrl}/${request.bookingId.trim()}/status',
       requestBody: <String, dynamic>{
         'booking_status': request.trimmedBookingStatus,
-        'location_code': _toLocationCode(
+        'location_code': LocationCodeRegistry.instance.resolve(
           request.trimmedLocationCode.isEmpty
               ? _defaultLocationCode
               : request.trimmedLocationCode,
@@ -51,17 +53,6 @@ class BookingsApi extends ApiBase {
       },
       requestErrorMessage: 'Error al actualizar estado.',
     );
-  }
-
-  String _toLocationCode(String locationCode) {
-    switch (locationCode.trim()) {
-      case '1':
-        return 'LOC001';
-      case '2':
-        return 'LOC002';
-      default:
-        return locationCode.trim();
-    }
   }
 
   List<Map<String, dynamic>> _extractBookingStateItems(dynamic data) {

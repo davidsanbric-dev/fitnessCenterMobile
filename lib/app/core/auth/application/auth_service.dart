@@ -6,6 +6,7 @@ import 'package:portfolio_mobile_app/app/core/auth/application/auth_api/auth_api
 import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
 import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 
 class AuthService extends GetxService {
   AuthService({
@@ -163,6 +164,8 @@ class AuthService extends GetxService {
     _claims = null;
     _role.value = null;
     _isLoggedIn.value = false;
+    // Drop the previous company's /statics location codes on session teardown.
+    LocationCodeRegistry.instance.clear();
   }
 
   void _updateRole() {

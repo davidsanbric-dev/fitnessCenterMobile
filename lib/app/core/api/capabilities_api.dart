@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capabilities_request.dart';
 
@@ -45,20 +46,13 @@ class CapabilitiesApi extends ApiBase {
         request.locationId != null;
 
     if (shouldIncludeLocationCode) {
-      return {'location_code': _toLocationCode(request.locationId!.toString())};
+      return {
+        'location_code': LocationCodeRegistry.instance.resolve(
+          request.locationId!.toString(),
+        ),
+      };
     }
     return const <String, String>{};
-  }
-
-  String _toLocationCode(String locationCode) {
-    switch (locationCode.trim()) {
-      case '1':
-        return 'LOC001';
-      case '2':
-        return 'LOC002';
-      default:
-        return locationCode.trim();
-    }
   }
 
   Future<List<CapabilityDto>> getGroups({int? locationId}) => getCapabilities(

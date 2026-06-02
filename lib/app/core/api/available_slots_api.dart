@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/api/shared/types.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
+import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_by_capability_request.dart';
@@ -51,7 +52,9 @@ class AvailableSlotsApi extends ApiBase {
     int? pageSize,
   }) {
     final legacy = request.toQueryParameters();
-    final mappedLocationCode = _toLocationCode(legacy['locationCode'] ?? '');
+    final mappedLocationCode = LocationCodeRegistry.instance.resolve(
+      legacy['locationCode'] ?? '',
+    );
     final mapped = <String, String>{
       'date_from': legacy['startDateTime'] ?? '',
       'date_to': legacy['endDateTime'] ?? '',
@@ -113,7 +116,9 @@ class AvailableSlotsApi extends ApiBase {
   ) {
     final legacy = request.toQueryParameters();
     final query = <String, String>{
-      'location_code': _toLocationCode(legacy['locationCode'] ?? ''),
+      'location_code': LocationCodeRegistry.instance.resolve(
+        legacy['locationCode'] ?? '',
+      ),
       'query_type': legacy['queryType'] ?? request.queryType.toString(),
       if ((legacy['startDate'] ?? '').trim().isNotEmpty)
         'date_from': legacy['startDate']!,
@@ -125,16 +130,5 @@ class AvailableSlotsApi extends ApiBase {
 
     query.removeWhere((_, value) => value.trim().isEmpty);
     return query;
-  }
-
-  String _toLocationCode(String locationCode) {
-    switch (locationCode.trim()) {
-      case '1':
-        return 'LOC001';
-      case '2':
-        return 'LOC002';
-      default:
-        return locationCode.trim();
-    }
   }
 }
