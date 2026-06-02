@@ -4,4 +4,5 @@ class ApiExceptionMessages {
   static const String sessionMissing =
       'Session not found. Please sign in again.';
   static const String serverError = 'Internal server error';
+  static const String invalidCredentials = 'Invalid email or password.';
 }

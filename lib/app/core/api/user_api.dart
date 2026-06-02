@@ -80,16 +80,11 @@ class UserApi extends ApiBase {
       body: jsonEncode({'id_token': trimmedToken}),
     );
 
-    if (response.statusCode == 401) {
-      throw const ApiException(ApiExceptionMessages.sessionExpired);
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      throw const ApiException(ApiExceptionMessages.invalidCredentials);
     }
     if (response.statusCode != 200) {
-      // Includes 403 from the origin gate (e.g. a non-member account); surface
-      // the backend's detail message to the user.
-      final message =
-          ApiShared.extractErrorMessage(response.body) ??
-          'Error al iniciar sesión (${response.statusCode}).';
-      throw ApiException(message);
+      throw const ApiException(ApiExceptionMessages.invalidCredentials);
     }
   }
 
