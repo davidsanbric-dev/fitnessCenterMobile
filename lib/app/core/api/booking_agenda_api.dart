@@ -7,8 +7,8 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_re
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_by_class_type_request.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_request.dart';
 
-class BookingsApi extends ApiBase {
-  BookingsApi() : super();
+class BookingAgendaApi extends ApiBase {
+  BookingAgendaApi() : super();
 
   Future<AvailableSlotDto?> getTodayBooking({String? memberId}) async {
     final trimmedId = memberId?.trim();

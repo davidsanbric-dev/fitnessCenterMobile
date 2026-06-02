@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 
 mixin AppStrings {
   static const String brandName = 'FitnessCenter';
-  static const String brandSubtitle = 'Your trusted fitness center';
   static const String slogan = 'now even closer to you';
   static const String loadWelcomeTitle = 'Welcome!';
   static const String loadWelcomeSubtitle = 'Enter your email to continue';

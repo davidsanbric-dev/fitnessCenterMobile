@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/api/booking_api.dart';
+import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/api/available_slots_api.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_request.dart';
@@ -15,16 +15,16 @@ import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart
 class AvailableSlotsService {
   AvailableSlotsService({
     AvailableSlotsApi? availableSlotsApi,
-    BookingsApi? bookingsApi,
+    BookingAgendaApi? bookingsApi,
   }) : _availableSlotsApi = availableSlotsApi ?? AvailableSlotsApi(),
-       _bookingsApi = bookingsApi ?? BookingsApi();
+       _bookingsApi = bookingsApi ?? BookingAgendaApi();
 
   static const Duration _availabilityLoadTimeout = Duration(seconds: 20);
   static const String _availabilityLoadTimeoutErrorMessage =
       'Timed out while loading available slots.';
 
   final AvailableSlotsApi _availableSlotsApi;
-  final BookingsApi _bookingsApi;
+  final BookingAgendaApi _bookingsApi;
 
   Future<List<AvailableSlotDto>> fetchAvailableBookings({
     required MemberAvailabilityFilters filters,

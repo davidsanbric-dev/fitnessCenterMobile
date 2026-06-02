@@ -11,9 +11,7 @@ mixin AppRoutes {
   static const login = RoutePaths.login;
   static const postLogin = RoutePaths.postLogin;
   static const home = RoutePaths.home;
-  static const adminBookings = RoutePaths.adminBookings;
   static const memberBookings = RoutePaths.memberBookings;
-  static const users = RoutePaths.users;
   static const unauthorized = RoutePaths.unauthorized;
 
   static final pages = [

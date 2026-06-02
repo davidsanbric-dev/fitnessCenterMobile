@@ -136,21 +136,6 @@ class _TestFirebaseAuthGateway implements FirebaseAuthGateway {
   }
 
   @override
-  Future<void> verifyPhoneNumber({
-    String? phoneNumber,
-    MultiFactorSession? multiFactorSession,
-    PhoneMultiFactorInfo? multiFactorInfo,
-    int? forceResendingToken,
-    Duration timeout = const Duration(seconds: 30),
-    required PhoneVerificationCompleted verificationCompleted,
-    required PhoneVerificationFailed verificationFailed,
-    required PhoneCodeSent codeSent,
-    required PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> withSecondaryAuth(SecondaryAuthAction action) {
     throw UnimplementedError();
   }

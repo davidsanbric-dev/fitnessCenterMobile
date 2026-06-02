@@ -1,6 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
-import 'package:portfolio_mobile_app/app/core/api/booking_api.dart';
+import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
@@ -34,14 +34,14 @@ class _HomeForMemberPageState extends State<HomeForMemberPage> {
   static const int _bookingsTabIndex = 1;
   static const int _fitnessDirectoryTabIndex = 6;
 
-  late final BookingsApi _bookingsApi;
+  late final BookingAgendaApi _bookingsApi;
   late final Future<AvailableSlotDto?> _todayBooking;
   bool _hasNotified = false;
 
   @override
   void initState() {
     super.initState();
-    _bookingsApi = BookingsApi();
+    _bookingsApi = BookingAgendaApi();
     _todayBooking = _loadTodayBooking();
   }
 

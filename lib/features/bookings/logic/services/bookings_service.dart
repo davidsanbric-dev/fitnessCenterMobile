@@ -1,11 +1,11 @@
-import 'package:portfolio_mobile_app/app/core/api/booking_api.dart';
+import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 
 class BookingsService {
-  BookingsService({BookingsApi? bookingsApi})
-    : _bookingsApi = bookingsApi ?? BookingsApi();
+  BookingsService({BookingAgendaApi? bookingsApi})
+    : _bookingsApi = bookingsApi ?? BookingAgendaApi();
 
-  final BookingsApi _bookingsApi;
+  final BookingAgendaApi _bookingsApi;
 
   Future<List<BookingDto>> fetchBookings({String? memberId}) {
     return _bookingsApi.getAgenda(

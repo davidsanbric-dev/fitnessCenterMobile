@@ -88,24 +88,4 @@ class UserApi extends ApiBase {
     }
   }
 
-  Future<void> checkIdentityGovernment({
-    required String rut,
-    String document = '',
-  }) async {
-    final normalizedRut = rut
-        .trim()
-        .toUpperCase()
-        .replaceAll('.', '')
-        .replaceAll(' ', '');
-    final formattedDocument = document.trim();
-
-    final rutPattern = RegExp(r'^[0-9]{7,8}-[0-9K]$');
-
-    if (normalizedRut.isEmpty ||
-        (!rutPattern.hasMatch(normalizedRut) && formattedDocument.isEmpty)) {
-      throw const ApiException(
-        'No fue posible verificar tu identidad con los datos ingresados.',
-      );
-    }
-  }
 }
