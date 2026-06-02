@@ -90,7 +90,10 @@ extension AuthApiSessionApi on AuthApi {
       throw const ApiException('No valid token was received.');
     }
 
-    await _userApi.syncFirebaseClaims(token: token);
+    // Exchange the token through the origin-gated backend entry point. This
+    // both enforces that only members sign in from mobile and writes the custom
+    // claims we pick up by force-refreshing the token next.
+    await _userApi.firebaseLogin(token: token);
 
     final refreshedTokenResult = await user.getIdTokenResult(true);
     final refreshedToken = (refreshedTokenResult.token ?? '').trim();

@@ -96,3 +96,5 @@ flutter_01.png
 .dart-defines.local.json
 .dart-defines.*.json
 RELEASING.md
+
+*.specs.md

@@ -51,7 +51,12 @@ class ApiShared {
     String? token,
     bool includeContentType = true,
   }) {
-    final headers = <String, String>{};
+    final headers = <String, String>{
+      // Identifies the originating app so the backend can enforce that only
+      // member accounts sign in from the mobile app. See the API's ClientOrigin
+      // gate in /auth/firebase-login.
+      'X-Client-Platform': 'mobile',
+    };
     if (includeContentType) {
       headers['Content-Type'] = 'application/json';
     }

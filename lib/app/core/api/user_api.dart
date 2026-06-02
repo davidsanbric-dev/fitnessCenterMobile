@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/api/shared/api_envelope.dart';
 import 'package:portfolio_mobile_app/app/core/api/shared/api_shared.dart';
@@ -56,49 +58,39 @@ class UserApi extends ApiBase {
     return user;
   }
 
-  Future<Map<String, dynamic>?> syncFirebaseClaims({
-    required String token,
-  }) async {
+  /// Exchanges the Firebase ID token for an app session via the backend's
+  /// origin-gated entry point (`/auth/firebase-login`).
+  ///
+  /// The backend verifies the token, enforces that only a member account may
+  /// sign in from the mobile app (the `X-Client-Platform: mobile` header drives
+  /// the ClientOrigin gate), and writes the custom claims (`app_role`,
+  /// `app_display_name`, ...). The caller then force-refreshes the ID token to
+  /// pick those claims up. The response body is not consumed here -- the rich
+  /// session profile is hydrated separately from `/users/me`.
+  Future<void> firebaseLogin({required String token}) async {
     final trimmedToken = token.trim();
     if (trimmedToken.isEmpty) {
-      return null;
+      throw const ApiException(ApiExceptionMessages.sessionMissing);
     }
 
     final response = await ApiShared.safePost(
       client,
-      Uri.parse('${ApiUrls.authUrl}/firebase/sync-claims'),
-      headers: ApiShared.buildJsonHeaders(token: trimmedToken),
-      body: '',
+      Uri.parse('${ApiUrls.authUrl}/firebase-login'),
+      headers: ApiShared.buildJsonHeaders(),
+      body: jsonEncode({'id_token': trimmedToken}),
     );
 
     if (response.statusCode == 401) {
       throw const ApiException(ApiExceptionMessages.sessionExpired);
     }
     if (response.statusCode != 200) {
+      // Includes 403 from the origin gate (e.g. a non-member account); surface
+      // the backend's detail message to the user.
       final message =
           ApiShared.extractErrorMessage(response.body) ??
-          'Error al sincronizar claims (${response.statusCode}).';
+          'Error al iniciar sesión (${response.statusCode}).';
       throw ApiException(message);
     }
-
-    final envelope = ApiEnvelope.fromResponse(response);
-    envelope.validateSuccess(
-      fallbackMessage: 'No fue posible sincronizar los claims de Firebase.',
-    );
-
-    final data = envelope.data;
-    if (data is! Map<String, dynamic>) {
-      return null;
-    }
-
-    final claims = data['claims'];
-    if (claims is Map<String, dynamic>) {
-      return claims;
-    }
-    if (claims is Map) {
-      return Map<String, dynamic>.from(claims);
-    }
-    return null;
   }
 
   Future<void> checkIdentityGovernment({
