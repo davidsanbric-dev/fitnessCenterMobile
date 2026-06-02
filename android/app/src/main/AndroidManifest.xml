@@ -3,7 +3,7 @@
          manifests declare this for tooling, but release builds rely on the main manifest. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="portfolio_mobile_app"
+        android:label="FitnessCenter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
