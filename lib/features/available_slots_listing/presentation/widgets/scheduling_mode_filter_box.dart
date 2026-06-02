@@ -18,7 +18,6 @@ class SchedulingModeFilterBox extends StatelessWidget {
   final ValueChanged<SchedulingMode>? onChanged;
 
   static const double _optionHeight = 160;
-  static const double _thirdOptionHeight = 120;
 
   static const List<FilterOption<SchedulingMode>> _options = [
     FilterOption<SchedulingMode>(
@@ -30,11 +29,6 @@ class SchedulingModeFilterBox extends StatelessWidget {
       value: SchedulingMode.byService,
       label: 'By Class Type',
       iconData: LucideIcons.tags,
-    ),
-    FilterOption<SchedulingMode>(
-      value: SchedulingMode.online,
-      label: 'Online Sessions',
-      iconData: LucideIcons.video,
     ),
   ];
 
@@ -56,12 +50,8 @@ class SchedulingModeFilterBox extends StatelessWidget {
             required accentColor,
             required onPressed,
           }) {
-            final buttonHeight = option.value == SchedulingMode.online
-                ? _thirdOptionHeight
-                : _optionHeight;
-
             return SizedBox(
-              height: buttonHeight,
+              height: _optionHeight,
               child: _FixedHeightOptionButton<SchedulingMode>(
                 option: option,
                 isSelected: isSelected,

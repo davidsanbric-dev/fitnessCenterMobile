@@ -5,7 +5,6 @@ export 'available_slots_dropdown_layout.dart';
 export 'available_slots_dropdown_overlay.dart';
 export 'available_slots_filter_fields.dart';
 export 'available_slots_table.dart';
-export 'available_slots_for_online_table.dart';
 export 'capabilities_group_filter_box.dart';
 export 'capabilities_subgroup_filter_box.dart';
 export 'capabilities_subgroup_items_table.dart';

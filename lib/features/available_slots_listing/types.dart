@@ -1,6 +1,6 @@
 enum DisciplineSearchMode { discipline, trainer }
 
-enum SchedulingMode { byService, byDisciplineTrainer, online }
+enum SchedulingMode { byService, byDisciplineTrainer }
 
 enum MemberFilterKind { rut, name }
 

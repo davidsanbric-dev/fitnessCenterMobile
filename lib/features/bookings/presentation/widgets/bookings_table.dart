@@ -41,9 +41,7 @@ class AgendaTable extends StatelessWidget {
         final trainerName = item.trainerName?.trim() ?? '';
         final disciplineName = item.disciplineName?.trim() ?? '';
         final locationName = item.locationName.trim();
-        final fallbackServiceName = item.isOnline ?? false
-            ? 'Online session'
-            : 'Not specified';
+        const fallbackServiceName = 'Not specified';
 
         return <String, dynamic>{
           'bookingId': item.bookingId,

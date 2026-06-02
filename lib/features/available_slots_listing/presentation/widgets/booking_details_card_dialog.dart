@@ -3,9 +3,7 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dt
 import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/info_card.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/row_details_card_dialog.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/ui/snackbar_messenger.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 mixin BookingDetailsCardDialog {
@@ -29,8 +27,6 @@ mixin BookingDetailsCardDialog {
     final memberItems = _buildMemberItems(detail);
     final trainerItems = _buildTrainerItems(detail);
     final serviceItems = _buildServiceItems(context, detail);
-    final onlineItems = _buildOnlineItems(context, detail);
-
     return [
       RowDetailsSection(title: 'General Information', items: generalItems),
       RowDetailsSection(title: 'Member', items: memberItems),
@@ -38,8 +34,6 @@ mixin BookingDetailsCardDialog {
         RowDetailsSection(title: 'Trainer', items: trainerItems),
       if (serviceItems.isNotEmpty)
         RowDetailsSection(title: 'Class', items: serviceItems),
-      if (onlineItems.isNotEmpty)
-        RowDetailsSection(title: 'Online Session', items: onlineItems),
     ];
   }
 
@@ -159,25 +153,6 @@ mixin BookingDetailsCardDialog {
     return items;
   }
 
-  static List<RowDetailsItem> _buildOnlineItems(
-    BuildContext context,
-    BookingDto detail,
-  ) {
-    final onlineUrl = detail.onlineUrl?.trim() ?? '';
-    if (detail.isOnline != true || onlineUrl.isEmpty) {
-      return const [];
-    }
-
-    return [
-      RowDetailsItem(
-        label: 'Link',
-        value: 'Open in browser',
-        icon: LucideIcons.video,
-        onTap: () => _openOnlineUrl(context, onlineUrl),
-      ),
-    ];
-  }
-
   static Future<void> _showPreparationDialog(
     BuildContext context,
     String preparationHtml,
@@ -215,48 +190,4 @@ mixin BookingDetailsCardDialog {
     );
   }
 
-  static Future<void> _openOnlineUrl(
-    BuildContext context,
-    String onlineUrl,
-  ) async {
-    final uri = _normalizeOnlineUri(onlineUrl);
-
-    if (uri == null) {
-      showAppSnackBar(context, 'The online session link is invalid.');
-      return;
-    }
-
-    try {
-      final launchedExternally = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-
-      if (launchedExternally || !context.mounted) return;
-
-      final launchedWithDefault = await launchUrl(uri);
-
-      if (launchedWithDefault || !context.mounted) return;
-      showAppSnackBar(context, 'Could not open the browser.');
-    } catch (_) {
-      if (!context.mounted) return;
-      showAppSnackBar(context, 'Could not open the browser.');
-    }
-  }
-
-  static Uri? _normalizeOnlineUri(String rawUrl) {
-    final trimmed = rawUrl.trim();
-    if (trimmed.isEmpty) return null;
-
-    final normalized =
-        trimmed.startsWith(RegExp(r'https?://', caseSensitive: false))
-        ? trimmed
-        : 'https://$trimmed';
-
-    final uri = Uri.tryParse(Uri.encodeFull(normalized));
-    if (uri == null || uri.host.isEmpty) return null;
-    if (uri.scheme != 'http' && uri.scheme != 'https') return null;
-
-    return uri;
-  }
 }

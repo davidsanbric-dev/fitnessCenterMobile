@@ -1,7 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_for_online_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
@@ -11,12 +10,7 @@ import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class AvailableSlotsPage extends StatefulWidget {
-  const AvailableSlotsPage({
-    super.key,
-    this.initialDestination = AvailableBookingsDestination.root,
-  });
-
-  final AvailableBookingsDestination initialDestination;
+  const AvailableSlotsPage({super.key});
 
   @override
   State<AvailableSlotsPage> createState() => _AvailableSlotsPageState();
@@ -27,27 +21,21 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
   static const String _byDisciplineTrainerHeaderSubtitle =
       'By Discipline/Trainer';
   static const String _byServiceHeaderSubtitle = 'By Class Type';
-  static const String _onlineHeaderSubtitle = 'Online Sessions';
 
   AppRouter? _appRouter;
   Worker? _navWorker;
-  Worker? _destinationWorker;
   bool _hasSelectedSchedulingMode = false;
   SchedulingMode _schedulingMode = SchedulingMode.byService;
-  bool _showOnline = false;
 
   @override
   void initState() {
     super.initState();
-    _showOnline =
-        widget.initialDestination == AvailableBookingsDestination.online;
     _attachNavListener();
   }
 
   @override
   void dispose() {
     _navWorker?.dispose();
-    _destinationWorker?.dispose();
     super.dispose();
   }
 
@@ -62,23 +50,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
       }
       _resetToInitialState();
     });
-    _destinationWorker = ever<AvailableBookingsDestination>(
-      _appRouter!.availableSlotsDestination,
-      _handleDestinationChanged,
-    );
-  }
-
-  void _handleDestinationChanged(AvailableBookingsDestination destination) {
-    if (!mounted) {
-      return;
-    }
-    if (destination == AvailableBookingsDestination.online) {
-      _openOnline();
-      return;
-    }
-    if (_showOnline) {
-      _resetToInitialState();
-    }
   }
 
   AvailableSlotsController? _findFiltersController() {
@@ -103,7 +74,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
     }
     _resetFiltersState();
     setState(() {
-      _showOnline = newMode == SchedulingMode.online;
       _schedulingMode = newMode;
       _hasSelectedSchedulingMode = true;
     });
@@ -112,17 +82,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
   void _backToSchedulingMode() {
     _resetFiltersState();
     setState(() {
-      _showOnline = false;
-      _hasSelectedSchedulingMode = false;
-      _schedulingMode = SchedulingMode.byService;
-    });
-    _appRouter?.resetAvailableBookingsDestination();
-  }
-
-  void _openOnline() {
-    _resetFiltersState();
-    setState(() {
-      _showOnline = true;
       _hasSelectedSchedulingMode = false;
       _schedulingMode = SchedulingMode.byService;
     });
@@ -134,7 +93,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
     }
     _resetFiltersState();
     setState(() {
-      _showOnline = false;
       _hasSelectedSchedulingMode = false;
       _schedulingMode = SchedulingMode.byService;
     });
@@ -144,13 +102,10 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final showOnlineFlow = _showOnline;
     final showCapabilityFlow =
-        !showOnlineFlow &&
         _hasSelectedSchedulingMode &&
         _schedulingMode == SchedulingMode.byService;
     final showDisciplineFlow =
-        !showOnlineFlow &&
         _hasSelectedSchedulingMode &&
         _schedulingMode == SchedulingMode.byDisciplineTrainer;
 
@@ -163,13 +118,6 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
                 onBack: _backToSchedulingMode,
                 headerSubtitle: _byDisciplineTrainerHeaderSubtitle,
                 headerSubtitleIcon: LucideIcons.dumbbell,
-              )
-            : showOnlineFlow
-            ? AvailableSlotsForOnlineSubPage(
-                isEmbedded: true,
-                onBack: _backToSchedulingMode,
-                headerSubtitle: _onlineHeaderSubtitle,
-                headerSubtitleIcon: LucideIcons.video,
               )
             : LayoutBuilder(
                 builder: (context, constraints) {
