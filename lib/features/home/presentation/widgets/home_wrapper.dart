@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/member_profile_page.dart';
 import 'package:flutter/material.dart';
@@ -34,30 +33,24 @@ class _HomeWrapperState extends State<HomeWrapper> {
         return const SizedBox.shrink();
       }
 
-      final menuItems = [
-        {'icon': LucideIcons.user, 'label': 'Profile', 'index': 5},
-        {'icon': LucideIcons.dumbbell, 'label': 'Directory', 'index': 6},
-      ];
-
       final navItems = [
         {'icon': LucideIcons.home, 'label': 'Home', 'index': 0},
-        {'icon': LucideIcons.calendar, 'label': 'Book', 'index': 4},
         {'icon': LucideIcons.calendar, 'label': 'Bookings', 'index': 1},
-        {'label': 'More', 'menuItems': menuItems},
+        {'icon': LucideIcons.dumbbell, 'label': 'Directory', 'index': 6},
+        {'icon': LucideIcons.user, 'label': 'Profile', 'index': 5},
       ];
 
       final pagesByIndex = <int, Widget>{
         0: const HomePage(),
         1: const BookingsPage(),
-        4: const AvailableSlotsPage(),
         6: const FitnessDirectoryPage(),
         5: const ProfilePage(),
       };
 
-      final navIndexes = [
-        ...navItems.map<int?>((item) => item['index'] as int?).whereType<int>(),
-        ...menuItems.map<int>((item) => item['index'] as int),
-      ];
+      final navIndexes = navItems
+          .map<int?>((item) => item['index'] as int?)
+          .whereType<int>()
+          .toList();
 
       final maxIndex = navIndexes.fold<int>(0, math.max);
 
