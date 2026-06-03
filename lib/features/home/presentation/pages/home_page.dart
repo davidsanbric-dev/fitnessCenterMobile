@@ -30,7 +30,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static const int _scheduleTabIndex = 4;
   static const int _bookingsTabIndex = 1;
   static const int _fitnessDirectoryTabIndex = 6;
@@ -50,6 +50,29 @@ class _HomePageState extends State<HomePage> {
         ? Get.find<BlogController>()
         : Get.put(BlogController(), permanent: true);
     _todayBooking = _loadTodayBooking();
+    // Safety net for the "user already on home" case: keep the slider current
+    // even if a foreground push is delayed/dropped, and re-sync on resume.
+    WidgetsBinding.instance.addObserver(this);
+    _blogController.startAutoRefresh();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _blogController.stopAutoRefresh();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _blogController.loadBlogs();
+      _blogController.startAutoRefresh();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
+      _blogController.stopAutoRefresh();
+    }
   }
 
   Future<AvailableSlotDto?> _loadTodayBooking() async {

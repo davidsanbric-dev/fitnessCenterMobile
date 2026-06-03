@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 
 import 'package:portfolio_mobile_app/app/core/api/blog_api.dart';
@@ -16,6 +18,10 @@ class BlogController extends GetxController {
   final RxBool loading = false.obs;
   final RxBool loaded = false.obs;
 
+  Timer? _pollTimer;
+  // Guards against overlapping fetches (push + poll + resume can coincide).
+  bool _inFlight = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -25,7 +31,30 @@ class BlogController extends GetxController {
     loadBlogs();
   }
 
+  @override
+  void onClose() {
+    stopAutoRefresh();
+    super.onClose();
+  }
+
+  /// Periodic safety net so the home slider stays current even if a foreground
+  /// push is delayed or dropped. The home page starts this while visible and
+  /// stops it when backgrounded. Idempotent.
+  void startAutoRefresh({Duration interval = const Duration(seconds: 60)}) {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(interval, (_) => loadBlogs());
+  }
+
+  void stopAutoRefresh() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
   Future<void> loadBlogs() async {
+    if (_inFlight) {
+      return;
+    }
+    _inFlight = true;
     loading.value = true;
     try {
       final result = await _api.getBlogs();
@@ -33,6 +62,7 @@ class BlogController extends GetxController {
     } catch (_) {
       // Non-critical: keep whatever is already displayed (or none).
     } finally {
+      _inFlight = false;
       loading.value = false;
       loaded.value = true;
     }
