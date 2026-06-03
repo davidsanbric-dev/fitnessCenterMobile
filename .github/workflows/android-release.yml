@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: deployment
     env:
-      PUBLISH_TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'both' }}
+      PUBLISH_TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'firebase' }}
       RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || '' }}
       RELEASE_NAME_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_name || '' }}
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
@@ -164,7 +164,7 @@ jobs:
           compression-level: 0
 
       - name: Publish to GitHub Releases
-        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both')) }}
+        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both') }}
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
