@@ -1,8 +1,10 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_dialog.dart';
 import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class BookingsPage extends StatefulWidget {
   const BookingsPage({super.key});
@@ -37,6 +39,15 @@ class _BookingsPageState extends State<BookingsPage> {
 
   Future<void> _refresh() => _controller.reload();
 
+  Future<void> _openBookSessionDialog() async {
+    await showBookSessionDialog(context);
+    if (!mounted) {
+      return;
+    }
+    // Refresh so any session booked within the dialog appears in the list.
+    await _controller.reload();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +72,19 @@ class _BookingsPageState extends State<BookingsPage> {
                     child: ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
-                        AgendaTable(
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 16, 2, 0),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: FilledButton.icon(
+                              onPressed: _openBookSessionDialog,
+                              icon: const Icon(LucideIcons.calendarPlus,
+                                  size: 18),
+                              label: const Text('Book a Session'),
+                            ),
+                          ),
+                        ),
+                        BookingsTable(
                           bookings: items,
                           isLoading: _controller.isLoading.value,
                           errorMessage: _controller.error.value,

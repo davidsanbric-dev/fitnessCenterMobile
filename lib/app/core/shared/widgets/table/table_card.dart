@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card_height_scope.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_title.dart';
@@ -81,8 +82,10 @@ class TableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedHeight =
-        height ?? MediaQuery.of(context).size.height * heightFactor;
+    final basisHeight =
+        TableCardHeightScope.maybeOf(context) ??
+        MediaQuery.of(context).size.height;
+    final resolvedHeight = height ?? basisHeight * heightFactor;
     final resolvedHeaders = headers ?? const <String>[];
     final hasTitle = title != null && title!.trim().isNotEmpty;
     final shouldShowTitle = showTitle && hasTitle;

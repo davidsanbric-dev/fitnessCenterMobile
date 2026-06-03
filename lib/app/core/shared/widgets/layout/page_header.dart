@@ -4,6 +4,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:get/get.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
 
 class AppBackButton extends StatelessWidget {
   const AppBackButton({
@@ -83,9 +84,14 @@ class PageHeader extends StatelessWidget {
         ? null
         : AppBackButton(onPressed: onBackPressed);
     // Determine the effective logout callback: use explicit `onLogout` if provided,
-    // otherwise auto-wire to `AuthService` logout flow when available.
-    VoidCallback? effectiveOnLogout = onLogout;
-    if (effectiveOnLogout == null && Get.isRegistered<AuthService>()) {
+    // otherwise auto-wire to `AuthService` logout flow when available. A
+    // `PageHeaderScope` with `showLogout: false` (e.g. a dialog host) suppresses
+    // the logout affordance entirely.
+    final allowLogout = PageHeaderScope.maybeOf(context)?.showLogout ?? true;
+    VoidCallback? effectiveOnLogout = allowLogout ? onLogout : null;
+    if (allowLogout &&
+        effectiveOnLogout == null &&
+        Get.isRegistered<AuthService>()) {
       Future<void> performLogout() async {
         final messenger = ScaffoldMessenger.of(context);
         final authService = Get.find<AuthService>();

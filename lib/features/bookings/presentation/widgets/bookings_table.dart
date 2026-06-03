@@ -4,8 +4,8 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.da
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
 
-class AgendaTable extends StatelessWidget {
-  const AgendaTable({
+class BookingsTable extends StatelessWidget {
+  const BookingsTable({
     super.key,
     required this.bookings,
     required this.isLoading,
