@@ -1,9 +1,8 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
-import 'package:portfolio_mobile_app/app/core/api/blog_api.dart';
 import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/blog/blog_dto.dart';
+import 'package:portfolio_mobile_app/features/home/logic/blog_controller.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
@@ -37,27 +36,20 @@ class _HomePageState extends State<HomePage> {
   static const int _fitnessDirectoryTabIndex = 6;
 
   late final BookingAgendaApi _bookingsApi;
-  late final BlogApi _blogApi;
+  late final BlogController _blogController;
   late final Future<AvailableSlotDto?> _todayBooking;
-  late final Future<List<BlogDto>> _blogs;
   bool _hasNotified = false;
 
   @override
   void initState() {
     super.initState();
     _bookingsApi = BookingAgendaApi();
-    _blogApi = BlogApi();
+    // Shared controller: loads blogs and re-fetches when a "new blog" push
+    // arrives (wired in BlogController.onInit), so the slider updates on-time.
+    _blogController = Get.isRegistered<BlogController>()
+        ? Get.find<BlogController>()
+        : Get.put(BlogController(), permanent: true);
     _todayBooking = _loadTodayBooking();
-    _blogs = _loadBlogs();
-  }
-
-  Future<List<BlogDto>> _loadBlogs() async {
-    try {
-      return await _blogApi.getBlogs();
-    } catch (_) {
-      // Non-critical: fall back to the static slider if blogs cannot load.
-      return const <BlogDto>[];
-    }
   }
 
   Future<AvailableSlotDto?> _loadTodayBooking() async {
@@ -232,18 +224,17 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 28),
                     ShortcutsDisplay(shortcuts: shortcuts, spacing: 8),
                     const SizedBox(height: 32),
-                    FutureBuilder<List<BlogDto>>(
-                      future: _blogs,
-                      builder: (context, snapshot) {
-                        final blogs = snapshot.data ?? const <BlogDto>[];
-                        if (blogs.isNotEmpty) {
-                          return BlogSlider(blogs: blogs);
-                        }
-                        // No blogs (or still loading / failed): keep the
-                        // original promotional slider so home is never empty.
-                        return InfoSlider(slides: sliderSlides);
-                      },
-                    ),
+                    Obx(() {
+                      final blogs = _blogController.blogs;
+                      if (blogs.isNotEmpty) {
+                        // Reactive: refreshes on-time when a "new blog" push
+                        // arrives via BlogController.
+                        return BlogSlider(blogs: blogs.toList());
+                      }
+                      // No blogs (or still loading / failed): keep the original
+                      // promotional slider so home is never empty.
+                      return InfoSlider(slides: sliderSlides);
+                    }),
                   ],
                 ),
               ),
