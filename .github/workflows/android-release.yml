@@ -2,8 +2,8 @@ name: Android Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       target:
@@ -25,6 +25,14 @@ on:
 
 permissions:
   contents: write
+
+# Every push to main triggers a build; cancel any in-flight run for the same
+# ref so a newer commit supersedes an older one and they don't race on the
+# shared Gradle cache. Manual dispatches are keyed separately by run id so they
+# never cancel each other or a push.
+concurrency:
+  group: android-release-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-publish:
@@ -99,9 +107,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          # This workflow only runs on tag pushes / manual dispatch (never a
-          # plain push to main), and releases are infrequent and serialized,
-          # so allow every run to read and update the build cache.
+          # Runs on every push to main / manual dispatch. The concurrency group
+          # above serializes runs, so allow every run to read and update the
+          # build cache without races.
           cache-read-only: false
 
       - name: Set up Flutter
