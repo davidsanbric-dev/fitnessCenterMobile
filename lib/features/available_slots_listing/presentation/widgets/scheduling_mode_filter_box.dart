@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/triple_option_filter_box.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -34,9 +34,8 @@ class SchedulingModeFilterBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedAccent =
-        accentColor ?? Theme.of(context).colorScheme.primary;
-    return TripleOptionFilterBox<SchedulingMode>(
+    final resolvedAccent = accentColor ?? Theme.of(context).colorScheme.primary;
+    return DoubleOptionFilterBox<SchedulingMode>(
       title: title,
       accentColor: resolvedAccent,
       options: _options,

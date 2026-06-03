@@ -13,5 +13,6 @@ mixin ApiUrls {
   static String get classCategoriesUrl => '$_apiV1BaseUrl/class-categories';
   static String get classTypesUrl => '$_apiV1BaseUrl/class-types';
   static String get membershipPlansUrl => '$_apiV1BaseUrl/membership-plans';
+  static String get blogUrl => '$_apiV1BaseUrl/blog';
   static String get documentsUrl => _apiV1BaseUrl;
 }

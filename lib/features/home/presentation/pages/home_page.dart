@@ -1,7 +1,9 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
+import 'package:portfolio_mobile_app/app/core/api/blog_api.dart';
 import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/blog/blog_dto.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
@@ -11,6 +13,7 @@ import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookin
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/disciplines_directory_subpage.dart';
+import 'package:portfolio_mobile_app/features/home/presentation/widgets/blog_slider.dart';
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_slider.dart';
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_summary.dart';
 import 'package:portfolio_mobile_app/features/home/presentation/widgets/shortcuts_display.dart';
@@ -34,14 +37,27 @@ class _HomePageState extends State<HomePage> {
   static const int _fitnessDirectoryTabIndex = 6;
 
   late final BookingAgendaApi _bookingsApi;
+  late final BlogApi _blogApi;
   late final Future<AvailableSlotDto?> _todayBooking;
+  late final Future<List<BlogDto>> _blogs;
   bool _hasNotified = false;
 
   @override
   void initState() {
     super.initState();
     _bookingsApi = BookingAgendaApi();
+    _blogApi = BlogApi();
     _todayBooking = _loadTodayBooking();
+    _blogs = _loadBlogs();
+  }
+
+  Future<List<BlogDto>> _loadBlogs() async {
+    try {
+      return await _blogApi.getBlogs();
+    } catch (_) {
+      // Non-critical: fall back to the static slider if blogs cannot load.
+      return const <BlogDto>[];
+    }
   }
 
   Future<AvailableSlotDto?> _loadTodayBooking() async {
@@ -216,7 +232,18 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 28),
                     ShortcutsDisplay(shortcuts: shortcuts, spacing: 8),
                     const SizedBox(height: 32),
-                    InfoSlider(slides: sliderSlides),
+                    FutureBuilder<List<BlogDto>>(
+                      future: _blogs,
+                      builder: (context, snapshot) {
+                        final blogs = snapshot.data ?? const <BlogDto>[];
+                        if (blogs.isNotEmpty) {
+                          return BlogSlider(blogs: blogs);
+                        }
+                        // No blogs (or still loading / failed): keep the
+                        // original promotional slider so home is never empty.
+                        return InfoSlider(slides: sliderSlides);
+                      },
+                    ),
                   ],
                 ),
               ),
