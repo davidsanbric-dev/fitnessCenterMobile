@@ -168,7 +168,7 @@ class AvailableSlotsFiltersController extends ControllerBase {
     final trimmedLocation = params.locationLabel.trim();
     final locationId = _locationNameToId[normalizeKey(trimmedLocation)];
 
-    if (!params.isOnline && locationId == null) {
+    if (locationId == null) {
       return null;
     }
 
@@ -200,10 +200,9 @@ class AvailableSlotsFiltersController extends ControllerBase {
       disciplineLabel: disciplineLabel,
       trainerId: trainerId,
       trainerLabel: trainerLabel,
-      locationId: locationId ?? 0,
-      locationLabel: locationId == null ? '' : trimmedLocation,
+      locationId: locationId,
+      locationLabel: trimmedLocation,
       searchMode: params.searchMode,
-      isOnline: params.isOnline,
     );
   }
 

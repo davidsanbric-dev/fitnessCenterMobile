@@ -33,7 +33,6 @@ class AvailableSlotsService {
       disciplineId: filters.disciplineId,
       trainerId: filters.trainerId,
       locationId: filters.locationId,
-      isOnline: filters.isOnline,
     );
 
     return _runWithAvailabilityTimeout(
@@ -58,12 +57,10 @@ class AvailableSlotsService {
   Future<void> reserveBooking({
     required AvailableSlotDto slot,
     required MemberAvailabilityFilters? lastFilters,
-    String? online,
   }) async {
     final scheduleRequest = _buildScheduleRequest(
       slot: slot,
       lastFilters: lastFilters,
-      online: online,
     );
     await _bookingsApi.scheduleBooking(request: scheduleRequest);
   }
@@ -110,14 +107,12 @@ class AvailableSlotsService {
   ScheduleBookingRequest _buildScheduleRequest({
     required AvailableSlotDto slot,
     required MemberAvailabilityFilters? lastFilters,
-    String? online,
   }) {
     final disciplineCode = slot.disciplineCode ?? lastFilters?.disciplineId;
     final trainerCode = slot.trainerCode ?? parseOptInt(lastFilters?.trainerId);
     final locationCode = slot.locationId ?? lastFilters?.locationId;
 
     final schedulingDate = slot.schedulingDate.toLocal();
-    final onlineFlag = _resolveOnlineFlag(slot: slot, online: online);
 
     return ScheduleBookingRequest(
       date: formatDateIso(schedulingDate),
@@ -126,19 +121,6 @@ class AvailableSlotsService {
       bookingDuration: slot.duration ?? 0,
       disciplineCode: disciplineCode ?? 0,
       trainerCode: trainerCode ?? 0,
-      online: onlineFlag,
     );
-  }
-
-  String _resolveOnlineFlag({required AvailableSlotDto slot, String? online}) {
-    final explicitFlag = online?.trim() ?? '';
-    if (explicitFlag.isNotEmpty) {
-      return explicitFlag;
-    }
-    final slotFlag = slot.isOnline;
-    if (slotFlag != null) {
-      return slotFlag ? '1' : '0';
-    }
-    return '0';
   }
 }

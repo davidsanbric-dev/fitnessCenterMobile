@@ -13,7 +13,6 @@ class AvailableSlotDto {
     this.locationId,
     this.trainerCode,
     this.disciplineCode,
-    this.isOnline,
   });
 
   final String bookingId;
@@ -26,7 +25,6 @@ class AvailableSlotDto {
   final int? locationId;
   final int? trainerCode;
   final int? disciplineCode;
-  final bool? isOnline;
 
   factory AvailableSlotDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
@@ -83,8 +81,6 @@ class AvailableSlotDto {
         : parseOptDateTime(
             json['slot_datetime'] ?? json['slotDateTime'] ?? json['dateTime'],
           );
-    final onlineRaw = json['isOnline'] ?? json['online'];
-    final parsedOnline = onlineRaw == null ? null : parseBool(onlineRaw);
     final bookingId =
         normOptString(json['bookingId']) ??
         normOptString(json['id']) ??
@@ -107,7 +103,6 @@ class AvailableSlotDto {
       locationId: locationId,
       trainerCode: parsedTrainerCode,
       disciplineCode: parsedDisciplineCode,
-      isOnline: parsedOnline,
     );
   }
 
@@ -139,21 +134,6 @@ class AvailableSlotDto {
       'locationName': locationLabel.isEmpty
           ? 'Centro por confirmar'
           : locationLabel,
-      'slot': this,
-    };
-  }
-
-  Map<String, dynamic> toOnlineRow() {
-    final trainerLabel = trainerName.trim();
-    final disciplineLabel = disciplineName.trim();
-    return {
-      'schedulingDate': schedulingDate,
-      'trainerName': trainerLabel.isEmpty
-          ? 'Profesional por confirmar'
-          : trainerLabel,
-      'disciplineName': disciplineLabel.isEmpty
-          ? 'Especialidad por confirmar'
-          : disciplineLabel,
       'slot': this,
     };
   }

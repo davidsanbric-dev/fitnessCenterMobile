@@ -55,7 +55,6 @@ class BookingAgendaApi extends ApiBase {
     DateTime? endDate,
     String? locationCode,
     String? bookingStatus,
-    String? isOnline,
     String? disciplineId,
     String? trainerId,
     bool includeAllLocations = false,
@@ -66,7 +65,6 @@ class BookingAgendaApi extends ApiBase {
       endDate: endDate,
       locationCode: locationCode,
       bookingStatus: bookingStatus,
-      isOnline: isOnline,
       disciplineId: disciplineId,
       trainerId: trainerId,
     );
@@ -88,12 +86,6 @@ class BookingAgendaApi extends ApiBase {
         if ((queryParameters['bookingStatus'] ?? '').trim().isNotEmpty &&
             queryParameters['bookingStatus'] != '0')
           'booking_status': queryParameters['bookingStatus']!,
-        if ((queryParameters['isOnline'] ?? '').trim().isNotEmpty)
-          'is_online':
-              queryParameters['isOnline']!.trim().toLowerCase() == 'true' ||
-                  queryParameters['isOnline'] == '1'
-              ? 'true'
-              : 'false',
         if ((queryParameters['disciplineId'] ?? '').trim().isNotEmpty &&
             queryParameters['disciplineId'] != '0')
           'discipline_id': queryParameters['disciplineId']!,
@@ -119,7 +111,6 @@ class BookingAgendaApi extends ApiBase {
         'session_duration_minutes': request.bookingDuration,
         'discipline_code': request.disciplineCode.toString(),
         'trainer_code': request.trainerCode,
-        'is_online': _toApiBoolean(request.trimmedOnline),
         'notes': request.trimmedObservation,
       },
       requestErrorMessage: 'Error al agendar cita',
@@ -168,15 +159,6 @@ class BookingAgendaApi extends ApiBase {
       return '${normalized.substring(0, 2)}:${normalized.substring(2, 4)}';
     }
     return normalized;
-  }
-
-  bool _toApiBoolean(String rawValue) {
-    final normalized = rawValue.trim().toLowerCase();
-    return normalized == '1' ||
-        normalized == 'true' ||
-        normalized == 'yes' ||
-        normalized == 'si' ||
-        normalized == 'sí';
   }
 
   AvailableSlotDto _mapAgendaToAvailableBooking(BookingDto agenda) {

@@ -10,7 +10,6 @@ class BookingRequest {
     this.endDate,
     this.locationCode,
     this.bookingStatus,
-    this.isOnline,
     this.disciplineId,
     this.trainerId,
   });
@@ -20,7 +19,6 @@ class BookingRequest {
   final DateTime? endDate;
   final String? locationCode;
   final String? bookingStatus;
-  final String? isOnline;
   final String? disciplineId;
   final String? trainerId;
 
@@ -46,7 +44,6 @@ class BookingRequest {
     String? defaultBookingStatus,
     String? defaultDisciplineId,
     String? defaultTrainerId,
-    String? defaultIsOnline,
   }) async {
     final resolvedStartDate =
         (startDate ?? defaultStartDate ?? _defaultStartDate()).toLocal();
@@ -70,7 +67,6 @@ class BookingRequest {
         normOptString(bookingStatus) ??
         defaultBookingStatus ??
         _defaultBookingStatus;
-    final resolvedOnline = normOptString(isOnline) ?? defaultIsOnline ?? '';
     final resolvedDiscipline =
         normOptString(disciplineId) ??
         defaultDisciplineId ??
@@ -84,7 +80,6 @@ class BookingRequest {
       'locationCode': resolvedLocationCode,
       'bookingStatus': resolvedStatus,
       'memberId': resolvedMemberId,
-      'isOnline': resolvedOnline,
       'disciplineId': resolvedDiscipline,
       'trainerId': resolvedTrainer,
     };
@@ -110,7 +105,6 @@ class BookingRequest {
     DateTime? endDate,
     String? locationCode,
     String? bookingStatus,
-    String? isOnline,
     String? disciplineId,
     String? trainerId,
   }) {
@@ -120,7 +114,6 @@ class BookingRequest {
       endDate: endDate ?? this.endDate,
       locationCode: locationCode ?? this.locationCode,
       bookingStatus: bookingStatus ?? this.bookingStatus,
-      isOnline: isOnline ?? this.isOnline,
       disciplineId: disciplineId ?? this.disciplineId,
       trainerId: trainerId ?? this.trainerId,
     );

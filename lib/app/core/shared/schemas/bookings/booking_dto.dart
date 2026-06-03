@@ -21,8 +21,6 @@ class BookingDto {
     this.serviceId,
     this.serviceName,
     this.preparation,
-    this.isOnline,
-    this.onlineUrl,
   });
 
   final String bookingId;
@@ -42,8 +40,6 @@ class BookingDto {
   final int? serviceId;
   final String? serviceName;
   final String? preparation;
-  final bool? isOnline;
-  final String? onlineUrl;
 
   factory BookingDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
@@ -130,12 +126,6 @@ class BookingDto {
       preparation:
           normOptString(json['preparation']) ??
           normOptString(json['preparation_info']),
-      isOnline: parseBool(
-        json['isOnline'] ?? json['online'] ?? json['is_online'],
-      ),
-      onlineUrl: normOptString(
-        json['onlineUrl'] ?? json['OnlineUrl'] ?? json['online_session_url'],
-      ),
     );
   }
 
@@ -168,8 +158,6 @@ class BookingDto {
     int? serviceId,
     String? serviceName,
     String? preparation,
-    bool? isOnline,
-    String? onlineUrl,
   }) {
     return BookingDto(
       bookingId: bookingId ?? this.bookingId,
@@ -189,8 +177,6 @@ class BookingDto {
       serviceId: serviceId ?? this.serviceId,
       serviceName: serviceName ?? this.serviceName,
       preparation: preparation ?? this.preparation,
-      isOnline: isOnline ?? this.isOnline,
-      onlineUrl: onlineUrl ?? this.onlineUrl,
     );
   }
 }

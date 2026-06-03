@@ -51,7 +51,6 @@ class ClassBookingController extends ChangeNotifier
   Future<void> bookStandard({
     required AvailableSlotDto slot,
     MemberAvailabilityFilters? listingContext,
-    String? online,
   }) async {
     if (_isStandardBookingInProgress) {
       return;
@@ -66,7 +65,6 @@ class ClassBookingController extends ChangeNotifier
       await _repository.bookStandard(
         slot: slot,
         listingContext: listingContext,
-        online: online,
       );
       await _refreshAgendaIfAvailable();
     } catch (error, stackTrace) {

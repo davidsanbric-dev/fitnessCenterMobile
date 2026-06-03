@@ -29,7 +29,6 @@ class MemberAvailabilityParams {
     required this.primarySelectionLabel,
     required this.locationLabel,
     required this.searchMode,
-    this.isOnline = false,
     this.trainerId,
     this.trainerDisciplineId,
     this.trainerDisciplineLabel,
@@ -39,7 +38,6 @@ class MemberAvailabilityParams {
   final String primarySelectionLabel;
   final String locationLabel;
   final DisciplineSearchMode searchMode;
-  final bool isOnline;
   final String? trainerId;
   final int? trainerDisciplineId;
   final String? trainerDisciplineLabel;
@@ -55,7 +53,6 @@ class MemberAvailabilityFilters {
     required this.locationId,
     required this.locationLabel,
     required this.searchMode,
-    this.isOnline = false,
   });
 
   final String serviceLabel;
@@ -66,7 +63,6 @@ class MemberAvailabilityFilters {
   final int locationId;
   final String locationLabel;
   final DisciplineSearchMode searchMode;
-  final bool isOnline;
 
   String get primaryLabel => searchMode == DisciplineSearchMode.discipline
       ? (disciplineLabel ?? '')

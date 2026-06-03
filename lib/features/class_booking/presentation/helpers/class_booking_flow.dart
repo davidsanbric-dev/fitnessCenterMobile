@@ -12,14 +12,12 @@ class ClassBookingFlow {
     required ClassBookingController controller,
     required AvailableSlotDto slot,
     MemberAvailabilityFilters? listingContext,
-    String? online,
     Future<void> Function()? onBooked,
   }) async {
     try {
       await controller.bookStandard(
         slot: slot,
         listingContext: listingContext,
-        online: online,
       );
       if (onBooked != null) {
         await onBooked();

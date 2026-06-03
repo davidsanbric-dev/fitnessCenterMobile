@@ -72,8 +72,7 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
         previousFilters.disciplineId == filters.disciplineId &&
         previousFilters.trainerId == filters.trainerId &&
         previousFilters.locationId == filters.locationId &&
-        previousFilters.searchMode == filters.searchMode &&
-        previousFilters.isOnline == filters.isOnline;
+        previousFilters.searchMode == filters.searchMode;
     if (isDuplicateRequest) {
       return;
     }
@@ -99,7 +98,7 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
     );
   }
 
-  Future<void> reserveBooking(AvailableSlotDto slot, {String? online}) async {
+  Future<void> reserveBooking(AvailableSlotDto slot) async {
     if (isReservingBooking.value) {
       return;
     }
@@ -110,7 +109,6 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
       await _bookingController.bookStandard(
         slot: slot,
         listingContext: lastSubmittedFilters.value,
-        online: online,
       );
       availableSlots.remove(slot);
       _syncAvailabilityPagination();

@@ -1,6 +1,4 @@
 class ScheduleBookingRequest {
-  static const String _defaultOnlineFlag = '0';
-
   const ScheduleBookingRequest({
     required this.date,
     required this.time,
@@ -12,7 +10,6 @@ class ScheduleBookingRequest {
     required this.trainerCode,
     this.observation = '',
     this.user = '',
-    this.online = _defaultOnlineFlag,
   });
 
   final String date;
@@ -25,7 +22,6 @@ class ScheduleBookingRequest {
   final int trainerCode;
   final String observation;
   final String user;
-  final String online;
 
   String get trimmedDate => date.trim();
   String get trimmedTime => time.trim();
@@ -34,7 +30,6 @@ class ScheduleBookingRequest {
   String get trimmedLocationCode => locationCode.trim();
   String get trimmedObservation => observation.trim();
   String get trimmedUser => user.trim();
-  String get trimmedOnline => online.trim();
 
   Map<String, String> toQueryParameters({
     required String defaultUser,
@@ -69,7 +64,6 @@ class ScheduleBookingRequest {
       resolvedMemberIdRaw,
       identificationType: resolvedIdentificationType,
     );
-    final resolvedOnline = _normalizeOnline(trimmedOnline);
     return <String, dynamic>{
       'date': _normalizeDate(trimmedDate),
       'time': _normalizeTime(trimmedTime),
@@ -81,7 +75,6 @@ class ScheduleBookingRequest {
       'trainerCode': trainerCode,
       'observation': trimmedObservation,
       'user': resolvedUser,
-      'online': resolvedOnline,
     };
   }
 
@@ -169,28 +162,6 @@ class ScheduleBookingRequest {
     }
   }
 
-  static String _normalizeOnline(String value) {
-    final normalized = value.trim().toLowerCase();
-    if (normalized.isEmpty) {
-      return _defaultOnlineFlag;
-    }
-
-    switch (normalized) {
-      case '1':
-      case 'true':
-      case 'yes':
-      case 'si':
-      case 'sí':
-        return '1';
-      case '0':
-      case 'false':
-      case 'no':
-        return '0';
-      default:
-        return value.trim();
-    }
-  }
-
   static String _normalizeMemberId(
     String value, {
     required String identificationType,
@@ -238,7 +209,6 @@ class ScheduleBookingRequest {
     int? trainerCode,
     String? observation,
     String? user,
-    String? online,
   }) {
     return ScheduleBookingRequest(
       date: date ?? this.date,
@@ -251,7 +221,6 @@ class ScheduleBookingRequest {
       trainerCode: trainerCode ?? this.trainerCode,
       observation: observation ?? this.observation,
       user: user ?? this.user,
-      online: online ?? this.online,
     );
   }
 }

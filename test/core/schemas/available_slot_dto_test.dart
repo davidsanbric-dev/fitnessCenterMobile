@@ -8,7 +8,6 @@ void main() {
         'bookingId': 'BK-SLOT-01',
         'bookingDateTime': '2026-03-24T15:30:00Z',
         'durationMinutes': 50,
-        'isOnline': false,
         'location': {'locationId': 4, 'name': 'North Gym'},
         'trainer': {
           'id': '11',
@@ -34,7 +33,6 @@ void main() {
       expect(dto.disciplineCode, 8);
       expect(dto.disciplineName, 'Functional');
       expect(dto.serviceName, 'Functional Group');
-      expect(dto.isOnline, false);
     });
 
     test('maps partial legacy availability payload with defaults', () {
@@ -71,7 +69,6 @@ void main() {
       expect(dto.disciplineCode, 44);
       expect(dto.disciplineName, '');
       expect(dto.serviceName, 'Legacy Service Name');
-      expect(dto.isOnline, null);
     });
   });
 }

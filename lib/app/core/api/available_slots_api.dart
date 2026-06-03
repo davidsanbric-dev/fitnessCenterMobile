@@ -64,9 +64,6 @@ class AvailableSlotsApi extends ApiBase {
         'trainer_id': legacy['trainerCode']!,
       if ((legacy['disciplineCode'] ?? '').trim().isNotEmpty)
         'discipline_id': legacy['disciplineCode']!,
-      'is_online': legacy['isOnline']!.trim().toLowerCase() == 'true'
-          ? 'true'
-          : 'false',
       if (pageNumber != null) 'page': pageNumber.toString(),
       if (pageSize != null) 'page_size': pageSize.toString(),
     };

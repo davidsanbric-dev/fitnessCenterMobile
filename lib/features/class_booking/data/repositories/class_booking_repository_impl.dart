@@ -14,12 +14,10 @@ class ClassBookingRepositoryImpl implements ClassBookingRepository {
   Future<void> bookStandard({
     required AvailableSlotDto slot,
     MemberAvailabilityFilters? listingContext,
-    String? online,
   }) {
     return _service.reserveBooking(
       slot: slot,
       lastFilters: listingContext,
-      online: online,
     );
   }
 

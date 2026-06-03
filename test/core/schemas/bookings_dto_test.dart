@@ -24,8 +24,6 @@ void main() {
         },
         'service': {'serviceId': 77, 'serviceName': 'HIIT Session'},
         'preparation': 'Bring water bottle',
-        'isOnline': true,
-        'onlineUrl': 'https://gym.example/session/abc',
       };
 
       final dto = BookingDto.fromJson(json);
@@ -53,8 +51,6 @@ void main() {
       expect(dto.serviceId, 77);
       expect(dto.serviceName, 'HIIT Session');
       expect(dto.preparation, 'Bring water bottle');
-      expect(dto.isOnline, true);
-      expect(dto.onlineUrl, 'https://gym.example/session/abc');
     });
 
     test('maps partial legacy payload with defaults', () {
@@ -78,8 +74,6 @@ void main() {
         },
         'service': {'serviceId': 18, 'serviceName': 'Legacy Session'},
         'preparation_info': 'Legacy preparation',
-        'Telemedicina': 1,
-        'OnlineUrl': 'https://legacy.example/online',
       };
 
       final dto = BookingDto.fromJson(json);
@@ -106,8 +100,6 @@ void main() {
       expect(dto.serviceId, 18);
       expect(dto.serviceName, 'Legacy Session');
       expect(dto.preparation, 'Legacy preparation');
-      expect(dto.isOnline, false);
-      expect(dto.onlineUrl, 'https://legacy.example/online');
     });
   });
 }

@@ -2,19 +2,15 @@ import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 
 class AvailableSlotsRequest {
-  static const String _onlineFlag = 'true';
-
   const AvailableSlotsRequest({
     required this.disciplineId,
     this.trainerId,
     required this.locationId,
-    this.isOnline = false,
   });
 
   final int disciplineId;
   final String? trainerId;
   final int locationId;
-  final bool isOnline;
 
   // Update later to remove hardcoded date range values
   //(Including UI date-range picker)
@@ -31,7 +27,6 @@ class AvailableSlotsRequest {
       'bookingDuration': bookingDuration.toString(),
       if (disciplineId > 0) 'disciplineCode': disciplineId.toString(),
       if (locationId > 0) 'locationCode': locationId.toString(),
-      'isOnline': isOnline ? _onlineFlag : 'false',
       if (normalizedTrainer != null) 'trainerCode': normalizedTrainer,
     };
 
@@ -41,7 +36,6 @@ class AvailableSlotsRequest {
   Map<String, dynamic> toJson() => {
     'disciplineId': disciplineId,
     'locationId': locationId,
-    'isOnline': isOnline,
     if (trainerId?.isNotEmpty ?? false) 'trainerId': trainerId,
   };
 
@@ -49,13 +43,11 @@ class AvailableSlotsRequest {
     int? disciplineId,
     String? trainerId,
     int? locationId,
-    bool? isOnline,
   }) {
     return AvailableSlotsRequest(
       disciplineId: disciplineId ?? this.disciplineId,
       trainerId: trainerId ?? this.trainerId,
       locationId: locationId ?? this.locationId,
-      isOnline: isOnline ?? this.isOnline,
     );
   }
 }

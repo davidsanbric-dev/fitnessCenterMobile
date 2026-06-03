@@ -6,7 +6,6 @@ abstract interface class ClassBookingRepository {
   Future<void> bookStandard({
     required AvailableSlotDto slot,
     MemberAvailabilityFilters? listingContext,
-    String? online,
   });
 
   Future<void> bookByClassType({required AvailableSlotByCapabilityDto slot});
