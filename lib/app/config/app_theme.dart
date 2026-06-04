@@ -408,7 +408,7 @@ mixin AppTheme {
       error: danger,
     ),
     scaffoldBackgroundColor: backgroundLight,
-    textTheme: GoogleFonts.poppinsTextTheme().apply(
+    textTheme: GoogleFonts.chakraPetchTextTheme().apply(
       bodyColor: textColorPrimary,
       displayColor: textColorPrimary,
     ),
@@ -439,7 +439,7 @@ mixin AppTheme {
     scaffoldBackgroundColor: darkBg,
     cardColor: darkPanel,
     dividerColor: darkBorder,
-    textTheme: GoogleFonts.poppinsTextTheme(
+    textTheme: GoogleFonts.chakraPetchTextTheme(
       ThemeData(brightness: Brightness.dark).textTheme,
     ).apply(bodyColor: darkText, displayColor: darkText),
     inputDecorationTheme: darkInputDecorationTheme,
