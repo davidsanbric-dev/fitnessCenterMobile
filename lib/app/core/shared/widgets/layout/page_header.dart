@@ -11,7 +11,7 @@ class AppBackButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     this.label,
-    this.tooltip = 'Volver',
+    this.tooltip = 'Back',
     this.color,
     this.iconSize = 24,
     this.style,

@@ -33,7 +33,7 @@ class ReserveCellButton<T> extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: isDisabled ? null : () => handler(selectedSlot),
           icon: const Icon(LucideIcons.calendarCheck, size: 18),
-          label: const Text('Reservar'),
+          label: const Text('Book'),
           style: AppTheme.tableActionButtonStyle(),
         ),
       ),

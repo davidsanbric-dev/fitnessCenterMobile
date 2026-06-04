@@ -7,7 +7,7 @@ class CheckAvailabilityButtonCell extends StatelessWidget {
     super.key,
     required this.row,
     this.onCheckAvailability,
-    this.label = 'Horarios',
+    this.label = 'Schedule',
     this.height = 36,
   });
 

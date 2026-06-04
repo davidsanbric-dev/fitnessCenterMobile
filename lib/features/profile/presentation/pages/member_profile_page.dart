@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -74,6 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
         title: 'Gym Locations',
         onTap: () => _showComingSoon(context),
       ),
+      _ProfileOption(
+        title: 'Sign Out',
+        onTap: () => _handleLogout(context),
+        isDestructive: true,
+      ),
     ];
 
     return Scaffold(
@@ -82,9 +88,9 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PageHeader(
-              title: 'My Profile',
-              onLogout: () => _handleLogout(context),
+            const PageHeaderScope(
+              showLogout: false,
+              child: PageHeader(title: 'My Profile'),
             ),
             Expanded(
               child: ListView.separated(
@@ -100,7 +106,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
+                        color: option.isDestructive
+                            ? Colors.red.shade600
+                            : Colors.grey.shade800,
                       ),
                     ),
                     onTap: option.onTap,
@@ -127,8 +135,13 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class _ProfileOption {
-  const _ProfileOption({required this.title, required this.onTap});
+  const _ProfileOption({
+    required this.title,
+    required this.onTap,
+    this.isDestructive = false,
+  });
 
   final String title;
   final VoidCallback onTap;
+  final bool isDestructive;
 }

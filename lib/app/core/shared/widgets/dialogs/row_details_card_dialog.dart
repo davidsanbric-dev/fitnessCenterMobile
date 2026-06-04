@@ -42,7 +42,7 @@ class RowDetailsCardDialog extends StatelessWidget {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text(
-            'Cerrar',
+            'Close',
             style: TextStyle(color: AppTheme.brandBlue),
           ),
         ),

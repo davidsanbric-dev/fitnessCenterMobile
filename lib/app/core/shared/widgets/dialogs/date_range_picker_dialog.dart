@@ -14,9 +14,9 @@ Future<DateTimeRange?> showDateRangePickerDialog({
   Future<void> Function(DateTime date)? onEndDateChanged,
   DateTime? firstDate,
   DateTime? lastDate,
-  String helpText = 'Selecciona el rango de fechas',
-  String confirmText = 'Guardar',
-  String saveText = 'Guardar',
+  String helpText = 'Select date range',
+  String confirmText = 'Save',
+  String saveText = 'Save',
 }) async {
   final normalizedEnd = selectedEndDate.isBefore(selectedStartDate)
       ? selectedStartDate
@@ -66,7 +66,7 @@ class DateRangePickerField extends StatelessWidget {
     this.onEndDateChanged,
     this.isLoading = false,
     this.width = 320,
-    this.labelText = 'Rango',
+    this.labelText = 'Range',
     this.firstDate,
     this.lastDate,
     this.helpText,
@@ -91,9 +91,9 @@ class DateRangePickerField extends StatelessWidget {
   final InputDecoration? decoration;
   final DateRangeLabelBuilder? dateLabelBuilder;
 
-  static const String _defaultHelpText = 'Selecciona el rango de fechas';
-  static const String _defaultConfirmText = 'Guardar';
-  static const String _defaultSaveText = 'Guardar';
+  static const String _defaultHelpText = 'Select date range';
+  static const String _defaultConfirmText = 'Save';
+  static const String _defaultSaveText = 'Save';
 
   @override
   Widget build(BuildContext context) {

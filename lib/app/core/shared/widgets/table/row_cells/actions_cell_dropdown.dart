@@ -122,7 +122,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.refreshCw, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
-              Text('Actualizar Estado'),
+              Text('Update Status'),
             ],
           ),
         ),
@@ -137,7 +137,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.edit, color: AppTheme.brandBlue, size: 18),
               SizedBox(width: 8),
-              Text('Editar'),
+              Text('Edit'),
             ],
           ),
         ),
@@ -152,7 +152,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.trash2, color: Colors.red[400], size: 18),
               const SizedBox(width: 8),
-              const Text('Eliminar'),
+              const Text('Delete'),
             ],
           ),
         ),
@@ -182,7 +182,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.key, color: Colors.blueAccent, size: 18),
               SizedBox(width: 8),
-              Text('Asignar permiso'),
+              Text('Assign permission'),
             ],
           ),
         ),
@@ -197,7 +197,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.minusCircle, color: Colors.redAccent, size: 18),
               SizedBox(width: 8),
-              Text('Remover permiso'),
+              Text('Remove permission'),
             ],
           ),
         ),
