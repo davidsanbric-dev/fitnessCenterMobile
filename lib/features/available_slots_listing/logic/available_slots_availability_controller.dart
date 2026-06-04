@@ -98,6 +98,34 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
     );
   }
 
+  /// Re-runs the last submitted availability query (if any) against the backend.
+  /// Triggered when a "slot_updated" push arrives so a member viewing slots sees
+  /// a trainer's availability change without re-applying filters by hand.
+  Future<void> refreshAvailability() async {
+    final filters = lastSubmittedFilters.value;
+    if (!hasSubmittedAvailabilityRequest.value || filters == null) {
+      return;
+    }
+    await runLatestLoadOperation<List<AvailableSlotDto>>(
+      isLoading: isAvailabilityLoading,
+      error: availabilityError,
+      loader: () => _repository.fetchAvailableBookings(filters: filters),
+      onSuccess: (slots) {
+        availableSlots.assignAll(slots);
+        availableSlots.refresh();
+        _syncAvailabilityPagination();
+      },
+      onError: () {
+        availableSlots.clear();
+        availableSlots.refresh();
+        _syncAvailabilityPagination();
+      },
+      unexpectedErrorMessage: 'Could not load available time slots',
+      startSequence: () => ++_availabilitySequence,
+      shouldApplyResult: (sequence) => sequence == _availabilitySequence,
+    );
+  }
+
   Future<void> reserveBooking(AvailableSlotDto slot) async {
     if (isReservingBooking.value) {
       return;

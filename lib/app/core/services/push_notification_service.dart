@@ -24,10 +24,19 @@ class PushNotificationService extends GetxService {
   /// home info-slider can refresh on-time. Set by the blog controller.
   VoidCallback? _onBlogCreated;
 
+  /// Invoked when a "slot_updated" push arrives (a trainer changed availability
+  /// via the admin web) so the available-slots listing can refresh on-time. Set
+  /// by the available-slots controller.
+  VoidCallback? _onSlotsUpdated;
+
   String? get token => _token.value;
 
   void setOnBlogCreated(VoidCallback callback) {
     _onBlogCreated = callback;
+  }
+
+  void setOnSlotsUpdated(VoidCallback callback) {
+    _onSlotsUpdated = callback;
   }
 
   Future<void> init() async {
@@ -105,15 +114,23 @@ class PushNotificationService extends GetxService {
     );
 
     _maybeHandleBlog(message);
+    _maybeHandleSlots(message);
   }
 
   void _handleOpenedApp(RemoteMessage message) {
     _maybeHandleBlog(message);
+    _maybeHandleSlots(message);
   }
 
   void _maybeHandleBlog(RemoteMessage message) {
     if (message.data['type'] == 'blog_created') {
       _onBlogCreated?.call();
+    }
+  }
+
+  void _maybeHandleSlots(RemoteMessage message) {
+    if (message.data['type'] == 'slot_updated') {
+      _onSlotsUpdated?.call();
     }
   }
 }

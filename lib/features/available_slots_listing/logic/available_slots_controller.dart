@@ -9,6 +9,7 @@ import 'package:portfolio_mobile_app/features/available_slots_listing/logic/avai
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/capabilities_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
 import 'package:get/get.dart';
 
 class AvailableSlotsController extends ControllerBase {
@@ -59,6 +60,18 @@ class AvailableSlotsController extends ControllerBase {
   final CapabilitiesController capabilitiesController;
   final AvailableSlotsFiltersController filtersController;
   final AvailableSlotsAvailabilityController availabilityController;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Refresh the visible availability when a trainer changes a slot (push), so
+    // the member's listing stays in sync without re-applying filters by hand.
+    if (Get.isRegistered<PushNotificationService>()) {
+      Get.find<PushNotificationService>().setOnSlotsUpdated(
+        availabilityController.refreshAvailability,
+      );
+    }
+  }
 
   RxList<String> get disciplines => filtersController.disciplines;
   RxList<String> get locations => filtersController.locations;
