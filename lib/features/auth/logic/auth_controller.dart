@@ -19,6 +19,9 @@ class AuthController extends GetxController with WidgetsBindingObserver {
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
+    ever(_authService.isLoggedInRx, (bool loggedIn) {
+      if (loggedIn) _navigateToHome();
+    });
   }
 
   @override

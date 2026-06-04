@@ -37,6 +37,7 @@ class AuthService extends GetxService {
   Map<String, dynamic>? _claims;
 
   bool get isLoggedIn => _isLoggedIn.value;
+  RxBool get isLoggedInRx => _isLoggedIn;
   String? get role => _role.value;
   String? get mail => _claimAsString('mail');
   String? get userName => _claimAsString('userName');
