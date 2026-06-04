@@ -50,7 +50,6 @@ class StartupManager {
   Future<void> _runAssetPreflight() async {
     const criticalAssets = <String>[
       AppAssets.logo,
-      'assets/info_slider_image.png',
     ];
     const timeout = Duration(seconds: 2);
 

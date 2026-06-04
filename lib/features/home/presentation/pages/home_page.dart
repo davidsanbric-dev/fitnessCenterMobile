@@ -21,8 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
-const _sliderImage = 'assets/info_slider_image.png';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -147,13 +145,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         title: 'Discover everything you can do',
         description: 'with your FitnessCenter app',
         callToAction: 'Learn more',
-        imageAsset: _sliderImage,
       ),
       const InfoSlide(
         title: 'Train smarter, hassle-free',
         description: 'Book and manage your classes from anywhere',
         callToAction: 'Start today',
-        imageAsset: _sliderImage,
       ),
     ];
 

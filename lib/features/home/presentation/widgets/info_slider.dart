@@ -7,14 +7,14 @@ class InfoSlide {
     required this.title,
     required this.description,
     required this.callToAction,
-    required this.imageAsset,
+    this.imageAsset,
     this.imageAspectRatio,
   });
 
   final String title;
   final String description;
   final String callToAction;
-  final String imageAsset;
+  final String? imageAsset;
   final double? imageAspectRatio;
 }
 
@@ -61,7 +61,8 @@ class _InfoSliderState extends State<InfoSlider> {
         final currentSlide = widget.slides[_currentIndex];
         final imageAspectRatio =
             currentSlide.imageAspectRatio ?? _defaultImageAspectRatio;
-        final imageHeight = width / imageAspectRatio;
+        final imageHeight =
+            currentSlide.imageAsset != null ? width / imageAspectRatio : 0.0;
         final sliderHeight = imageHeight + _footerHeight;
 
         return Column(
@@ -78,7 +79,8 @@ class _InfoSliderState extends State<InfoSlider> {
                   final slide = widget.slides[index];
                   final itemAspectRatio =
                       slide.imageAspectRatio ?? _defaultImageAspectRatio;
-                  final itemImageHeight = width / itemAspectRatio;
+                  final itemImageHeight =
+                      slide.imageAsset != null ? width / itemAspectRatio : 0.0;
 
                   return _SlideCard(
                     slide: slide,
@@ -149,32 +151,33 @@ class _SlideCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              height: imageHeight,
-              child: ClipRRect(
-                child: Image.asset(
-                  slide.imageAsset,
-                  fit: BoxFit.fitWidth,
-                  errorBuilder: (context, error, stackTrace) {
-                    return DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        border: Border.all(
-                          color: accent.withValues(alpha: 0.4),
+            if (slide.imageAsset != null)
+              SizedBox(
+                height: imageHeight,
+                child: ClipRRect(
+                  child: Image.asset(
+                    slide.imageAsset!,
+                    fit: BoxFit.fitWidth,
+                    errorBuilder: (context, error, stackTrace) {
+                      return DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest,
+                          border: Border.all(
+                            color: accent.withValues(alpha: 0.4),
+                          ),
                         ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          LucideIcons.imageOff,
-                          color: accent,
-                          size: 36,
+                        child: Center(
+                          child: Icon(
+                            LucideIcons.imageOff,
+                            color: accent,
+                            size: 36,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
             SizedBox(
               height: footerHeight,
               child: Container(
