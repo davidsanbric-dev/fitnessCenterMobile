@@ -36,7 +36,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
       final navItems = [
         {'icon': LucideIcons.home, 'label': 'Home', 'index': 0},
         {'icon': LucideIcons.calendar, 'label': 'Bookings', 'index': 1},
-        {'icon': LucideIcons.dumbbell, 'label': 'Directory', 'index': 6},
+        {'icon': LucideIcons.libraryBig, 'label': 'Directory', 'index': 6},
         {'icon': LucideIcons.user, 'label': 'Profile', 'index': 5},
       ];
 

@@ -55,6 +55,7 @@ class AvailableSlotsFilterFields extends StatelessWidget {
         focusNode: primaryFocusNode,
         hintText: primaryPlaceholder,
         showUnderline: !hideUnderline,
+        showClearButton: true,
         onTap: () {
           primaryFocusNode.requestFocus();
           onPrimaryTap?.call();

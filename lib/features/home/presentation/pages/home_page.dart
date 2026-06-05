@@ -1,5 +1,4 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
-import 'package:portfolio_mobile_app/app/config/app_routes.dart';
 import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/features/home/logic/blog_controller.dart';
@@ -8,6 +7,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_dialog.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
@@ -29,13 +29,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  static const int _scheduleTabIndex = 4;
   static const int _bookingsTabIndex = 1;
   static const int _fitnessDirectoryTabIndex = 6;
 
   late final BookingAgendaApi _bookingsApi;
   late final BlogController _blogController;
-  late final Future<AvailableSlotDto?> _todayBooking;
+  late Future<AvailableSlotDto?> _todayBooking;
   bool _hasNotified = false;
 
   @override
@@ -90,12 +89,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return 'Hi, $firstName!';
   }
 
-  void _handleAgendaNavigation() {
-    if (Get.isRegistered<AppRouter>()) {
-      Get.find<AppRouter>().changeTab(_scheduleTabIndex);
+  Future<void> _openBookSessionDialog() async {
+    // Reuse the exact same "Book a Session" flow as the Bookings page button.
+    await showBookSessionDialog(context);
+    if (!mounted) {
       return;
     }
-    Get.toNamed(AppRoutes.memberBookings);
+    // A session may have been booked within the dialog; refresh the home
+    // "today" summary so it reflects the change.
+    setState(() {
+      _todayBooking = _loadTodayBooking();
+    });
   }
 
   void _handleBookingsNavigation() {
@@ -165,7 +169,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
       ShortcutCardData(
         title: 'Meet\nTrainers',
-        iconData: LucideIcons.activity,
+        iconData: LucideIcons.usersRound,
         onTap: _handleTrainersNavigation,
       ),
     ];
@@ -203,7 +207,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       text: 'Book a Session',
                       height: 58,
                       fontSize: 18,
-                      onPressed: _handleAgendaNavigation,
+                      onPressed: _openBookSessionDialog,
                     ),
                     const SizedBox(height: 22),
                     FutureBuilder<AvailableSlotDto?>(
@@ -226,10 +230,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           InfoSummaryTab(
                             label: 'Upcoming Bookings',
                             description: todayDescription,
+                            iconData: LucideIcons.calendarClock,
                           ),
                           const InfoSummaryTab(
                             label: 'History',
                             description: 'Your past sessions will appear here.',
+                            iconData: LucideIcons.history,
                           ),
                         ];
                         return InfoSummary(

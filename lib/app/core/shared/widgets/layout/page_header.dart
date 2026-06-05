@@ -1,10 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:get/get.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/config/app_routes.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
 
 class AppBackButton extends StatelessWidget {
   const AppBackButton({
@@ -55,7 +51,6 @@ class PageHeader extends StatelessWidget {
     this.subtitleIconSize = 18,
     this.subtitleSpacing = 6,
     this.onBackButtonPressed,
-    this.onLogout,
     this.leadingPadding = EdgeInsets.zero,
     this.leadingSlotWidth = kMinInteractiveDimension,
   }) : assert(
@@ -70,7 +65,6 @@ class PageHeader extends StatelessWidget {
   final double subtitleIconSize;
   final double subtitleSpacing;
   final VoidCallback? onBackButtonPressed;
-  final VoidCallback? onLogout;
   final EdgeInsets leadingPadding;
   final double leadingSlotWidth;
 
@@ -83,52 +77,10 @@ class PageHeader extends StatelessWidget {
     final resolvedLeading = onBackPressed == null
         ? null
         : AppBackButton(onPressed: onBackPressed);
-    // Determine the effective logout callback: use explicit `onLogout` if provided,
-    // otherwise auto-wire to `AuthService` logout flow when available. A
-    // `PageHeaderScope` with `showLogout: false` (e.g. a dialog host) suppresses
-    // the logout affordance entirely.
-    final allowLogout = PageHeaderScope.maybeOf(context)?.showLogout ?? true;
-    VoidCallback? effectiveOnLogout = allowLogout ? onLogout : null;
-    if (allowLogout &&
-        effectiveOnLogout == null &&
-        Get.isRegistered<AuthService>()) {
-      Future<void> performLogout() async {
-        final messenger = ScaffoldMessenger.of(context);
-        final authService = Get.find<AuthService>();
-        try {
-          await authService.logout();
-          await Get.offAllNamed(AppRoutes.login);
-        } catch (error) {
-          messenger.showSnackBar(
-            SnackBar(content: Text('Could not sign out: $error')),
-          );
-        }
-      }
-
-      effectiveOnLogout = () {
-        performLogout();
-      };
-    }
-    // Build an optional trailing logout button slot when `onLogout` is provided.
-    final Widget trailingSlot = effectiveOnLogout == null
-        ? SizedBox(width: leadingSlotWidth)
-        : SizedBox(
-            width: leadingSlotWidth,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: Icon(LucideIcons.logOut, size: 20, color: Colors.white),
-                tooltip: 'Sign out',
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(
-                  minWidth: leadingSlotWidth,
-                  minHeight: kMinInteractiveDimension,
-                ),
-                visualDensity: VisualDensity.compact,
-                onPressed: effectiveOnLogout,
-              ),
-            ),
-          );
+    // Logout now lives on the member profile page, so the header keeps only an
+    // empty trailing slot to balance the optional leading back button and keep
+    // the centered content aligned.
+    final Widget trailingSlot = SizedBox(width: leadingSlotWidth);
 
     final headerContent = resolvedLeading == null
         ? Row(

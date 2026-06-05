@@ -12,6 +12,8 @@ class SearchField extends StatelessWidget {
     this.onTap,
     this.fontSize,
     this.showUnderline = true,
+    this.showClearButton = false,
+    this.onCleared,
   });
 
   final TextEditingController controller;
@@ -22,9 +24,53 @@ class SearchField extends StatelessWidget {
   final double? fontSize;
   final bool showUnderline;
 
+  /// When true, a clear (x) button is shown at the end of the field (before the
+  /// search icon) whenever the field holds text. Tapping it empties the field.
+  final bool showClearButton;
+
+  /// Called after the field is cleared via the clear (x) button.
+  final VoidCallback? onCleared;
+
   void _moveCursorToEnd() {
     final text = controller.text;
     controller.selection = TextSelection.collapsed(offset: text.length);
+  }
+
+  void _handleClear() {
+    controller.clear();
+    onCleared?.call();
+  }
+
+  Widget _buildSuffixIcon(Color brand) {
+    final searchIcon = Icon(LucideIcons.search, color: brand);
+    if (!showClearButton) {
+      return searchIcon;
+    }
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, child) {
+        final clearButton = value.text.isEmpty
+            ? const SizedBox.shrink()
+            : IconButton(
+                icon: const Icon(LucideIcons.x, size: 18),
+                color: Colors.grey.shade600,
+                tooltip: 'Clear',
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: _handleClear,
+              );
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            clearButton,
+            if (value.text.isNotEmpty) const SizedBox(width: 6),
+            child!,
+          ],
+        );
+      },
+      child: searchIcon,
+    );
   }
 
   @override
@@ -59,7 +105,7 @@ class SearchField extends StatelessWidget {
         hintText: hintText,
         hintStyle: fontSize != null ? TextStyle(fontSize: fontSize) : null,
         contentPadding: const EdgeInsets.only(bottom: 8),
-        suffixIcon: Icon(LucideIcons.search, color: brand),
+        suffixIcon: _buildSuffixIcon(brand),
         enabledBorder: underlineBorder,
         focusedBorder: focusedUnderlineBorder,
       ),

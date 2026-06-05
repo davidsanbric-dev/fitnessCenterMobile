@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller
 import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
 
 class BookingsPage extends StatefulWidget {
   const BookingsPage({super.key});
@@ -72,18 +71,6 @@ class _BookingsPageState extends State<BookingsPage> {
                     child: ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 16, 2, 0),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: FilledButton.icon(
-                              onPressed: _openBookSessionDialog,
-                              icon: const Icon(LucideIcons.calendarPlus,
-                                  size: 18),
-                              label: const Text('Book a Session'),
-                            ),
-                          ),
-                        ),
                         BookingsTable(
                           bookings: items,
                           isLoading: _controller.isLoading.value,
@@ -96,6 +83,7 @@ class _BookingsPageState extends State<BookingsPage> {
                           totalItems: bookingsTotalItems,
                           onPageChanged: _controller.setBookingsPageNumber,
                           showPagination: true,
+                          onBookSession: _openBookSessionDialog,
                         ),
                       ],
                     ),

@@ -3,6 +3,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/dat
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class BookingsTable extends StatelessWidget {
   const BookingsTable({
@@ -18,9 +19,11 @@ class BookingsTable extends StatelessWidget {
     this.totalItems,
     this.onPageChanged,
     this.showPagination = false,
+    this.onBookSession,
   });
 
   final List<BookingDto> bookings;
+  final VoidCallback? onBookSession;
   final bool isLoading;
   final String? errorMessage;
   final Future<void> Function(BuildContext context, Map<String, dynamic> row)?
@@ -84,6 +87,15 @@ class BookingsTable extends StatelessWidget {
 
     return TableCard(
       headers: const ['Time', 'Class / Trainer', 'Actions'],
+      createButton: onBookSession == null
+          ? null
+          : TableCardCreateButtonConfig(
+              label: 'Book a Session',
+              onPressed: onBookSession,
+              icon: const Icon(LucideIcons.calendarPlus, size: 18),
+              alignment: Alignment.centerRight,
+              spacing: 0,
+            ),
       body: TableBodySection(
         isLoading: isLoading,
         errorMessage: errorMessage,

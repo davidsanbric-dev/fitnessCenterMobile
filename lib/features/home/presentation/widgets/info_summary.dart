@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class InfoSummaryTab {
-  const InfoSummaryTab({required this.label, required this.description});
+  const InfoSummaryTab({
+    required this.label,
+    required this.description,
+    this.iconData,
+  });
 
   final String label;
   final String description;
+
+  /// Optional icon shown beside the tab label and in the summary circle while
+  /// this tab is active.
+  final IconData? iconData;
 }
 
 class InfoSummary extends StatefulWidget {
@@ -71,6 +79,7 @@ class _InfoSummaryState extends State<InfoSummary> {
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               fontSize: 14,
             );
+            final labelColor = textStyle?.color;
             return Expanded(
               child: InkWell(
                 onTap: () => _handleTabSelected(tabIndex),
@@ -78,10 +87,26 @@ class _InfoSummaryState extends State<InfoSummary> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Column(
                     children: [
-                      Text(
-                        tabData.label,
-                        style: textStyle,
-                        textAlign: TextAlign.center,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (tabData.iconData != null) ...[
+                              Icon(
+                                tabData.iconData,
+                                size: 15,
+                                color: labelColor,
+                              ),
+                              const SizedBox(width: 5),
+                            ],
+                            Text(
+                              tabData.label,
+                              style: textStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 4),
                       AnimatedContainer(
@@ -132,8 +157,12 @@ class _InfoSummaryState extends State<InfoSummary> {
                         border: Border.all(color: accentColor, width: 2.4),
                       ),
                       padding: const EdgeInsets.all(8),
-                      child: widget.iconData != null
-                          ? Icon(widget.iconData, color: accentColor, size: 28)
+                      child: (tab.iconData ?? widget.iconData) != null
+                          ? Icon(
+                              tab.iconData ?? widget.iconData,
+                              color: accentColor,
+                              size: 28,
+                            )
                           : Image.asset(
                               widget.iconAsset!,
                               fit: BoxFit.contain,
