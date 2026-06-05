@@ -30,7 +30,7 @@ class InlineOptionsDropdown extends StatefulWidget {
     required this.onOptionSelected,
     required this.filterText,
     required this.maxHeight,
-    this.color = AppTheme.brandBlue,
+    this.color,
     this.twoStage,
     this.stageResetKey,
   });
@@ -40,7 +40,7 @@ class InlineOptionsDropdown extends StatefulWidget {
   final ValueChanged<String> onOptionSelected;
   final String filterText;
   final double maxHeight;
-  final Color color;
+  final Color? color;
   final InlineOptionsDropdownTwoStage? twoStage;
   final Object? stageResetKey;
 
@@ -145,10 +145,11 @@ class _InlineOptionsDropdownState extends State<InlineOptionsDropdown> {
     final filteredOptions = baseOptions;
     final shouldShowNoMatches =
         hasFilter && options.isNotEmpty && baseOptions.isEmpty;
+    final color = widget.color ?? AppTheme.brandAccentColor(context);
 
     return Material(
       elevation: 12,
-      color: widget.color,
+      color: color,
       shadowColor: Colors.black.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
@@ -204,7 +205,7 @@ class _InlineOptionsDropdownState extends State<InlineOptionsDropdown> {
                         );
                       },
                     ),
-                  _InlineBottomFadeOverlay(color: widget.color),
+                  _InlineBottomFadeOverlay(color: color),
                 ],
               ),
             ),

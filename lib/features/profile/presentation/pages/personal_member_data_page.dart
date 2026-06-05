@@ -146,7 +146,10 @@ class _PersonalDataViewState extends State<PersonalDataView> {
             height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.brandBlue, width: 3),
+              border: Border.all(
+                color: AppTheme.brandAccentColor(context),
+                width: 3,
+              ),
             ),
             child: const Icon(
               LucideIcons.plus,

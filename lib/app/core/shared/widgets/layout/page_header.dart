@@ -158,9 +158,9 @@ class PageHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 34, 24, 22),
       alignment: Alignment.bottomCenter,
       constraints: const BoxConstraints(minHeight: 90, maxHeight: 110),
-      decoration: const BoxDecoration(
-        color: AppTheme.brandBlue,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: AppTheme.brandAccentColor(context),
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
         ),

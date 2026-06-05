@@ -21,7 +21,7 @@ class AppButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         minimumSize: Size(double.infinity, height),
-        backgroundColor: AppTheme.brandBlue,
+        backgroundColor: AppTheme.brandAccentColor(context),
         foregroundColor: Colors.white,
         shape: AppTheme.buttonShape,
         textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(

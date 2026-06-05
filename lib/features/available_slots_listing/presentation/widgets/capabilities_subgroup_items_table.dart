@@ -129,9 +129,11 @@ class _SubgroupItemActionsCell extends StatelessWidget {
               icon: const Icon(LucideIcons.fileText, size: 16),
               label: const Text('Preparation'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.brandBlue,
+                foregroundColor: AppTheme.brandAccentColor(context),
                 side: BorderSide(
-                  color: AppTheme.brandBlue.withValues(alpha: 0.5),
+                  color: AppTheme.brandAccentColor(
+                    context,
+                  ).withValues(alpha: 0.5),
                 ),
                 textStyle: const TextStyle(
                   fontSize: 12,
@@ -187,9 +189,9 @@ class _SubgroupItemActionsCell extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
+            child: Text(
               'Close',
-              style: TextStyle(color: AppTheme.brandBlue),
+              style: TextStyle(color: AppTheme.brandAccentColor(context)),
             ),
           ),
         ],

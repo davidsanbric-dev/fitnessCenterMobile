@@ -49,7 +49,7 @@ class FilterBoxOptionButton extends StatelessWidget {
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
-            color: AppTheme.brandBlue,
+            color: AppTheme.brandAccentColor(context),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(

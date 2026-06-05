@@ -52,7 +52,7 @@ class CreateButton extends StatelessWidget {
             style:
                 style ??
                 ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.brandBlue,
+                  backgroundColor: AppTheme.brandAccentColor(context),
                   foregroundColor: Colors.white,
                   shape: AppTheme.buttonShape,
                 ),

@@ -28,7 +28,7 @@ class InputOptionsDropupSheet extends StatefulWidget {
     required this.title,
     required this.options,
     required this.onOptionSelected,
-    this.color = AppTheme.brandBlue,
+    this.color,
     this.heightFraction = 0.55,
     this.twoStage,
     this.stageResetKey,
@@ -38,7 +38,7 @@ class InputOptionsDropupSheet extends StatefulWidget {
   final String title;
   final List<String> options;
   final ValueChanged<String> onOptionSelected;
-  final Color color;
+  final Color? color;
   final double heightFraction;
   final InputOptionsDropupTwoStage? twoStage;
   final Object? stageResetKey;
@@ -153,7 +153,7 @@ class _InputOptionsDropupSheetState extends State<InputOptionsDropupSheet> {
       child: SizedBox(
         height: sheetHeight,
         child: Material(
-          color: widget.color,
+          color: widget.color ?? AppTheme.brandAccentColor(context),
           elevation: 12,
           shadowColor: Colors.black.withValues(alpha: 0.2),
           borderRadius: _sheetRadius,
@@ -288,8 +288,8 @@ class _BottomFadeOverlay extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                AppTheme.brandBlue.withValues(alpha: 0.1),
-                AppTheme.brandBlue.withValues(alpha: 0.85),
+                AppTheme.brandAccentColor(context).withValues(alpha: 0.1),
+                AppTheme.brandAccentColor(context).withValues(alpha: 0.85),
               ],
             ),
           ),

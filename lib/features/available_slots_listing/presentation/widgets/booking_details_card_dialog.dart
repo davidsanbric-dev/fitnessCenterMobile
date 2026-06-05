@@ -180,9 +180,9 @@ mixin BookingDetailsCardDialog {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
+            child: Text(
               'Close',
-              style: TextStyle(color: AppTheme.brandBlue),
+              style: TextStyle(color: AppTheme.brandAccentColor(context)),
             ),
           ),
         ],

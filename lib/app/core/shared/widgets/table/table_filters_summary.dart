@@ -73,7 +73,7 @@ class TableFiltersSummary extends StatelessWidget {
     final resolvedLabelStyle =
         labelStyle ?? resolvedTextStyle?.copyWith(color: Colors.grey[600]);
     final resolvedValueStyle = valueStyle ?? resolvedTextStyle;
-    final resolvedIconColor = iconColor ?? AppTheme.brandBlue;
+    final resolvedIconColor = iconColor ?? AppTheme.brandAccentColor(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

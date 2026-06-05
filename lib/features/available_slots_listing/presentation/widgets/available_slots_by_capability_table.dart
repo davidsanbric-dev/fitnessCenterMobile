@@ -59,8 +59,8 @@ class AvailableSlotsByCapabilityTable extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
                     subtitle!,
-                    style: const TextStyle(
-                      color: AppTheme.brandBlue,
+                    style: TextStyle(
+                      color: AppTheme.brandAccentColor(context),
                       fontWeight: FontWeight.w600,
                     ),
                   ),

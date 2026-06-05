@@ -34,16 +34,17 @@ class ActionsDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <PopupMenuEntry<String>>[];
+    final brand = AppTheme.brandAccentColor(context);
 
     if (onViewFile != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'viewFile',
           child: Row(
             children: [
-              Icon(LucideIcons.fileText, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('View file'),
+              Icon(LucideIcons.fileText, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('View file'),
             ],
           ),
         ),
@@ -52,13 +53,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onViewDerivation != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'viewDerivation',
           child: Row(
             children: [
-              Icon(LucideIcons.gitBranch, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('View referral'),
+              Icon(LucideIcons.gitBranch, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('View referral'),
             ],
           ),
         ),
@@ -67,13 +68,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onView != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'view',
           child: Row(
             children: [
-              Icon(LucideIcons.eye, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('View details'),
+              Icon(LucideIcons.eye, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('View details'),
             ],
           ),
         ),
@@ -82,17 +83,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onConfirmReservation != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'confirmReservation',
           child: Row(
             children: [
-              Icon(
-                LucideIcons.checkCircle,
-                color: AppTheme.brandBlue,
-                size: 18,
-              ),
-              SizedBox(width: 8),
-              Text('CONFIRM BOOKING'),
+              Icon(LucideIcons.checkCircle, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('CONFIRM BOOKING'),
             ],
           ),
         ),
@@ -101,13 +98,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onCancelReservation != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'cancelReservation',
           child: Row(
             children: [
-              Icon(LucideIcons.xCircle, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('CANCEL BOOKING'),
+              Icon(LucideIcons.xCircle, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('CANCEL BOOKING'),
             ],
           ),
         ),
@@ -116,13 +113,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onUpdateBookingStatus != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'updateBookingStatus',
           child: Row(
             children: [
-              Icon(LucideIcons.refreshCw, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('Update Status'),
+              Icon(LucideIcons.refreshCw, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('Update Status'),
             ],
           ),
         ),
@@ -131,13 +128,13 @@ class ActionsDropdown extends StatelessWidget {
 
     if (onEdit != null) {
       items.add(
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'edit',
           child: Row(
             children: [
-              Icon(LucideIcons.edit, color: AppTheme.brandBlue, size: 18),
-              SizedBox(width: 8),
-              Text('Edit'),
+              Icon(LucideIcons.edit, color: brand, size: 18),
+              const SizedBox(width: 8),
+              const Text('Edit'),
             ],
           ),
         ),

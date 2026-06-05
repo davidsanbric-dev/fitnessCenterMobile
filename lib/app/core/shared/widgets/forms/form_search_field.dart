@@ -34,9 +34,10 @@ class SearchField extends StatelessWidget {
         color: showUnderline ? Colors.grey.shade400 : Colors.transparent,
       ),
     );
+    final brand = AppTheme.brandAccentColor(context);
     final focusedUnderlineBorder = UnderlineInputBorder(
       borderSide: BorderSide(
-        color: showUnderline ? AppTheme.brandBlue : Colors.transparent,
+        color: showUnderline ? brand : Colors.transparent,
         width: showUnderline ? 1.5 : 0,
       ),
     );
@@ -58,7 +59,7 @@ class SearchField extends StatelessWidget {
         hintText: hintText,
         hintStyle: fontSize != null ? TextStyle(fontSize: fontSize) : null,
         contentPadding: const EdgeInsets.only(bottom: 8),
-        suffixIcon: const Icon(LucideIcons.search, color: AppTheme.brandBlue),
+        suffixIcon: Icon(LucideIcons.search, color: brand),
         enabledBorder: underlineBorder,
         focusedBorder: focusedUnderlineBorder,
       ),

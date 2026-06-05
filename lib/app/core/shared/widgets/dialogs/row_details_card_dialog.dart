@@ -41,9 +41,9 @@ class RowDetailsCardDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text(
+          child: Text(
             'Close',
-            style: TextStyle(color: AppTheme.brandBlue),
+            style: TextStyle(color: AppTheme.brandAccentColor(context)),
           ),
         ),
       ],
@@ -107,7 +107,7 @@ class _SectionView extends StatelessWidget {
                       child: Icon(
                         item.icon,
                         size: 16,
-                        color: AppTheme.brandBlue,
+                        color: AppTheme.brandAccentColor(context),
                       ),
                     ),
                   Expanded(
@@ -133,7 +133,8 @@ class _SectionView extends StatelessWidget {
                                   ? TextButton(
                                       onPressed: item.onTap,
                                       style: TextButton.styleFrom(
-                                        foregroundColor: AppTheme.brandBlue,
+                                        foregroundColor:
+                                            AppTheme.brandAccentColor(context),
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 4,
                                           vertical: 2,

@@ -19,11 +19,11 @@ class BrandAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brand = AppTheme.brandAccentColor(context);
     return CircleAvatar(
       radius: radius,
-      backgroundColor:
-          backgroundColor ?? AppTheme.brandBlue.withValues(alpha: 0.12),
-      child: Icon(icon, color: iconColor ?? AppTheme.brandBlue, size: iconSize),
+      backgroundColor: backgroundColor ?? brand.withValues(alpha: 0.12),
+      child: Icon(icon, color: iconColor ?? brand, size: iconSize),
     );
   }
 }

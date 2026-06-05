@@ -186,7 +186,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                                     : const Icon(LucideIcons.search),
                                 label: const Text('Search'),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: AppTheme.brandBlue,
+                                  backgroundColor: AppTheme.brandAccentColor(sheetContext),
                                   foregroundColor: Colors.white,
                                 ),
                               ),
@@ -264,7 +264,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                             icon: const Icon(LucideIcons.refreshCw),
                             label: const Text('Reset'),
                             style: TextButton.styleFrom(
-                              foregroundColor: AppTheme.brandBlue,
+                              foregroundColor: AppTheme.brandAccentColor(sheetContext),
                             ),
                           ),
                           const Spacer(),
@@ -273,7 +273,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                               Navigator.of(sheetContext).pop();
                             },
                             style: TextButton.styleFrom(
-                              foregroundColor: AppTheme.brandBlue,
+                              foregroundColor: AppTheme.brandAccentColor(sheetContext),
                             ),
                             child: const Text('Cancel'),
                           ),
@@ -288,7 +288,7 @@ showAdvancedFiltersSheet<TMember, TLocation>({
                               );
                             },
                             style: FilledButton.styleFrom(
-                              backgroundColor: AppTheme.brandBlue,
+                              backgroundColor: AppTheme.brandAccentColor(sheetContext),
                               foregroundColor: Colors.white,
                             ),
                             child: const Text('Apply'),

@@ -5,7 +5,6 @@ import 'package:portfolio_mobile_app/features/auth/presentation/widgets/greeting
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_image.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_slogan_bar.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_form.dart';
@@ -60,7 +59,7 @@ class _LoginPageState extends State<LoginPage>
     final Widget authForm = const LoginForm();
 
     return Scaffold(
-      backgroundColor: AppTheme.brandBlue,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(

@@ -7,7 +7,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 class CapabilitiesSubgroupFilterBox extends StatelessWidget {
   const CapabilitiesSubgroupFilterBox({
     super.key,
-    this.accentColor = AppTheme.brandBlue,
+    this.accentColor,
     required this.subgroup,
     required this.onCapabilitySelected,
     this.groupLabel,
@@ -15,7 +15,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
     this.isLoading = false,
   });
 
-  final Color accentColor;
+  final Color? accentColor;
   final List<CapabilityDto> subgroup;
   final ValueChanged<CapabilityDto> onCapabilitySelected;
   final String? groupLabel;
@@ -25,6 +25,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final accent = accentColor ?? AppTheme.brandAccentColor(context);
 
     if (isLoading) {
       return const Padding(
@@ -80,7 +81,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
                         child: Icon(
                           LucideIcons.tags,
                           size: 16,
-                          color: accentColor,
+                          color: accent,
                         ),
                       ),
                       Expanded(
@@ -108,7 +109,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
           Container(
             height: 1,
             margin: const EdgeInsets.symmetric(horizontal: 24),
-            color: accentColor.withValues(alpha: 0.5),
+            color: accent.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 12),
           Padding(

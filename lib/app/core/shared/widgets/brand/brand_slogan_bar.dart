@@ -13,9 +13,9 @@ class BrandSloganBar extends StatelessWidget {
       alignment: Alignment.centerLeft,
       widthFactor: widthFactor,
       child: Container(
-        decoration: const BoxDecoration(
-          color: AppTheme.brandBlue,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: AppTheme.brandAccentColor(context),
+          borderRadius: const BorderRadius.only(
             topRight: Radius.circular(50),
             bottomRight: Radius.circular(50),
           ),
