@@ -101,22 +101,13 @@ class _PersonalDataViewState extends State<PersonalDataView> {
       return const PageHeader(title: 'Personal Information');
     }
 
+    // Mirror the Directory page breadcrumb pattern: keep the master section
+    // title and surface the current sub-view as an iconed subtitle hint.
     return PageHeader(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text('Personal Information', style: AppTheme.orangeBarText),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: const Icon(LucideIcons.arrowLeft),
-              color: Colors.white,
-              tooltip: 'Back',
-              onPressed: widget.onBack,
-            ),
-          ),
-        ],
-      ),
+      title: 'My Profile',
+      subtitle: 'Personal Information',
+      subtitleIcon: LucideIcons.idCard,
+      onBackButtonPressed: widget.onBack,
     );
   }
 

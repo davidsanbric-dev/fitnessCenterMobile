@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:portfolio_mobile_app/app/core/shared/schemas/blog/blog_dto.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_slider.dart';
 
 /// Home info-slider variant backed by company-scoped blog entries. Each slide
 /// shows the blog hero image and title; tapping opens a dialog with the full
@@ -20,9 +19,7 @@ class BlogSlider extends StatefulWidget {
 
 class _BlogSliderState extends State<BlogSlider> {
   static const double _footerHeight = 52;
-  // Match the promotional info-slider's image space so blog heroes render in the
-  // same compact banner area on home.
-  static const double _imageAspectRatio = InfoSlider.defaultImageAspectRatio;
+  static const double _imageAspectRatio = 16 / 9;
   late final PageController _controller;
   int _currentIndex = 0;
 
@@ -147,12 +144,7 @@ class _BlogSlideCard extends StatelessWidget {
             children: [
               SizedBox(
                 height: imageHeight,
-                child: _BlogHeroImage(
-                  url: blog.absoluteHeroImageUrl,
-                  // Fit the whole hero within the info-slider image space
-                  // instead of cropping it.
-                  fit: BoxFit.contain,
-                ),
+                child: _BlogHeroImage(url: blog.absoluteHeroImageUrl),
               ),
               SizedBox(
                 height: footerHeight,
@@ -211,10 +203,9 @@ class _BlogSlideCard extends StatelessWidget {
 }
 
 class _BlogHeroImage extends StatelessWidget {
-  const _BlogHeroImage({required this.url, this.fit = BoxFit.cover});
+  const _BlogHeroImage({required this.url});
 
   final String? url;
-  final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +226,7 @@ class _BlogHeroImage extends StatelessWidget {
 
     return Image.network(
       imageUrl,
-      fit: fit,
+      fit: BoxFit.cover,
       width: double.infinity,
       loadingBuilder: (context, child, progress) {
         if (progress == null) {

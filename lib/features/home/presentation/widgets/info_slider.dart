@@ -23,17 +23,14 @@ class InfoSlider extends StatefulWidget {
 
   final List<InfoSlide> slides;
 
-  /// Image-space aspect ratio (width / height) for the promotional slides,
-  /// matching the bundled asset. Shared with `BlogSlider` so blog hero images
-  /// render fitted within the same image space.
-  static const double defaultImageAspectRatio = 1857 / 571;
-
   @override
   State<InfoSlider> createState() => _InfoSliderState();
 }
 
 class _InfoSliderState extends State<InfoSlider> {
   static const double _footerHeight = 52;
+  // Default matches the bundled asset (width / height).
+  static const double _defaultImageAspectRatio = 1857 / 571;
   late final PageController _controller;
   int _currentIndex = 0;
 
@@ -63,7 +60,7 @@ class _InfoSliderState extends State<InfoSlider> {
         final width = constraints.maxWidth;
         final currentSlide = widget.slides[_currentIndex];
         final imageAspectRatio =
-            currentSlide.imageAspectRatio ?? InfoSlider.defaultImageAspectRatio;
+            currentSlide.imageAspectRatio ?? _defaultImageAspectRatio;
         final imageHeight =
             currentSlide.imageAsset != null ? width / imageAspectRatio : 0.0;
         final sliderHeight = imageHeight + _footerHeight;
@@ -81,7 +78,7 @@ class _InfoSliderState extends State<InfoSlider> {
                 itemBuilder: (context, index) {
                   final slide = widget.slides[index];
                   final itemAspectRatio =
-                      slide.imageAspectRatio ?? InfoSlider.defaultImageAspectRatio;
+                      slide.imageAspectRatio ?? _defaultImageAspectRatio;
                   final itemImageHeight =
                       slide.imageAsset != null ? width / itemAspectRatio : 0.0;
 
