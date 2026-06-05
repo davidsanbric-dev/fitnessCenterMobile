@@ -95,6 +95,22 @@ mixin AppTheme {
     color: textColorPrimary,
   );
 
+  /// Theme-aware list-tile title so options stay legible in dark mode
+  /// (light navy text is invisible on the dark scaffold background).
+  static TextStyle listTileTitleStyle(
+    BuildContext context, {
+    bool isDestructive = false,
+  }) {
+    final Color color = isDestructive
+        ? (_isDark(context) ? const Color(0xFFE57373) : Colors.red.shade600)
+        : primaryTextColor(context);
+    return TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: color,
+    );
+  }
+
   static bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
@@ -110,6 +126,15 @@ mixin AppTheme {
 
   static Color brandAccentColor(BuildContext context) =>
       _isDark(context) ? darkPrimary : brandBlue;
+
+  /// Background for raised surface cards (filter boxes, panels) so they
+  /// follow the theme instead of a hardcoded white that hides light text.
+  static Color surfaceCardColor(BuildContext context) =>
+      _isDark(context) ? darkPanel : Colors.white;
+
+  static Color surfaceCardBorderColor(BuildContext context) => _isDark(context)
+      ? darkBorder
+      : Colors.black.withValues(alpha: 0.05);
 
   static TextStyle? bodyMediumMuted(BuildContext context) {
     return Theme.of(
@@ -419,9 +444,14 @@ mixin AppTheme {
   static const InputDecorationTheme darkInputDecorationTheme =
       InputDecorationTheme(
         labelStyle: TextStyle(
-          color: darkPrimary,
+          color: darkTextMuted,
           fontSize: 20,
           fontWeight: FontWeight.w300,
+        ),
+        floatingLabelStyle: TextStyle(
+          color: darkText,
+          fontSize: 20,
+          fontWeight: FontWeight.w400,
         ),
       );
 

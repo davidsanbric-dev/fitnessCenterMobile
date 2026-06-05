@@ -34,12 +34,10 @@ String formatDateIso(DateTime value) {
   return '$year-$month-$day';
 }
 
-/// Formats a [DateTime] value into `dd/MM/yyyy HH:mm`.
+/// Formats a [DateTime] value into `dd/MM/yyyy hh:mm AM/PM`.
 String formatDateTimeLabel(DateTime value) {
   final local = _normalizeDateTime(value);
-  final time =
-      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
-  return '${formatDateLabel(local)} $time';
+  return '${formatDateLabel(local)} ${formatTime(local)}';
 }
 
 /// Formats an optional [DateTime] or returns [placeholder] when `null`.
@@ -68,9 +66,12 @@ String formatRemaining(Duration value) {
   return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 }
 
+/// 12-hour clock with AM/PM, consistent with the admin web app's time format.
 String formatTime(DateTime value) {
   final local = value.toLocal();
-  final hour = local.hour.toString().padLeft(2, '0');
+  final period = local.hour >= 12 ? 'PM' : 'AM';
+  final hour12 = local.hour % 12 == 0 ? 12 : local.hour % 12;
+  final hour = hour12.toString().padLeft(2, '0');
   final minute = local.minute.toString().padLeft(2, '0');
-  return '$hour:$minute';
+  return '$hour:$minute $period';
 }

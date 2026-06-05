@@ -1,3 +1,5 @@
+import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/booking_status_badge.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
 import 'package:flutter/material.dart';
 
@@ -29,9 +31,6 @@ class DateTimeStatusCell extends StatelessWidget {
     final timeText = hasValue
         ? DateTimeCell.formatTime(value!)
         : timePlaceholder;
-    final statusText = trimmedStatus.isEmpty
-        ? statusPlaceholder
-        : trimmedStatus;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -46,19 +45,15 @@ class DateTimeStatusCell extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           timeText,
-          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 2),
-        Text(
-          statusText,
           style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
+            color: AppTheme.mutedTextColor(context),
           ),
           textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 6),
+        BookingStatusBadge(
+          status: trimmedStatus,
+          placeholder: statusPlaceholder,
         ),
       ],
     );

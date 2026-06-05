@@ -46,7 +46,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceCardColor(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -55,7 +55,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
             offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        border: Border.all(color: AppTheme.surfaceCardBorderColor(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

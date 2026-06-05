@@ -11,7 +11,12 @@ class SectionTitle extends StatelessWidget {
     return Container(
       alignment: Alignment.centerLeft,
       margin: const EdgeInsets.only(top: 28),
-      child: Text(text, style: AppTheme.cardHeading),
+      child: Text(
+        text,
+        style: AppTheme.cardHeading.copyWith(
+          color: AppTheme.primaryTextColor(context),
+        ),
+      ),
     );
   }
 }

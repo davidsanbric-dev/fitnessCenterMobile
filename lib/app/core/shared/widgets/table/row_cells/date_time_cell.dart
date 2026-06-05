@@ -1,3 +1,4 @@
+import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Simple two-line cell that prints the date on top and the time below.
@@ -33,7 +34,9 @@ class DateTimeCell extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           timeText,
-          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: AppTheme.mutedTextColor(context),
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -48,10 +51,14 @@ class DateTimeCell extends StatelessWidget {
     return '$day/$month/$year';
   }
 
+  /// 12-hour clock with AM/PM, matching the admin web app's time format
+  /// (Intl `hour: '2-digit', minute: '2-digit', hour12: true`).
   static String formatTime(DateTime value) {
     final local = value.toLocal();
-    final hour = local.hour.toString().padLeft(2, '0');
+    final period = local.hour >= 12 ? 'PM' : 'AM';
+    final hour12 = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final hour = hour12.toString().padLeft(2, '0');
     final minute = local.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
+    return '$hour:$minute $period';
   }
 }

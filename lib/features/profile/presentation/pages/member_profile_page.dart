@@ -1,4 +1,5 @@
 import 'package:portfolio_mobile_app/app/config/app_routes.dart';
+import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
@@ -103,12 +104,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   return ListTile(
                     title: Text(
                       option.title,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: option.isDestructive
-                            ? Colors.red.shade600
-                            : Colors.grey.shade800,
+                      style: AppTheme.listTileTitleStyle(
+                        context,
+                        isDestructive: option.isDestructive,
                       ),
                     ),
                     onTap: option.onTap,

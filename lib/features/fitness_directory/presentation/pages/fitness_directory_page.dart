@@ -421,7 +421,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
                         return ListTile(
                           title: Text(
                             option.title,
-                            style: AppTheme.listTileTitle,
+                            style: AppTheme.listTileTitleStyle(context),
                           ),
                           onTap: option.onTap,
                           contentPadding: const EdgeInsets.symmetric(
