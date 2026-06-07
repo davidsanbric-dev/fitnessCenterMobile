@@ -13,9 +13,10 @@ const double _sloganHorizontalInset = 0.0;
 const double _sloganWidthFactor = 0.8;
 const double _loginImageAspectRatio = 323 / 248;
 const double _sloganInitialDropFraction =
-    0.2; // How far the slogan bar starts over the image
+    0.4; // How far the slogan bar starts over the image (first stage),
+// enough to clear the sheet's top edge so the bar is fully visible there too
 const double _collapsedSheetPeek =
-    0.06; // Let the sheet overtake the image slightly when collapsed
+    0.0; // Sheet reveal stops at the image top when collapsed (no surface peek)
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -108,7 +109,7 @@ class _AnimatedHeader extends StatelessWidget {
     )!;
     final double headerOffset = lerpDouble(
       48,
-      12,
+      64,
       const Interval(0, 0.6, curve: Curves.easeOut).transform(t),
     )!;
 
@@ -176,7 +177,7 @@ class _AnimatedSheets extends StatelessWidget {
         final double baseHeight = constraints.maxHeight.isFinite
             ? constraints.maxHeight
             : viewport.height;
-        final double fullHeight = imageHeight + baseHeight * 0.35;
+        final double fullHeight = imageHeight + baseHeight * 0.55;
         final double collapsedFactor = fullHeight > 0
             ? (imageHeight / fullHeight).clamp(0.0, 1.0)
             : 0.6;
@@ -189,6 +190,7 @@ class _AnimatedSheets extends StatelessWidget {
           0.9,
           curve: Curves.easeOut,
         ).transform(revealProgress);
+        final double imageTopFade = lerpDouble(0.0, 0.08, revealProgress)!;
 
         return ClipRRect(
           borderRadius: const BorderRadius.only(
@@ -202,7 +204,7 @@ class _AnimatedSheets extends StatelessWidget {
               child: LoginSheet(
                 loginForm: loginForm,
                 brandSloganBar: const BrandSloganBar(),
-                loginImage: const LoginImage(),
+                loginImage: LoginImage(topFadeFraction: imageTopFade),
                 brandBarHorizontalInset: _sloganHorizontalInset,
                 brandBarWidthFactor: _sloganWidthFactor,
                 imageAspectRatio: _loginImageAspectRatio,
