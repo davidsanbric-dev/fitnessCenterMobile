@@ -109,7 +109,7 @@ class _AnimatedHeader extends StatelessWidget {
     )!;
     final double headerOffset = lerpDouble(
       48,
-      64,
+      40,
       const Interval(0, 0.6, curve: Curves.easeOut).transform(t),
     )!;
 

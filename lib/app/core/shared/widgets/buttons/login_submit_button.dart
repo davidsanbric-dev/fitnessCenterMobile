@@ -23,6 +23,8 @@ class AppButton extends StatelessWidget {
         minimumSize: Size(double.infinity, height),
         backgroundColor: AppTheme.brandAccentColor(context),
         foregroundColor: Colors.white,
+        // Web pairs primary fills with a --primary-soft edge.
+        side: BorderSide(color: AppTheme.primarySoftColor(context)),
         shape: AppTheme.buttonShape,
         textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.w600,

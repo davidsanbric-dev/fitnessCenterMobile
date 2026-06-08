@@ -26,6 +26,16 @@ mixin AppTheme {
   static const Color darkPrimarySoft = Color(0xFF1F4F7C);
   static const Color darkBorder = Color(0xFF23435F);
   static const Color darkInputBg = Color(0xFF0F2438);
+  static const Color darkNavHover = Color(0xFF17314A);
+  // Sidebar/brand-chrome gradient — mirrors the web's --sidebar-grad-* vars so
+  // the brand header reads as dark, restrained chrome (letting the aquamarine
+  // logo/wordmark pop) instead of a flat bright-blue flood.
+  static const Color darkSidebarGradStart = Color(0xFF0C1D2D);
+  static const Color darkSidebarGradEnd = Color(0xFF10263A);
+
+  // Light-mode border tuned to the web's [data-theme='light'] --border so card
+  // and panel edges match across both frontends.
+  static const Color lightBorder = Color(0xFFD7E1EA);
 
   static const Color textColorPrimary = brandTextPrimary;
   static const Color textColorSecondary = brandTextSecondary;
@@ -127,14 +137,35 @@ mixin AppTheme {
   static Color brandAccentColor(BuildContext context) =>
       _isDark(context) ? darkPrimary : brandBlue;
 
+  /// `--primary-soft` — the slightly darker edge the web pairs with primary
+  /// fills (e.g. `.btn-primary` border) so filled accents read as crisp.
+  static Color primarySoftColor(BuildContext context) =>
+      _isDark(context) ? darkPrimarySoft : brandTextSecondary;
+
   /// Background for raised surface cards (filter boxes, panels) so they
   /// follow the theme instead of a hardcoded white that hides light text.
   static Color surfaceCardColor(BuildContext context) =>
       _isDark(context) ? darkPanel : Colors.white;
 
-  static Color surfaceCardBorderColor(BuildContext context) => _isDark(context)
-      ? darkBorder
-      : Colors.black.withValues(alpha: 0.05);
+  static Color surfaceCardBorderColor(BuildContext context) =>
+      _isDark(context) ? darkBorder : lightBorder;
+
+  /// Canonical surface border — mirrors the web's single `--border` token so
+  /// panels, cards and tiles all share one consistent edge instead of
+  /// primary-tinted, per-widget borders.
+  static Color borderColor(BuildContext context) =>
+      _isDark(context) ? darkBorder : lightBorder;
+
+  /// Brand-header background. In dark mode this returns the web sidebar
+  /// gradient (dark, restrained chrome); in light mode there is no gradient and
+  /// callers fall back to [brandAccentColor].
+  static Gradient? headerGradient(BuildContext context) => _isDark(context)
+      ? const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [darkSidebarGradStart, darkSidebarGradEnd],
+        )
+      : null;
 
   static TextStyle? bodyMediumMuted(BuildContext context) {
     return Theme.of(

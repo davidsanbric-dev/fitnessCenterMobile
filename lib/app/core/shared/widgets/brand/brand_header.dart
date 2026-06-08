@@ -39,30 +39,29 @@ class BrandHeader extends StatelessWidget {
 
     final spacing = variant == 'extralarge' ? 10.0 : 8.0;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (includeLogo)
-          Padding(
-            padding: logoPadding,
-            child: BrandLogo(height: logoHeight),
-          ),
-        if (includeLogo) SizedBox(width: spacing),
-        Flexible(
-          child: RichText(
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            text: TextSpan(
-              style: textStyle,
-              children: const [
-                // TextSpan(text: AppStrings.brandSubtitle),
-                TextSpan(text: AppStrings.brandName),
-              ],
+    return Padding(
+      padding: logoPadding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (includeLogo) BrandLogo(height: logoHeight),
+          if (includeLogo) SizedBox(width: spacing),
+          Flexible(
+            child: RichText(
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                style: textStyle,
+                children: const [
+                  // TextSpan(text: AppStrings.brandSubtitle),
+                  TextSpan(text: AppStrings.brandName),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

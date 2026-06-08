@@ -111,7 +111,15 @@ class PageHeader extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       constraints: const BoxConstraints(minHeight: 90, maxHeight: 110),
       decoration: BoxDecoration(
-        color: AppTheme.brandAccentColor(context),
+        // Dark mode mirrors the web sidebar gradient so the aquamarine brand
+        // mark reads as genuinely aqua; light mode keeps the solid brand blue.
+        gradient: AppTheme.headerGradient(context),
+        color: AppTheme.headerGradient(context) == null
+            ? AppTheme.brandAccentColor(context)
+            : null,
+        border: Border(
+          bottom: BorderSide(color: AppTheme.borderColor(context)),
+        ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 
 class InfoSummaryTab {
   const InfoSummaryTab({
@@ -67,7 +68,13 @@ class _InfoSummaryState extends State<InfoSummary> {
         Row(
           children: List.generate(tabs.length * 2 - 1, (index) {
             if (index.isOdd) {
-              return Container(width: 1, height: 32, color: accentColor);
+              // Neutral --border separator (web uses one border token, not the
+              // bright primary, for dividers).
+              return Container(
+                width: 1,
+                height: 32,
+                color: AppTheme.borderColor(context),
+              );
             }
             final tabIndex = index ~/ 2;
             final tabData = tabs[tabIndex];
