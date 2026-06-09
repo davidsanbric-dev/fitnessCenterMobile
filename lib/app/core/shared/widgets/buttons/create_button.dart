@@ -14,6 +14,7 @@ class CreateButton extends StatelessWidget {
     this.spacing = 12,
     this.alignment = Alignment.centerLeft,
     this.style,
+    this.tapTargetSize,
   });
 
   final VoidCallback? onPressed;
@@ -25,6 +26,12 @@ class CreateButton extends StatelessWidget {
   final double spacing;
   final Alignment alignment;
   final ButtonStyle? style;
+
+  /// Overrides the button's tap-target sizing. Defaults to the framework's
+  /// `padded` behavior; pass [MaterialTapTargetSize.shrinkWrap] to drop the
+  /// extra invisible padding the framework adds to reach a 48px touch target
+  /// (useful when a caller wants the button to sit flush against neighbours).
+  final MaterialTapTargetSize? tapTargetSize;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +62,7 @@ class CreateButton extends StatelessWidget {
                   backgroundColor: AppTheme.brandAccentColor(context),
                   foregroundColor: Colors.white,
                   shape: AppTheme.buttonShape,
+                  tapTargetSize: tapTargetSize,
                 ),
           ),
         ),

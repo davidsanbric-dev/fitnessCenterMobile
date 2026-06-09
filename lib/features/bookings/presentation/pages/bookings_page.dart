@@ -135,13 +135,14 @@ class _BookingsPageState extends State<BookingsPage> {
 
   Widget _buildBookSessionButton() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 4),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
       child: CreateButton(
         label: 'Book a Session',
         onPressed: _openBookFlow,
         icon: const Icon(LucideIcons.calendarPlus, size: 18),
         alignment: Alignment.centerRight,
         spacing: 0,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }

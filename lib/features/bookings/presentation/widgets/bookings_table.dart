@@ -114,6 +114,7 @@ class BookingsTable extends StatelessWidget {
       ),
       heightFactor: 0.72,
       margin: const EdgeInsets.fromLTRB(2, 0, 2, 16),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
       toolbarSpacing: 6,
       pagination: pagination,
     );
