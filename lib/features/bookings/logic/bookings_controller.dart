@@ -1,9 +1,11 @@
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_state_dto.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/services/booking_service.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/assign_row_value_dialog.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/features/bookings/logic/services/bookings_service.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/booking_details_card_dialog.dart';
@@ -16,6 +18,10 @@ class BookingsController extends ControllerBase {
   static const String _reservedState = 'RESERVADA';
   static const String _confirmedState = 'CONFIRMADA';
   static const String _canceledState = 'ANULADA';
+
+  // Statuses members are not allowed to set from the generic picker. "Completed"
+  // is an operational/admin outcome, not a member-driven transition.
+  static const Set<String> _memberHiddenStatusCodes = {'completed', 'completada'};
   static const int _defaultBookingsPageSize = 6;
 
   BookingsController({
@@ -28,6 +34,7 @@ class BookingsController extends ControllerBase {
   final BookingService _bookingService;
 
   final bookings = <BookingDto>[].obs;
+  final states = <BookingStateDto>[].obs;
   final bookingsPageNumber = 1.obs;
   final bookingsPageSize = _defaultBookingsPageSize.obs;
   final bookingsTotalItems = 0.obs;
@@ -88,7 +95,7 @@ class BookingsController extends ControllerBase {
     try {
       final detail = await _bookingService.fetchBookingDetails(
         bookingId: normReqString(row['bookingId']),
-        locationCode: parseReqInt(row['locationId']),
+        locationCode: _resolveLocationArg(row),
       );
 
       if (!context.mounted) return;
@@ -133,6 +140,120 @@ class BookingsController extends ControllerBase {
     );
   }
 
+  /// Generic status picker: lets the member pick any backend-supported booking
+  /// status and apply it, mirroring the available-slots / web-admin flow.
+  Future<void> updateBookingStatus(
+    BuildContext context,
+    Map<String, dynamic> row,
+  ) async {
+    await _ensureBookingStatesLoaded();
+
+    final options = _buildStateOptions();
+    if (options.isEmpty) {
+      Get.snackbar(
+        'Action unavailable',
+        'No booking statuses are available to apply.',
+      );
+      return;
+    }
+
+    final initialValue = _resolveStateOptionId(
+      options,
+      _normalizeState(row['bookingStatus'] ?? row['state']),
+    );
+
+    if (!context.mounted) return;
+    final updatedState = await showAssignRowValueDialog(
+      context: context,
+      title: 'Update Status',
+      fieldLabel: 'Status',
+      emptySelectionMessage: 'Select a status',
+      confirmLabel: 'Update',
+      initialValue: initialValue,
+      options: options,
+      onSubmit: (value) async {
+        try {
+          final bookingId = normReqString(row['bookingId']);
+          await _bookingService.updateBookingStatus(
+            bookingId: bookingId,
+            state: value,
+            locationCode: _resolveLocationArg(row),
+          );
+          await _refreshBookingsAfterStatusUpdate(
+            bookingId: bookingId,
+            fallbackState: value,
+          );
+          return null;
+        } on ApiException catch (error) {
+          return error.message;
+        } catch (error) {
+          return 'Could not update status: $error';
+        }
+      },
+    );
+
+    if (updatedState != null) {
+      Get.snackbar('Status updated', 'Booking changed to $updatedState.');
+    }
+  }
+
+  Future<void> _ensureBookingStatesLoaded() async {
+    if (states.isNotEmpty) return;
+    try {
+      final data = await _bookingService.fetchBookingStates();
+      states.assignAll(data);
+    } catch (_) {
+      // Non-fatal: fall back to statuses derived from the loaded bookings.
+    }
+  }
+
+  List<AssignRowValueOption> _buildStateOptions() {
+    final source = states.isNotEmpty
+        ? states.toList(growable: false)
+        : bookings
+              .map(
+                (booking) =>
+                    BookingStateDto(code: booking.state, label: booking.state),
+              )
+              .toList(growable: false);
+
+    final selectable = source
+        .where(
+          (state) =>
+              !_memberHiddenStatusCodes.contains(
+                state.code.trim().toLowerCase(),
+              ) &&
+              !_memberHiddenStatusCodes.contains(
+                state.label.trim().toLowerCase(),
+              ),
+        )
+        .toList(growable: false);
+
+    return buildOptions<BookingStateDto>(
+      source: selectable,
+      idSelector: (state) => state.code,
+      labelSelector: (state) => state.label,
+      normalizeId: (value) => value.toLowerCase(),
+    );
+  }
+
+  String _resolveStateOptionId(
+    List<AssignRowValueOption> options,
+    String currentValue,
+  ) {
+    final normalized = currentValue.trim().toLowerCase();
+    if (normalized.isNotEmpty) {
+      for (final option in options) {
+        final optionId = option.id.trim().toLowerCase();
+        final optionLabel = option.label.trim().toLowerCase();
+        if (optionId == normalized || optionLabel == normalized) {
+          return option.id;
+        }
+      }
+    }
+    return options.first.id;
+  }
+
   Future<void> _updateBookingStatusAction({
     required Map<String, dynamic> row,
     required String actionCode,
@@ -153,7 +274,7 @@ class BookingsController extends ControllerBase {
       await _bookingService.updateBookingStatus(
         bookingId: bookingId,
         state: actionCode,
-        locationCode: parseReqInt(row['locationId']),
+        locationCode: _resolveLocationArg(row),
       );
 
       await _refreshBookingsAfterStatusUpdate(
@@ -173,6 +294,19 @@ class BookingsController extends ControllerBase {
 
   String _normalizeState(dynamic value) {
     return value?.toString().trim().toUpperCase() ?? '';
+  }
+
+  /// Location argument for booking requests. Prefers the real `/statics`
+  /// location code carried by the booking (e.g. `LOC001`); only falls back to
+  /// the numeric id when the code is missing. The booking's `locationId` is a
+  /// DB primary key, not the synthetic id the LocationCodeRegistry knows, so
+  /// sending it would resolve to the wrong code and 404.
+  Object _resolveLocationArg(Map<String, dynamic> row) {
+    final code = normOptString(row['locationCode']);
+    if (code != null && code.isNotEmpty) {
+      return code;
+    }
+    return parseReqInt(row['locationId']);
   }
 
   Future<void> _refreshBookingsAfterStatusUpdate({

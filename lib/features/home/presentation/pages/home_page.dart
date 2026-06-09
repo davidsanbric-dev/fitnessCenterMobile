@@ -29,6 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  static const int _homeTabIndex = 0;
   static const int _bookingsTabIndex = 1;
   static const int _fitnessDirectoryTabIndex = 6;
 
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late final BlogController _blogController;
   late Future<AvailableSlotDto?> _upcomingBooking;
   bool _hasNotified = false;
+  Worker? _navWorker;
 
   @override
   void initState() {
@@ -51,11 +53,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // even if a foreground push is delayed/dropped, and re-sync on resume.
     WidgetsBinding.instance.addObserver(this);
     _blogController.startAutoRefresh();
+    _attachNavListener();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _navWorker?.dispose();
     _blogController.stopAutoRefresh();
     super.dispose();
   }
@@ -65,11 +69,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       _blogController.loadBlogs();
       _blogController.startAutoRefresh();
+      // A booking may have been cancelled/changed (web, push, another device)
+      // while backgrounded; re-sync the upcoming summary on resume.
+      _refreshUpcomingBooking();
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive ||
         state == AppLifecycleState.hidden) {
       _blogController.stopAutoRefresh();
     }
+  }
+
+  // The bottom-nav uses an IndexedStack, so this page stays mounted across tab
+  // switches. Watch the active tab and re-fetch the upcoming booking whenever
+  // the user returns to Home, so a status change made on the Bookings tab
+  // (e.g. cancelling) is reflected here without a full app restart.
+  void _attachNavListener() {
+    if (!Get.isRegistered<AppRouter>()) {
+      return;
+    }
+    final appRouter = Get.find<AppRouter>();
+    _navWorker = ever<int>(appRouter.currentIndex, (index) {
+      if (index == _homeTabIndex) {
+        _refreshUpcomingBooking();
+      }
+    });
+  }
+
+  void _refreshUpcomingBooking() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _upcomingBooking = _loadUpcomingBooking();
+    });
   }
 
   Future<AvailableSlotDto?> _loadUpcomingBooking() async {
@@ -97,9 +129,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     // A session may have been booked within the dialog; refresh the home
     // "upcoming" summary so it reflects the change.
-    setState(() {
-      _upcomingBooking = _loadUpcomingBooking();
-    });
+    _refreshUpcomingBooking();
   }
 
   void _handleBookingsNavigation() {

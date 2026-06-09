@@ -14,6 +14,7 @@ class BookingDto {
     required this.memberPhone,
     required this.locationId,
     required this.locationName,
+    this.locationCode,
     this.trainerId,
     this.trainerName,
     this.disciplineId,
@@ -33,6 +34,7 @@ class BookingDto {
   final String memberPhone;
   final int locationId;
   final String locationName;
+  final String? locationCode;
   final String? trainerId;
   final String? trainerName;
   final int? disciplineId;
@@ -72,6 +74,10 @@ class BookingDto {
         resolvedLocation['locationName'] ??
         resolvedLocation['name'] ??
         json['locationName'];
+    final locationCodeRaw =
+        resolvedLocation['locationCode'] ??
+        resolvedLocation['location_code'] ??
+        json['locationCode'];
     final serviceNameRaw =
         resolvedServiceNode['serviceName'] ?? resolvedServiceNode['name'];
 
@@ -96,6 +102,7 @@ class BookingDto {
           '',
       locationId: normReqInt(locationIdRaw ?? 0),
       locationName: normReqString(locationNameRaw ?? ''),
+      locationCode: normOptString(locationCodeRaw),
       trainerId: normOptString(
         resolvedTrainer['trainerId'] ??
             resolvedTrainer['trainer_id'] ??
@@ -151,6 +158,7 @@ class BookingDto {
     String? memberPhone,
     int? locationId,
     String? locationName,
+    String? locationCode,
     String? trainerId,
     String? trainerName,
     int? disciplineId,
@@ -170,6 +178,7 @@ class BookingDto {
       memberPhone: memberPhone ?? this.memberPhone,
       locationId: locationId ?? this.locationId,
       locationName: locationName ?? this.locationName,
+      locationCode: locationCode ?? this.locationCode,
       trainerId: trainerId ?? this.trainerId,
       trainerName: trainerName ?? this.trainerName,
       disciplineId: disciplineId ?? this.disciplineId,

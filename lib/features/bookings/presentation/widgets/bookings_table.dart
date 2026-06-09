@@ -13,6 +13,7 @@ class BookingsTable extends StatelessWidget {
     this.onViewDetails,
     this.onConfirmReservation,
     this.onCancelReservation,
+    this.onUpdateBookingStatus,
     this.pageNumber,
     this.pageSize,
     this.totalItems,
@@ -29,6 +30,8 @@ class BookingsTable extends StatelessWidget {
   onConfirmReservation;
   final Future<void> Function(BuildContext context, Map<String, dynamic> row)?
   onCancelReservation;
+  final Future<void> Function(BuildContext context, Map<String, dynamic> row)?
+  onUpdateBookingStatus;
   final int? pageNumber;
   final int? pageSize;
   final int? totalItems;
@@ -59,6 +62,7 @@ class BookingsTable extends StatelessWidget {
               ? 'Club pending assignment'
               : locationName,
           'locationId': item.locationId,
+          'locationCode': item.locationCode,
           'duration': item.duration,
           'slot': item,
         };
@@ -107,6 +111,10 @@ class BookingsTable extends StatelessWidget {
           if (onCancelReservation != null) {
             handlers['onCancelReservation'] = (row) =>
                 onCancelReservation!(context, row);
+          }
+          if (onUpdateBookingStatus != null) {
+            handlers['onUpdateBookingStatus'] = (row) =>
+                onUpdateBookingStatus!(context, row);
           }
           return handlers.isEmpty ? null : handlers;
         }(),

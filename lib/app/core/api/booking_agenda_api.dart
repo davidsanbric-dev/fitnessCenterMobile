@@ -10,12 +10,22 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_bo
 class BookingAgendaApi extends ApiBase {
   BookingAgendaApi() : super();
 
-  static const String _canceledState = 'ANULADA';
+  // Statuses that must never surface as "upcoming": a cancelled or completed
+  // booking is no longer a future commitment. Matches the backend's English
+  // booking_status vocabulary (PENDING/CONFIRMED/CANCELLED/COMPLETED); the
+  // legacy Spanish codes are kept so older data is filtered too.
+  static const Set<String> _inactiveStates = {
+    'CANCELLED',
+    'ANULADA',
+    'COMPLETED',
+    'COMPLETADA',
+  };
 
   /// Returns the soonest booking at or after "now", drawn from the same full
   /// agenda the Bookings table lists (all locations, no date window), so the
   /// home summary always mirrors the next entry the user sees in that table.
-  /// Cancelled bookings are skipped. Returns null when nothing is upcoming.
+  /// Cancelled and completed bookings are skipped. Returns null when nothing
+  /// is upcoming.
   Future<AvailableSlotDto?> getNextUpcomingBooking({String? memberId}) async {
     final trimmedId = memberId?.trim();
     final now = DateTime.now().toLocal();
@@ -32,7 +42,7 @@ class BookingAgendaApi extends ApiBase {
     final upcoming = agendas
         .where((agenda) {
           final state = agenda.state.trim().toUpperCase();
-          return state != _canceledState &&
+          return !_inactiveStates.contains(state) &&
               !agenda.schedulingDate.toLocal().isBefore(now);
         })
         .toList(growable: false)

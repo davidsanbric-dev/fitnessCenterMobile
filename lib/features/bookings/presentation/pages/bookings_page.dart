@@ -167,6 +167,7 @@ class _BookingsPageState extends State<BookingsPage> {
                 onViewDetails: _controller.showBookingDetails,
                 onConfirmReservation: _controller.confirmReservation,
                 onCancelReservation: _controller.cancelReservation,
+                onUpdateBookingStatus: _controller.updateBookingStatus,
                 pageNumber: bookingsPageNumber,
                 pageSize: bookingsPageSize,
                 totalItems: bookingsTotalItems,
