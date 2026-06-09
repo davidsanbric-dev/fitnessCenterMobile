@@ -41,21 +41,29 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       return;
     }
 
-    var details = _claimMap(cachedUser, ['details', 'Details']);
-    var membershipFromClaims =
-        _claimValue(details, ['membership']) ??
-        _claimValue(cachedUser, ['membership']);
-    final needsSessionRefresh = details.isEmpty || membershipFromClaims == null;
-    if (needsSessionRefresh && _authApi.hasFirebaseSession) {
+    // Paint the fields from the cached claims right away. Name/email/phone/rut
+    // are already present locally, so the user sees them without waiting on the
+    // (multi-round-trip) Firebase session refresh below.
+    emit(_stateFromClaims(cachedUser));
+
+    // Only force a session refresh when the cached payload is structurally
+    // incomplete (no `details` map). A missing membership claim is not a reason
+    // to refresh: the session pipeline never writes one, so refreshing for it
+    // would pay the network cost on every visit without ever resolving it.
+    final details = _claimMap(cachedUser, ['details', 'Details']);
+    if (details.isEmpty && _authApi.hasFirebaseSession) {
       final refreshedClaims = await _authApi.restoreSessionFromFirebase();
       if (refreshedClaims != null && refreshedClaims.isNotEmpty) {
-        cachedUser = refreshedClaims;
-        details = _claimMap(cachedUser, ['details', 'Details']);
-        membershipFromClaims =
-            _claimValue(details, ['membership']) ??
-            _claimValue(cachedUser, ['membership']);
+        emit(_stateFromClaims(refreshedClaims));
       }
     }
+  }
+
+  ProfileState _stateFromClaims(Map<String, dynamic> claims) {
+    final details = _claimMap(claims, ['details', 'Details']);
+    final membershipFromClaims =
+        _claimValue(details, ['membership']) ??
+        _claimValue(claims, ['membership']);
 
     final detailsLastName = _buildLastName(
       _claimValue(details, ['paternalLastName']),
@@ -67,38 +75,30 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
 
     final fullNameFromClaims = _buildFullName(
-      _claimValue(cachedUser, ['name', 'firstName']),
-      _claimValue(cachedUser, ['lastName', 'paternalLastName']),
-      fallback: _claimValue(cachedUser, ['userName']),
+      _claimValue(claims, ['name', 'firstName']),
+      _claimValue(claims, ['lastName', 'paternalLastName']),
+      fallback: _claimValue(claims, ['userName']),
     );
-    final emailFromClaims = _claimValue(cachedUser, ['mail', 'email']);
-    final phoneFromClaims = _claimValue(cachedUser, [
+    final emailFromClaims = _claimValue(claims, ['mail', 'email']);
+    final phoneFromClaims = _claimValue(claims, [
       'mobilePhone',
       'landlinePhone',
       'phone',
     ]);
-    final rutFromClaims = _claimValue(cachedUser, [
+    final rutFromClaims = _claimValue(claims, [
       'memberId',
       'rut',
       'documentId',
     ]);
 
-    final resolvedFullName = detailsFullName ?? fullNameFromClaims;
-    final resolvedEmail = _claimValue(details, ['email']) ?? emailFromClaims;
-    final resolvedPhone =
-        _claimValue(details, ['mobilePhone', 'landlinePhone']) ??
-        phoneFromClaims;
-    final resolvedRut = _claimValue(details, ['memberId']) ?? rutFromClaims;
-    final resolvedMembership = membershipFromClaims;
-
-    emit(
-      state.copyWith(
-        fullName: resolvedFullName,
-        email: resolvedEmail,
-        phone: resolvedPhone,
-        rut: resolvedRut,
-        selectedMembership: resolvedMembership,
-      ),
+    return state.copyWith(
+      fullName: detailsFullName ?? fullNameFromClaims,
+      email: _claimValue(details, ['email']) ?? emailFromClaims,
+      phone:
+          _claimValue(details, ['mobilePhone', 'landlinePhone']) ??
+          phoneFromClaims,
+      rut: _claimValue(details, ['memberId']) ?? rutFromClaims,
+      selectedMembership: membershipFromClaims,
     );
   }
 
