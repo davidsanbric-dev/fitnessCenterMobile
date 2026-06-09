@@ -87,7 +87,7 @@ class AvailableSlotsService {
     await _bookingsApi.scheduleBookingByClassType(
       request: ScheduleBookingByClassTypeRequest(
         bookingDate: formatDateIso(schedulingDate),
-        bookingTime: formatTime(schedulingDate),
+        bookingTime: formatTimeIso(schedulingDate),
         locationCode: locationId.toString(),
         trainerCode: trainerCode,
         slotAssignmentCode: slotAssignmentCode,
@@ -116,7 +116,7 @@ class AvailableSlotsService {
 
     return ScheduleBookingRequest(
       date: formatDateIso(schedulingDate),
-      time: formatTime(schedulingDate),
+      time: formatTimeIso(schedulingDate),
       locationCode: locationCode.toString(),
       bookingDuration: slot.duration ?? 0,
       disciplineCode: disciplineCode ?? 0,

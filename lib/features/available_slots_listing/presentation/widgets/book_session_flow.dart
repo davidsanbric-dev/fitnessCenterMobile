@@ -2,6 +2,7 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.
 import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/scheduling_mode_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,28 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 /// branch relies on a [Stack] with `StackFit.expand` while the other branches
 /// are scroll-wrapped internally, mirroring the original page layout.
 class BookSessionFlow extends StatefulWidget {
-  const BookSessionFlow({super.key, this.scrollBottomPadding = 120});
+  const BookSessionFlow({
+    super.key,
+    this.scrollBottomPadding = 120,
+    this.onHeaderStateChanged,
+    this.onExit,
+  });
 
   /// Bottom padding applied to the scroll-wrapped branches. Defaults to a value
   /// that clears the bottom navigation bar when hosted as a page; dialogs can
   /// pass a smaller value.
   final double scrollBottomPadding;
+
+  /// When provided, the flow runs "chromeless": each stage suppresses its own
+  /// [PageHeader] and instead reports its header state up so the host can render
+  /// a single unified header. When null, the flow renders its own headers (the
+  /// dialog and standalone-tab hosting).
+  final BookSessionHeaderReporter? onHeaderStateChanged;
+
+  /// Invoked when the user backs out of the initial scheduling-mode selection.
+  /// Hosts that embed the flow (e.g. inline on the bookings page) use this to
+  /// dismiss the flow and restore their previous content.
+  final VoidCallback? onExit;
 
   @override
   State<BookSessionFlow> createState() => BookSessionFlowState();
@@ -87,8 +104,34 @@ class BookSessionFlowState extends State<BookSessionFlow> {
 
   double _horizontalPaddingForWidth(double width) => width > 600 ? 28.0 : 16.0;
 
+  /// Reports header state to a chromeless host, deferred to after the current
+  /// build so it can safely drive the host's `setState`.
+  void _scheduleHeaderReport(
+    String stageKey,
+    String? secondarySubtitle,
+    IconData? secondarySubtitleIcon,
+    VoidCallback? backHandler,
+  ) {
+    final reporter = widget.onHeaderStateChanged;
+    if (reporter == null) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      reporter(
+        stageKey,
+        secondarySubtitle,
+        secondarySubtitleIcon,
+        backHandler,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final chromeless = widget.onHeaderStateChanged != null;
     final showCapabilityFlow =
         _hasSelectedSchedulingMode &&
         _schedulingMode == SchedulingMode.byService;
@@ -96,12 +139,19 @@ class BookSessionFlowState extends State<BookSessionFlow> {
         _hasSelectedSchedulingMode &&
         _schedulingMode == SchedulingMode.byDisciplineTrainer;
 
+    // The initial scheduling-mode stage has no second-level subtitle; backing
+    // out of it exits the flow entirely.
+    if (chromeless && !_hasSelectedSchedulingMode) {
+      _scheduleHeaderReport('mode', null, null, widget.onExit);
+    }
+
     return showDisciplineFlow
         ? AvailableSlotsByDisciplineTrainerPage(
             isEmbedded: true,
             onBack: _backToSchedulingMode,
             headerSubtitle: _byDisciplineTrainerHeaderSubtitle,
             headerSubtitleIcon: LucideIcons.dumbbell,
+            onHeaderStateChanged: widget.onHeaderStateChanged,
           )
         : LayoutBuilder(
             builder: (context, constraints) {
@@ -113,7 +163,7 @@ class BookSessionFlowState extends State<BookSessionFlow> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (!showCapabilityFlow)
+                    if (!showCapabilityFlow && !chromeless)
                       const PageHeader(title: 'Book a Session'),
                     if (showCapabilityFlow)
                       AvailableSlotsByCapabilityPage(
@@ -122,6 +172,7 @@ class BookSessionFlowState extends State<BookSessionFlow> {
                         onBack: _backToSchedulingMode,
                         headerSubtitle: _byServiceHeaderSubtitle,
                         headerSubtitleIcon: LucideIcons.trophy,
+                        onHeaderStateChanged: widget.onHeaderStateChanged,
                       )
                     else
                       Padding(

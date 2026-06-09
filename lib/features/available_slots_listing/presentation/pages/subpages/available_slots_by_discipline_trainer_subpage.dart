@@ -17,6 +17,7 @@ import 'package:portfolio_mobile_app/features/available_slots_listing/presentati
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_dropdown_overlay.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_filter_fields.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_table.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/discipline_trainer_filter_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,7 @@ class AvailableSlotsByDisciplineTrainerPage extends ConsumerStatefulWidget {
     this.horizontalPadding,
     this.headerSubtitle,
     this.headerSubtitleIcon,
+    this.onHeaderStateChanged,
   });
 
   final VoidCallback? onBack;
@@ -37,6 +39,10 @@ class AvailableSlotsByDisciplineTrainerPage extends ConsumerStatefulWidget {
   final double? horizontalPadding;
   final String? headerSubtitle;
   final IconData? headerSubtitleIcon;
+
+  /// When provided, this subpage suppresses its own [PageHeader] and reports its
+  /// current stage/back handler up so a host renders a unified page header.
+  final BookSessionHeaderReporter? onHeaderStateChanged;
 
   @override
   ConsumerState<AvailableSlotsByDisciplineTrainerPage> createState() =>
@@ -151,6 +157,24 @@ class _AvailableSlotsByDisciplineTrainerPageState
     );
   }
 
+  void _scheduleHeaderReport(String stageKey, VoidCallback? backHandler) {
+    final reporter = widget.onHeaderStateChanged;
+    if (reporter == null) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      reporter(
+        stageKey,
+        widget.headerSubtitle,
+        widget.headerSubtitleIcon,
+        backHandler,
+      );
+    });
+  }
+
   double _horizontalPaddingForWidth(double width) => width > 600 ? 28.0 : 16.0;
 
   bool _shouldShowConsultButton(
@@ -223,6 +247,10 @@ class _AvailableSlotsByDisciplineTrainerPageState
       final headerBackHandler = showAvailabilityTable
           ? _uiActions.handleEditFiltersPressed
           : _handleBack;
+      _scheduleHeaderReport(
+        showAvailabilityTable ? 'disc:availability' : 'disc:filters',
+        headerBackHandler,
+      );
 
       return LayoutBuilder(
         builder: (context, constraints) {
@@ -274,12 +302,13 @@ class _AvailableSlotsByDisciplineTrainerPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    PageHeader(
-                      title: 'Book a Session',
-                      subtitle: widget.headerSubtitle,
-                      subtitleIcon: widget.headerSubtitleIcon,
-                      onBackButtonPressed: headerBackHandler,
-                    ),
+                    if (widget.onHeaderStateChanged == null)
+                      PageHeader(
+                        title: 'Book a Session',
+                        subtitle: widget.headerSubtitle,
+                        subtitleIcon: widget.headerSubtitleIcon,
+                        onBackButtonPressed: headerBackHandler,
+                      ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         horizontalPadding,

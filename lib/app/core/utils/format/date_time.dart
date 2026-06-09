@@ -66,6 +66,15 @@ String formatRemaining(Duration value) {
   return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 }
 
+/// Formats a [DateTime] into a 24-hour `HH:mm` string for API payloads
+/// (parsed server-side via `time.fromisoformat`). Use [formatTime] for display.
+String formatTimeIso(DateTime value) {
+  final local = _normalizeDateTime(value);
+  final hour = local.hour.toString().padLeft(2, '0');
+  final minute = local.minute.toString().padLeft(2, '0');
+  return '$hour:$minute';
+}
+
 /// 12-hour clock with AM/PM, consistent with the admin web app's time format.
 String formatTime(DateTime value) {
   final local = value.toLocal();

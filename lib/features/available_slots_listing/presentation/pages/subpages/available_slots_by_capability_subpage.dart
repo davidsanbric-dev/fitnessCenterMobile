@@ -3,6 +3,7 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capabi
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
+import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_by_capability_table.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_group_filter_box.dart';
@@ -20,6 +21,7 @@ class AvailableSlotsByCapabilityPage extends StatefulWidget {
     this.horizontalPadding,
     this.headerSubtitle,
     this.headerSubtitleIcon,
+    this.onHeaderStateChanged,
   });
 
   final VoidCallback? onBack;
@@ -27,6 +29,10 @@ class AvailableSlotsByCapabilityPage extends StatefulWidget {
   final double? horizontalPadding;
   final String? headerSubtitle;
   final IconData? headerSubtitleIcon;
+
+  /// When provided, this subpage suppresses its own [PageHeader] and reports its
+  /// current stage/back handler up so a host renders a unified page header.
+  final BookSessionHeaderReporter? onHeaderStateChanged;
 
   @override
   State<AvailableSlotsByCapabilityPage> createState() =>
@@ -163,6 +169,41 @@ class _AvailableSlotsByCapabilityPageState
     return _backToSubgroupItems;
   }
 
+  String _stageKeyFor({
+    required CapabilityDto? selectedGroup,
+    required CapabilityDto? selectedSubgroup,
+    required CapabilityDto? selectedSubgroupItem,
+  }) {
+    if (selectedGroup == null) {
+      return 'cap:group';
+    }
+    if (selectedSubgroup == null) {
+      return 'cap:subgroup';
+    }
+    if (selectedSubgroupItem == null) {
+      return 'cap:items';
+    }
+    return 'cap:availability';
+  }
+
+  void _scheduleHeaderReport(String stageKey, VoidCallback? backHandler) {
+    final reporter = widget.onHeaderStateChanged;
+    if (reporter == null) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      reporter(
+        stageKey,
+        widget.headerSubtitle,
+        widget.headerSubtitleIcon,
+        backHandler,
+      );
+    });
+  }
+
   Future<void> _handleReserveCapabilitySlot(
     AvailableSlotByCapabilityDto slot,
   ) async {
@@ -225,6 +266,14 @@ class _AvailableSlotsByCapabilityPageState
         selectedSubgroup: _selectedSubgroup,
         selectedSubgroupItem: _selectedSubgroupItem,
       );
+      _scheduleHeaderReport(
+        _stageKeyFor(
+          selectedGroup: _selectedGroup,
+          selectedSubgroup: _selectedSubgroup,
+          selectedSubgroupItem: _selectedSubgroupItem,
+        ),
+        backHandler,
+      );
 
       return LayoutBuilder(
         builder: (context, constraints) {
@@ -239,12 +288,13 @@ class _AvailableSlotsByCapabilityPageState
           final content = Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PageHeader(
-                title: 'Book a Session',
-                subtitle: widget.headerSubtitle,
-                subtitleIcon: widget.headerSubtitleIcon,
-                onBackButtonPressed: backHandler,
-              ),
+              if (widget.onHeaderStateChanged == null)
+                PageHeader(
+                  title: 'Book a Session',
+                  subtitle: widget.headerSubtitle,
+                  subtitleIcon: widget.headerSubtitleIcon,
+                  onBackButtonPressed: backHandler,
+                ),
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   horizontalPadding,

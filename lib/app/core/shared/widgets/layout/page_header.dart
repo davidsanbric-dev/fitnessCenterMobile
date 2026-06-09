@@ -48,6 +48,8 @@ class PageHeader extends StatelessWidget {
     this.child,
     this.subtitle,
     this.subtitleIcon,
+    this.secondarySubtitle,
+    this.secondarySubtitleIcon,
     this.subtitleIconSize = 18,
     this.subtitleSpacing = 6,
     this.onBackButtonPressed,
@@ -62,6 +64,13 @@ class PageHeader extends StatelessWidget {
   final Widget? child;
   final String? subtitle;
   final IconData? subtitleIcon;
+
+  /// Optional second-level subtitle rendered below [subtitle] in a smaller,
+  /// more muted style. Lets a single header express a three-tier hierarchy
+  /// (title › subtitle › secondary subtitle), e.g. the bookings page showing
+  /// `My Bookings › Book a Session › By Class Type`.
+  final String? secondarySubtitle;
+  final IconData? secondarySubtitleIcon;
   final double subtitleIconSize;
   final double subtitleSpacing;
   final VoidCallback? onBackButtonPressed;
@@ -72,7 +81,17 @@ class PageHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolvedSubtitle = subtitle?.trim();
     final hasSubtitle = resolvedSubtitle != null && resolvedSubtitle.isNotEmpty;
-    final content = child ?? _buildTitleContent(resolvedSubtitle, hasSubtitle);
+    final resolvedSecondary = secondarySubtitle?.trim();
+    final hasSecondary =
+        resolvedSecondary != null && resolvedSecondary.isNotEmpty;
+    final content =
+        child ??
+        _buildTitleContent(
+          resolvedSubtitle,
+          hasSubtitle,
+          resolvedSecondary,
+          hasSecondary,
+        );
     final onBackPressed = onBackButtonPressed;
     final resolvedLeading = onBackPressed == null
         ? null
@@ -109,7 +128,12 @@ class PageHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 34, 24, 22),
       alignment: Alignment.bottomCenter,
-      constraints: const BoxConstraints(minHeight: 90, maxHeight: 110),
+      constraints: BoxConstraints(
+        minHeight: 90,
+        // A second-level subtitle adds a third text line, so give the bar a
+        // little more vertical room to avoid clipping it.
+        maxHeight: hasSecondary ? 134 : 110,
+      ),
       decoration: BoxDecoration(
         // Dark mode mirrors the web sidebar gradient so the aquamarine brand
         // mark reads as genuinely aqua; light mode keeps the solid brand blue.
@@ -129,13 +153,19 @@ class PageHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleContent(String? resolvedSubtitle, bool hasSubtitle) {
+  Widget _buildTitleContent(
+    String? resolvedSubtitle,
+    bool hasSubtitle,
+    String? resolvedSecondary,
+    bool hasSecondary,
+  ) {
+    final compact = hasSubtitle || hasSecondary;
     final titleWidget = Text(
       title!,
-      style: _titleStyle(hasSubtitle),
+      style: _titleStyle(compact),
       textAlign: TextAlign.center,
     );
-    if (!hasSubtitle) {
+    if (!compact) {
       return titleWidget;
     }
 
@@ -143,8 +173,14 @@ class PageHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget,
-        SizedBox(height: _resolvedSubtitleSpacing()),
-        _buildSubtitleRow(resolvedSubtitle!, hasSubtitle),
+        if (hasSubtitle) ...[
+          SizedBox(height: _resolvedSubtitleSpacing()),
+          _buildSubtitleRow(resolvedSubtitle!, compact),
+        ],
+        if (hasSecondary) ...[
+          const SizedBox(height: 3),
+          _buildSecondarySubtitleRow(resolvedSecondary!),
+        ],
       ],
     );
   }
@@ -184,6 +220,31 @@ class PageHeader extends StatelessWidget {
           if (subtitleIcon != null)
             Icon(subtitleIcon, size: resolvedIconSize, color: mutedColor),
           if (subtitleIcon != null) const SizedBox(width: 6),
+          Text(label, style: labelStyle, textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSecondarySubtitleRow(String label) {
+    final mutedColor = Colors.white.withValues(alpha: 0.62);
+    final labelStyle = AppTheme.orangeBarTextNormal.copyWith(
+      fontSize: 15,
+      height: 1.1,
+      fontWeight: FontWeight.w500,
+      color: mutedColor,
+    );
+    final resolvedIconSize = subtitleIconSize - 4;
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (secondarySubtitleIcon != null)
+            Icon(secondarySubtitleIcon, size: resolvedIconSize, color: mutedColor),
+          if (secondarySubtitleIcon != null) const SizedBox(width: 5),
           Text(label, style: labelStyle, textAlign: TextAlign.center),
         ],
       ),
