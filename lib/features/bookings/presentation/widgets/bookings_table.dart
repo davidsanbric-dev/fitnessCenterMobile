@@ -19,6 +19,7 @@ class BookingsTable extends StatelessWidget {
     this.totalItems,
     this.onPageChanged,
     this.showPagination = false,
+    this.emptyLabel = 'You have no assigned bookings.',
   });
 
   final List<BookingDto> bookings;
@@ -37,6 +38,7 @@ class BookingsTable extends StatelessWidget {
   final int? totalItems;
   final ValueChanged<int>? onPageChanged;
   final bool showPagination;
+  final String emptyLabel;
 
   List<Map<String, dynamic>> get _rows => bookings
       .map((item) {
@@ -118,7 +120,7 @@ class BookingsTable extends StatelessWidget {
           }
           return handlers.isEmpty ? null : handlers;
         }(),
-        emptyLabel: 'You have no assigned bookings.',
+        emptyLabel: emptyLabel,
       ),
       heightFactor: 0.72,
       margin: const EdgeInsets.fromLTRB(2, 0, 2, 16),

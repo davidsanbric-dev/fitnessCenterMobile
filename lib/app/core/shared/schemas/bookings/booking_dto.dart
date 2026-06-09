@@ -22,6 +22,7 @@ class BookingDto {
     this.serviceId,
     this.serviceName,
     this.preparation,
+    this.notes,
   });
 
   final String bookingId;
@@ -42,6 +43,7 @@ class BookingDto {
   final int? serviceId;
   final String? serviceName;
   final String? preparation;
+  final String? notes;
 
   factory BookingDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
@@ -133,6 +135,7 @@ class BookingDto {
       preparation:
           normOptString(json['preparation']) ??
           normOptString(json['preparation_info']),
+      notes: normOptString(json['notes']),
     );
   }
 
@@ -166,6 +169,7 @@ class BookingDto {
     int? serviceId,
     String? serviceName,
     String? preparation,
+    String? notes,
   }) {
     return BookingDto(
       bookingId: bookingId ?? this.bookingId,
@@ -186,6 +190,7 @@ class BookingDto {
       serviceId: serviceId ?? this.serviceId,
       serviceName: serviceName ?? this.serviceName,
       preparation: preparation ?? this.preparation,
+      notes: notes ?? this.notes,
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/personal_member_data_page.dart';
+import 'package:portfolio_mobile_app/features/profile/presentation/pages/training_history_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _showPersonalData = false;
+  bool _showTrainingHistory = false;
 
   Future<void> _handleLogout(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -43,6 +45,18 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void _openTrainingHistory() {
+    setState(() {
+      _showTrainingHistory = true;
+    });
+  }
+
+  void _closeTrainingHistory() {
+    setState(() {
+      _showTrainingHistory = false;
+    });
+  }
+
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('This section will be available soon.')),
@@ -62,11 +76,24 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
+    if (_showTrainingHistory) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          _closeTrainingHistory();
+        },
+        child: Scaffold(
+          body: TrainingHistoryView(onBack: _closeTrainingHistory),
+        ),
+      );
+    }
+
     final options = [
       _ProfileOption(title: 'Personal Information', onTap: _openPersonalData),
       _ProfileOption(
         title: 'Training History',
-        onTap: () => _showComingSoon(context),
+        onTap: _openTrainingHistory,
       ),
       _ProfileOption(
         title: 'Assessment Results',

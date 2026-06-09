@@ -27,6 +27,7 @@ mixin BookingDetailsCardDialog {
     final memberItems = _buildMemberItems(detail);
     final trainerItems = _buildTrainerItems(detail);
     final serviceItems = _buildServiceItems(context, detail);
+    final feedbackItems = _buildFeedbackItems(detail);
     return [
       RowDetailsSection(title: 'General Information', items: generalItems),
       RowDetailsSection(title: 'Member', items: memberItems),
@@ -34,6 +35,22 @@ mixin BookingDetailsCardDialog {
         RowDetailsSection(title: 'Trainer', items: trainerItems),
       if (serviceItems.isNotEmpty)
         RowDetailsSection(title: 'Class', items: serviceItems),
+      if (feedbackItems.isNotEmpty)
+        RowDetailsSection(title: 'Session Feedback', items: feedbackItems),
+    ];
+  }
+
+  static List<RowDetailsItem> _buildFeedbackItems(BookingDto detail) {
+    final notes = detail.notes?.trim() ?? '';
+    if (notes.isEmpty) {
+      return const [];
+    }
+    return [
+      RowDetailsItem(
+        label: 'Trainer Notes',
+        value: notes,
+        icon: LucideIcons.messageSquare,
+      ),
     ];
   }
 
