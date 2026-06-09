@@ -135,6 +135,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void _handleAssessmentResultsNavigation() {
+    ProfileNavigationService.instance.requestAssessmentResults();
+    if (Get.isRegistered<AppRouter>()) {
+      Get.find<AppRouter>().changeTab(_profileTabIndex);
+      return;
+    }
+  }
+
   String _greetingFor(AuthService authService) {
     final name = authService.userName?.trim();
     if (name == null || name.isEmpty) {
@@ -216,9 +224,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         iconData: LucideIcons.dumbbell,
         onTap: _handleDisciplinesNavigation,
       ),
-      const ShortcutCardData(
+      ShortcutCardData(
         title: 'Fitness\nAssessments',
         iconData: LucideIcons.heartPulse,
+        onTap: _handleAssessmentResultsNavigation,
       ),
       ShortcutCardData(
         title: 'Meet\nTrainers',

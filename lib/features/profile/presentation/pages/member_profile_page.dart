@@ -50,6 +50,12 @@ class _ProfilePageState extends State<ProfilePage> {
         _showAssessmentResults = false;
         _showTrainingHistory = true;
       });
+    } else if (view == 'assessment_results') {
+      setState(() {
+        _showPersonalData = false;
+        _showTrainingHistory = false;
+        _showAssessmentResults = true;
+      });
     }
   }
 
