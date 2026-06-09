@@ -10,43 +10,39 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_bo
 class BookingAgendaApi extends ApiBase {
   BookingAgendaApi() : super();
 
-  Future<AvailableSlotDto?> getTodayBooking({String? memberId}) async {
+  static const String _canceledState = 'ANULADA';
+
+  /// Returns the soonest booking at or after "now", drawn from the same full
+  /// agenda the Bookings table lists (all locations, no date window), so the
+  /// home summary always mirrors the next entry the user sees in that table.
+  /// Cancelled bookings are skipped. Returns null when nothing is upcoming.
+  Future<AvailableSlotDto?> getNextUpcomingBooking({String? memberId}) async {
     final trimmedId = memberId?.trim();
     final now = DateTime.now().toLocal();
-    final today = DateTime(now.year, now.month, now.day);
 
     final agendas = await getAgenda(
       memberId: trimmedId?.isEmpty ?? true ? null : trimmedId,
-      startDate: today,
-      endDate: today,
+      includeAllLocations: true,
     );
 
     if (agendas.isEmpty) {
       return null;
     }
 
-    final todaysBookings = agendas
+    final upcoming = agendas
         .where((agenda) {
-          final schedulingDate = agenda.schedulingDate.toLocal();
-          return schedulingDate.year == today.year &&
-              schedulingDate.month == today.month &&
-              schedulingDate.day == today.day;
+          final state = agenda.state.trim().toUpperCase();
+          return state != _canceledState &&
+              !agenda.schedulingDate.toLocal().isBefore(now);
         })
-        .toList(growable: false);
+        .toList(growable: false)
+      ..sort((a, b) => a.schedulingDate.compareTo(b.schedulingDate));
 
-    if (todaysBookings.isEmpty) {
+    if (upcoming.isEmpty) {
       return null;
     }
 
-    final sortedBookings = [...todaysBookings]
-      ..sort((a, b) => a.schedulingDate.compareTo(b.schedulingDate));
-
-    final selectedBooking = sortedBookings.firstWhere(
-      (booking) => !booking.schedulingDate.isBefore(now),
-      orElse: () => sortedBookings.first,
-    );
-
-    return _mapAgendaToAvailableBooking(selectedBooking);
+    return _mapAgendaToAvailableBooking(upcoming.first);
   }
 
   Future<List<BookingDto>> getAgenda({

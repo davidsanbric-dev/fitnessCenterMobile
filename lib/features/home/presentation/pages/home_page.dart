@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   late final BookingAgendaApi _bookingsApi;
   late final BlogController _blogController;
-  late Future<AvailableSlotDto?> _todayBooking;
+  late Future<AvailableSlotDto?> _upcomingBooking;
   bool _hasNotified = false;
 
   @override
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _blogController = Get.isRegistered<BlogController>()
         ? Get.find<BlogController>()
         : Get.put(BlogController(), permanent: true);
-    _todayBooking = _loadTodayBooking();
+    _upcomingBooking = _loadUpcomingBooking();
     // Safety net for the "user already on home" case: keep the slider current
     // even if a foreground push is delayed/dropped, and re-sync on resume.
     WidgetsBinding.instance.addObserver(this);
@@ -72,9 +72,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  Future<AvailableSlotDto?> _loadTodayBooking() async {
+  Future<AvailableSlotDto?> _loadUpcomingBooking() async {
     try {
-      return await _bookingsApi.getTodayBooking();
+      return await _bookingsApi.getNextUpcomingBooking();
     } catch (error) {
       rethrow;
     }
@@ -96,9 +96,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return;
     }
     // A session may have been booked within the dialog; refresh the home
-    // "today" summary so it reflects the change.
+    // "upcoming" summary so it reflects the change.
     setState(() {
-      _todayBooking = _loadTodayBooking();
+      _upcomingBooking = _loadUpcomingBooking();
     });
   }
 
@@ -211,15 +211,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 22),
                     FutureBuilder<AvailableSlotDto?>(
-                      future: _todayBooking,
+                      future: _upcomingBooking,
                       builder: (context, snapshot) {
                         final slot = snapshot.data;
                         if (slot != null &&
                             !_hasNotified &&
-                            snapshot.connectionState == ConnectionState.done) {
+                            snapshot.connectionState == ConnectionState.done &&
+                            _isToday(slot.schedulingDate)) {
                           _notifyTodayBooking(slot);
                         }
-                        final todayDescription = _buildTodayDescription(
+                        final upcomingDescription = _buildUpcomingDescription(
                           slot,
                           isLoading:
                               snapshot.connectionState ==
@@ -229,7 +230,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         final tabs = [
                           InfoSummaryTab(
                             label: 'Upcoming Bookings',
-                            description: todayDescription,
+                            description: upcomingDescription,
                             iconData: LucideIcons.calendarClock,
                           ),
                           const InfoSummaryTab(
@@ -270,25 +271,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  String _buildTodayDescription(
+  String _buildUpcomingDescription(
     AvailableSlotDto? slot, {
     required bool isLoading,
     Object? error,
   }) {
     if (isLoading) {
-      return 'Loading your booking for today...';
+      return 'Loading your next booking...';
     }
     if (error != null) {
-      return 'We could not load your booking for today.';
+      return 'We could not load your upcoming bookings.';
     }
     if (slot == null) {
       return 'You have no upcoming bookings at FitnessCenter.';
     }
-    final dateText = DateTimeCell.formatDate(slot.schedulingDate);
     final timeText = DateTimeCell.formatTime(slot.schedulingDate);
     final service = slot.serviceName.isEmpty ? 'Class' : slot.serviceName;
     final trainer = slot.trainerName.isEmpty ? '' : ' with ${slot.trainerName}';
-    return 'Today: $service$trainer at ${slot.locationName}, $dateText at $timeText.';
+    final location = slot.locationName.isEmpty
+        ? 'FitnessCenter'
+        : slot.locationName;
+    if (_isToday(slot.schedulingDate)) {
+      return 'Today: $service$trainer at $location, $timeText.';
+    }
+    final dateText = DateTimeCell.formatDate(slot.schedulingDate);
+    return 'Next: $service$trainer at $location, $dateText at $timeText.';
+  }
+
+  bool _isToday(DateTime value) {
+    final now = DateTime.now();
+    final local = value.toLocal();
+    return local.year == now.year &&
+        local.month == now.month &&
+        local.day == now.day;
   }
 
   Future<void> _notifyTodayBooking(AvailableSlotDto slot) async {
