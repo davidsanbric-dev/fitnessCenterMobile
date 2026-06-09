@@ -7,6 +7,8 @@ class InfoSummaryTab {
     required this.label,
     required this.description,
     this.iconData,
+    this.actionLabel,
+    this.onActionPressed,
   });
 
   final String label;
@@ -15,6 +17,13 @@ class InfoSummaryTab {
   /// Optional icon shown beside the tab label and in the summary circle while
   /// this tab is active.
   final IconData? iconData;
+
+  /// When set, overrides the widget-level [InfoSummary.actionLabel] for this
+  /// specific tab. Falls back to the widget-level value when null.
+  final String? actionLabel;
+
+  /// When set, overrides [InfoSummary.onActionPressed] for this tab.
+  final VoidCallback? onActionPressed;
 }
 
 class InfoSummary extends StatefulWidget {
@@ -61,6 +70,11 @@ class _InfoSummaryState extends State<InfoSummary> {
       fontWeight: FontWeight.w500,
       fontSize: 13,
     );
+
+    final resolvedActionLabel =
+        tab.actionLabel ?? widget.actionLabel;
+    final resolvedActionPressed =
+        tab.onActionPressed ?? widget.onActionPressed;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,13 +210,13 @@ class _InfoSummaryState extends State<InfoSummary> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: widget.onActionPressed,
+                  onPressed: resolvedActionPressed,
                   style: TextButton.styleFrom(
                     foregroundColor: accentColor,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   child: Text(
-                    widget.actionLabel,
+                    resolvedActionLabel,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 12,

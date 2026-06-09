@@ -1,6 +1,8 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
+import 'package:portfolio_mobile_app/app/core/services/profile_navigation_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/features/home/logic/blog_controller.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
@@ -33,9 +35,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static const int _bookingsTabIndex = 1;
   static const int _fitnessDirectoryTabIndex = 6;
 
+  static const int _profileTabIndex = 5;
+
   late final BookingAgendaApi _bookingsApi;
   late final BlogController _blogController;
   late Future<AvailableSlotDto?> _upcomingBooking;
+  late Future<BookingDto?> _lastCompletedBooking;
   bool _hasNotified = false;
   Worker? _navWorker;
 
@@ -49,6 +54,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ? Get.find<BlogController>()
         : Get.put(BlogController(), permanent: true);
     _upcomingBooking = _loadUpcomingBooking();
+    _lastCompletedBooking = _loadLastCompletedBooking();
     // Safety net for the "user already on home" case: keep the slider current
     // even if a foreground push is delayed/dropped, and re-sync on resume.
     WidgetsBinding.instance.addObserver(this);
@@ -109,6 +115,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return await _bookingsApi.getNextUpcomingBooking();
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<BookingDto?> _loadLastCompletedBooking() async {
+    final items = await _bookingsApi.getAgenda(
+      bookingStatus: 'COMPLETED',
+      includeAllLocations: true,
+    );
+    // API returns results sorted booking_datetime DESC; first entry is most recent.
+    return items.isEmpty ? null : items.first;
+  }
+
+  void _handleProfileHistoryNavigation() {
+    ProfileNavigationService.instance.requestTrainingHistory();
+    if (Get.isRegistered<AppRouter>()) {
+      Get.find<AppRouter>().changeTab(_profileTabIndex);
+      return;
     }
   }
 
@@ -240,40 +263,58 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       onPressed: _openBookSessionDialog,
                     ),
                     const SizedBox(height: 22),
-                    FutureBuilder<AvailableSlotDto?>(
-                      future: _upcomingBooking,
-                      builder: (context, snapshot) {
-                        final slot = snapshot.data;
-                        if (slot != null &&
-                            !_hasNotified &&
-                            snapshot.connectionState == ConnectionState.done &&
-                            _isToday(slot.schedulingDate)) {
-                          _notifyTodayBooking(slot);
-                        }
-                        final upcomingDescription = _buildUpcomingDescription(
-                          slot,
-                          isLoading:
-                              snapshot.connectionState ==
-                              ConnectionState.waiting,
-                          error: snapshot.error,
-                        );
-                        final tabs = [
-                          InfoSummaryTab(
-                            label: 'Upcoming Bookings',
-                            description: upcomingDescription,
-                            iconData: LucideIcons.calendarClock,
-                          ),
-                          const InfoSummaryTab(
-                            label: 'History',
-                            description: 'Your past sessions will appear here.',
-                            iconData: LucideIcons.history,
-                          ),
-                        ];
-                        return InfoSummary(
-                          tabs: tabs,
-                          iconData: LucideIcons.activity,
-                          onActionPressed: _handleBookingsNavigation,
-                          actionLabel: 'View bookings',
+                    FutureBuilder<BookingDto?>(
+                      future: _lastCompletedBooking,
+                      builder: (context, historySnapshot) {
+                        return FutureBuilder<AvailableSlotDto?>(
+                          future: _upcomingBooking,
+                          builder: (context, snapshot) {
+                            final slot = snapshot.data;
+                            if (slot != null &&
+                                !_hasNotified &&
+                                snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                _isToday(slot.schedulingDate)) {
+                              _notifyTodayBooking(slot);
+                            }
+                            final upcomingDescription =
+                                _buildUpcomingDescription(
+                              slot,
+                              isLoading:
+                                  snapshot.connectionState ==
+                                  ConnectionState.waiting,
+                              error: snapshot.error,
+                            );
+                            final historyDescription =
+                                _buildHistoryDescription(
+                              historySnapshot.data,
+                              isLoading:
+                                  historySnapshot.connectionState ==
+                                  ConnectionState.waiting,
+                              error: historySnapshot.error,
+                            );
+                            final tabs = [
+                              InfoSummaryTab(
+                                label: 'Upcoming Bookings',
+                                description: upcomingDescription,
+                                iconData: LucideIcons.calendarClock,
+                              ),
+                              InfoSummaryTab(
+                                label: 'History',
+                                description: historyDescription,
+                                iconData: LucideIcons.history,
+                                actionLabel: 'View history',
+                                onActionPressed:
+                                    _handleProfileHistoryNavigation,
+                              ),
+                            ];
+                            return InfoSummary(
+                              tabs: tabs,
+                              iconData: LucideIcons.activity,
+                              onActionPressed: _handleBookingsNavigation,
+                              actionLabel: 'View bookings',
+                            );
+                          },
                         );
                       },
                     ),
@@ -299,6 +340,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  String _buildHistoryDescription(
+    BookingDto? booking, {
+    required bool isLoading,
+    Object? error,
+  }) {
+    if (isLoading) return 'Loading your training history...';
+    if (error != null) return 'We could not load your training history.';
+    if (booking == null) return 'Your completed sessions will appear here.';
+    final service = booking.serviceName?.trim() ?? '';
+    final trainer = booking.trainerName?.trim() ?? '';
+    final date = booking.schedulingDate.toLocal();
+    final dateText =
+        '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    final sessionLabel = service.isNotEmpty ? service : 'Session';
+    final trainerPart = trainer.isNotEmpty ? ' with $trainer' : '';
+    return 'Last: $sessionLabel$trainerPart, $dateText.';
   }
 
   String _buildUpcomingDescription(
