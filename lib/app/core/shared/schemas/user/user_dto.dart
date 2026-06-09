@@ -172,6 +172,11 @@ class UserDto {
     final birthDate = normOptString(json['birth_date']);
     final address = normOptString(json['address']);
     final membership = normOptString(normReqMap(json['membership_plan'])['name']);
+    // The RUT is the member's identification; carry it into `memberId` so it
+    // survives the details round-trip. `UserDto.rut` resolves from
+    // `details.memberId` first, so leaving this empty would blank out the RUT
+    // even when the flat payload supplies it.
+    final rut = normOptString(json['rut']);
 
     final hasAnyField = [
       firstName,
@@ -182,12 +187,14 @@ class UserDto {
       birthDate,
       address,
       membership,
+      rut,
     ].any((value) => value != null);
     if (!hasAnyField) {
       return null;
     }
 
     return UserDetailsDto(
+      memberId: rut ?? '',
       firstName: firstName ?? '',
       paternalLastName: paternal ?? '',
       maternalLastName: maternal ?? '',
