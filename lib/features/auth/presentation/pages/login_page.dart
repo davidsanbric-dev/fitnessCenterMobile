@@ -17,6 +17,9 @@ const double _sloganInitialDropFraction =
 // enough to clear the sheet's top edge so the bar is fully visible there too
 const double _collapsedSheetPeek =
     0.0; // Sheet reveal stops at the image top when collapsed (no surface peek)
+const double _imageTopFade =
+    0.08; // Static soft fade on the image top edge (kept constant so the image
+// widget stays const and its ShaderMask rasterizes once instead of per frame).
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +31,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _progress;
+  late final CurvedAnimation _progress;
+  late final CurvedAnimation _greeting;
   Timer? _animationStartTimer;
 
   static const _transitionDuration = Duration(milliseconds: 900);
@@ -42,6 +46,12 @@ class _LoginPageState extends State<LoginPage>
       duration: _transitionDuration,
     );
     _progress = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    // Greeting fade/slide runs on its own curve so it can repaint
+    // independently of the header/sheet transforms.
+    _greeting = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0, 0.65, curve: Curves.easeInOut),
+    );
 
     _animationStartTimer = Timer(_initialDelay, () {
       if (mounted) _controller.forward();
@@ -51,13 +61,19 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     _animationStartTimer?.cancel();
+    _greeting.dispose();
+    _progress.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget authForm = const LoginForm();
+    // Static subtrees built once; they are not rebuilt while the animation runs.
+    const Widget authForm = LoginForm();
+    const Widget loginImage = LoginImage(topFadeFraction: _imageTopFade);
+    const Widget sloganBar = BrandSloganBar();
+    final Widget greeting = _AnimatedGreeting(animation: _greeting);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -65,9 +81,24 @@ class _LoginPageState extends State<LoginPage>
         bottom: false,
         child: LayoutBuilder(
           builder: (context, constraints) {
+            // Layout-derived values depend only on the (stable) constraints,
+            // so compute them once here instead of inside the per-frame builder.
+            final double imageHeight =
+                constraints.maxWidth / _loginImageAspectRatio;
+            final double baseHeight = constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : MediaQuery.sizeOf(context).height;
+            final double fullHeight = imageHeight + baseHeight * 0.55;
+            final double collapsedFactor = fullHeight > 0
+                ? (imageHeight / fullHeight).clamp(0.0, 1.0)
+                : 0.6;
+            final double collapsedWithPeek =
+                (collapsedFactor + _collapsedSheetPeek).clamp(0.0, 1.0);
+
             return AnimatedBuilder(
               animation: _progress,
-              builder: (context, _) {
+              child: greeting,
+              builder: (context, greetingChild) {
                 final double t = _progress.value;
 
                 return SingleChildScrollView(
@@ -79,8 +110,15 @@ class _LoginPageState extends State<LoginPage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _AnimatedHeader(progress: t),
-                        _AnimatedGreeting(progress: t),
-                        _AnimatedSheets(progress: t, loginForm: authForm),
+                        greetingChild!,
+                        _AnimatedSheets(
+                          progress: t,
+                          loginForm: authForm,
+                          loginImage: loginImage,
+                          sloganBar: sloganBar,
+                          imageHeight: imageHeight,
+                          collapsedWithPeek: collapsedWithPeek,
+                        ),
                       ],
                     ),
                   ),
@@ -119,9 +157,13 @@ class _AnimatedHeader extends StatelessWidget {
         children: [
           Transform.scale(
             scale: headerScale,
-            child: const BrandHeader(
-              key: ValueKey('brand-extra'),
-              variant: 'extralarge',
+            // RepaintBoundary isolates the brand logo so the per-frame
+            // scale/translate is applied to a cached raster layer.
+            child: const RepaintBoundary(
+              child: BrandHeader(
+                key: ValueKey('brand-extra'),
+                variant: 'extralarge',
+              ),
             ),
           ),
         ],
@@ -131,35 +173,47 @@ class _AnimatedHeader extends StatelessWidget {
 }
 
 class _AnimatedGreeting extends StatelessWidget {
-  const _AnimatedGreeting({required this.progress});
+  const _AnimatedGreeting({required this.animation});
 
-  final double progress;
+  final Animation<double> animation;
 
   @override
   Widget build(BuildContext context) {
-    final double greetingCurve = const Interval(
-      0,
-      0.65,
-      curve: Curves.easeInOut,
-    ).transform(progress);
-    final double greetingOpacity = (1 - greetingCurve).clamp(0.0, 1.0);
-    final double greetingOffset = lerpDouble(0, -12, greetingCurve)!;
-
-    return Opacity(
-      opacity: greetingOpacity,
-      child: Transform.translate(
-        offset: Offset(0, greetingOffset),
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: animation,
         child: const GreetingMessage(),
+        builder: (context, child) {
+          final double v = animation.value;
+          return Opacity(
+            opacity: (1 - v).clamp(0.0, 1.0),
+            child: Transform.translate(
+              offset: Offset(0, -12 * v),
+              child: child,
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class _AnimatedSheets extends StatelessWidget {
-  const _AnimatedSheets({required this.progress, required this.loginForm});
+  const _AnimatedSheets({
+    required this.progress,
+    required this.loginForm,
+    required this.loginImage,
+    required this.sloganBar,
+    required this.imageHeight,
+    required this.collapsedWithPeek,
+  });
 
   final double progress;
   final Widget loginForm;
+  final Widget loginImage;
+  final Widget sloganBar;
+  final double imageHeight;
+  final double collapsedWithPeek;
 
   @override
   Widget build(BuildContext context) {
@@ -168,53 +222,35 @@ class _AnimatedSheets extends StatelessWidget {
       1.0,
       curve: Curves.easeInOut,
     ).transform(progress);
+    final double heightFactor =
+        lerpDouble(collapsedWithPeek, 1.0, revealProgress) ?? 1.0;
+    final double sloganSlide = const Interval(
+      0.0,
+      0.9,
+      curve: Curves.easeOut,
+    ).transform(revealProgress);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final Size viewport = MediaQuery.sizeOf(context);
-        final double imageHeight =
-            constraints.maxWidth / _loginImageAspectRatio;
-        final double baseHeight = constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : viewport.height;
-        final double fullHeight = imageHeight + baseHeight * 0.55;
-        final double collapsedFactor = fullHeight > 0
-            ? (imageHeight / fullHeight).clamp(0.0, 1.0)
-            : 0.6;
-        final double collapsedWithPeek = (collapsedFactor + _collapsedSheetPeek)
-            .clamp(0.0, 1.0);
-        final double heightFactor =
-            lerpDouble(collapsedWithPeek, 1.0, revealProgress) ?? 1.0;
-        final double sloganSlide = const Interval(
-          0.0,
-          0.9,
-          curve: Curves.easeOut,
-        ).transform(revealProgress);
-        final double imageTopFade = lerpDouble(0.0, 0.08, revealProgress)!;
-
-        return ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(66),
-            topRight: Radius.circular(66),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(66),
+        topRight: Radius.circular(66),
+      ),
+      child: ClipRect(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          heightFactor: heightFactor,
+          child: LoginSheet(
+            loginForm: loginForm,
+            brandSloganBar: sloganBar,
+            loginImage: loginImage,
+            imageHeight: imageHeight,
+            brandBarHorizontalInset: _sloganHorizontalInset,
+            brandBarWidthFactor: _sloganWidthFactor,
+            brandSloganSlide: sloganSlide,
+            brandSloganDropFraction: _sloganInitialDropFraction,
           ),
-          child: ClipRect(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              heightFactor: heightFactor,
-              child: LoginSheet(
-                loginForm: loginForm,
-                brandSloganBar: const BrandSloganBar(),
-                loginImage: LoginImage(topFadeFraction: imageTopFade),
-                brandBarHorizontalInset: _sloganHorizontalInset,
-                brandBarWidthFactor: _sloganWidthFactor,
-                imageAspectRatio: _loginImageAspectRatio,
-                brandSloganSlide: sloganSlide,
-                brandSloganDropFraction: _sloganInitialDropFraction,
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
