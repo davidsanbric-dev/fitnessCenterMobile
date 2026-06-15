@@ -33,6 +33,12 @@ class BookingAgendaApi extends ApiBase {
     final agendas = await getAgenda(
       memberId: trimmedId?.isEmpty ?? true ? null : trimmedId,
       includeAllLocations: true,
+      // The soonest upcoming booking can be more than 14 days out, so drop the
+      // default date window. The backend orders booking_datetime DESC and caps
+      // results, which could push the nearest future booking past that cap, so
+      // also request the full set (page_size 0) before filtering/sorting below.
+      includeAllDates: true,
+      pageSize: 0,
     );
 
     if (agendas.isEmpty) {
@@ -64,6 +70,8 @@ class BookingAgendaApi extends ApiBase {
     String? disciplineId,
     String? trainerId,
     bool includeAllLocations = false,
+    bool includeAllDates = false,
+    int? pageSize,
   }) async {
     final request = BookingRequest(
       memberId: memberId,
@@ -81,12 +89,27 @@ class BookingAgendaApi extends ApiBase {
       queryParameters['locationCode'] ?? '',
     );
 
+    // BookingRequest always resolves a default [today, today+14] window when no
+    // dates are given, which is right for the upcoming "My Bookings" list but
+    // wrong for COMPLETED/history queries (their sessions are in the past).
+    // `includeAllDates` omits the date filter entirely so the backend returns
+    // every status-matching booking regardless of date. Explicitly supplied
+    // dates are still honoured.
+    final startDateParam = (queryParameters['startDate'] ?? '').trim();
+    final endDateParam = (queryParameters['endDate'] ?? '').trim();
+    final sendStartDate =
+        startDateParam.isNotEmpty && (!includeAllDates || startDate != null);
+    final sendEndDate =
+        endDateParam.isNotEmpty && (!includeAllDates || endDate != null);
+
     return getDataListAsync<BookingDto>(
       url: ApiUrls.bookingsUrl,
       requestErrorMessage: 'Error al obtener citas del paciente',
       queryParameters: <String, String>{
-        'date_from': queryParameters['startDate'] ?? '',
-        'date_to': queryParameters['endDate'] ?? '',
+        if (sendStartDate) 'date_from': startDateParam,
+        if (sendEndDate) 'date_to': endDateParam,
+        // page_size == 0 asks the backend for the full set (no pagination).
+        if (pageSize != null) 'page_size': pageSize.toString(),
         if (normalizedLocationCode.trim().isNotEmpty)
           'location_code': normalizedLocationCode,
         if ((queryParameters['bookingStatus'] ?? '').trim().isNotEmpty &&

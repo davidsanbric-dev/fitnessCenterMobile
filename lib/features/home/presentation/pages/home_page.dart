@@ -1,5 +1,6 @@
 import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
+import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
 import 'package:portfolio_mobile_app/app/core/services/profile_navigation_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
@@ -9,7 +10,6 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_dialog.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
@@ -122,6 +122,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final items = await _bookingsApi.getAgenda(
       bookingStatus: 'COMPLETED',
       includeAllLocations: true,
+      // Completed sessions are past-dated; bypass the default upcoming window
+      // so the home "History" summary can surface the most recent one.
+      includeAllDates: true,
     );
     // API returns results sorted booking_datetime DESC; first entry is most recent.
     return items.isEmpty ? null : items.first;
@@ -152,15 +155,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return 'Hi, $firstName!';
   }
 
-  Future<void> _openBookSessionDialog() async {
-    // Reuse the exact same "Book a Session" flow as the Bookings page button.
-    await showBookSessionDialog(context);
-    if (!mounted) {
-      return;
-    }
-    // A session may have been booked within the dialog; refresh the home
-    // "upcoming" summary so it reflects the change.
-    _refreshUpcomingBooking();
+  void _openBookSessionFlow() {
+    // Reuse the exact same in-page "Book a Session" flow as the Bookings page
+    // button (the three-tier header experience), instead of a standalone
+    // dialog: request the flow and switch to the Bookings tab so the page
+    // opens it on arrival. The upcoming-booking summary re-syncs automatically
+    // when the user returns to Home (see _attachNavListener).
+    BookingsNavigationService.instance.requestBookFlow();
+    _handleBookingsNavigation();
   }
 
   void _handleBookingsNavigation() {
@@ -269,7 +271,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       text: 'Book a Session',
                       height: 58,
                       fontSize: 18,
-                      onPressed: _openBookSessionDialog,
+                      onPressed: _openBookSessionFlow,
                     ),
                     const SizedBox(height: 22),
                     FutureBuilder<BookingDto?>(

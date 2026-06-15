@@ -1,3 +1,4 @@
+import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
@@ -17,6 +18,7 @@ class BookingsPage extends StatefulWidget {
 class _BookingsPageState extends State<BookingsPage> {
   late final BookingsController _controller;
   late final bool _ownsController;
+  Worker? _bookFlowWorker;
 
   // While true, the page swaps the bookings table for the in-page "Book a
   // Session" flow and renders a three-tier header
@@ -39,14 +41,36 @@ class _BookingsPageState extends State<BookingsPage> {
       _controller = Get.put(BookingsController());
       _ownsController = true;
     }
+    // The Bookings tab is lazily mounted (Offstage + _visitedIndexes in
+    // HomeWrapper), so it may not exist yet when Home calls requestBookFlow().
+    // Two paths, mirroring ProfilePage:
+    //   1. Page already mounted when the request fires → ever() catches it.
+    //   2. Page mounts AFTER the request was set → ever() sees no change;
+    //      the post-frame callback handles it by checking the current value.
+    final navService = BookingsNavigationService.instance;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumePendingBookFlow());
+    _bookFlowWorker =
+        ever<bool>(navService.pendingBookFlow, (_) => _consumePendingBookFlow());
   }
 
   @override
   void dispose() {
+    _bookFlowWorker?.dispose();
     if (_ownsController) {
       Get.delete<BookingsController>();
     }
     super.dispose();
+  }
+
+  void _consumePendingBookFlow() {
+    final navService = BookingsNavigationService.instance;
+    if (!navService.pendingBookFlow.value || !mounted) {
+      return;
+    }
+    navService.consume();
+    if (!_showBookFlow) {
+      _openBookFlow();
+    }
   }
 
   Future<void> _refresh() => _controller.reload();

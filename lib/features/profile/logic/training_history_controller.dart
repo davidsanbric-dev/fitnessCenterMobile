@@ -41,8 +41,16 @@ class TrainingHistoryController extends ControllerBase {
     if (isLoading.value) return;
 
     await runLoading(
-      action: () =>
-          _bookingsService.fetchBookings(bookingStatus: _completedStatus),
+      action: () => _bookingsService.fetchBookings(
+        bookingStatus: _completedStatus,
+        // History is past-dated; opt out of the default upcoming date window
+        // so completed sessions aren't filtered out server-side.
+        includeAllDates: true,
+        // Fetch every completed session (page_size 0 = no server cap); the list
+        // is then paginated client-side, so a member with a long history isn't
+        // capped at the backend's default page size.
+        pageSize: 0,
+      ),
       errorMessage: 'Unexpected error while loading training history',
       onSuccess: (items) {
         bookings.assignAll(items);

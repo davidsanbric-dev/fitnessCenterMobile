@@ -1,10 +1,12 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/greeting_message.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_image.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/animated/animated_greeting.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/animated/animated_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/animated/animated_sheet_reveal.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_slogan_bar.dart';
 import 'package:portfolio_mobile_app/features/auth/presentation/widgets/login_form.dart';
@@ -73,7 +75,10 @@ class _LoginPageState extends State<LoginPage>
     const Widget authForm = LoginForm();
     const Widget loginImage = LoginImage(topFadeFraction: _imageTopFade);
     const Widget sloganBar = BrandSloganBar();
-    final Widget greeting = _AnimatedGreeting(animation: _greeting);
+    final Widget greeting = AnimatedGreeting(
+      animation: _greeting,
+      child: const GreetingMessage(),
+    );
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -109,15 +114,40 @@ class _LoginPageState extends State<LoginPage>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _AnimatedHeader(progress: t),
-                        greetingChild!,
-                        _AnimatedSheets(
+                        AnimatedHeader(
                           progress: t,
-                          loginForm: authForm,
-                          loginImage: loginImage,
-                          sloganBar: sloganBar,
-                          imageHeight: imageHeight,
-                          collapsedWithPeek: collapsedWithPeek,
+                          // RepaintBoundary isolates the brand logo so the
+                          // per-frame scale/translate is applied to a cached
+                          // raster layer.
+                          child: const RepaintBoundary(
+                            child: BrandHeader(
+                              key: ValueKey('brand-extra'),
+                              variant: 'extralarge',
+                            ),
+                          ),
+                        ),
+                        greetingChild!,
+                        AnimatedSheetReveal(
+                          progress: t,
+                          collapsedHeightFactor: collapsedWithPeek,
+                          builder: (context, revealProgress) {
+                            final double sloganSlide = const Interval(
+                              0.0,
+                              0.9,
+                              curve: Curves.easeOut,
+                            ).transform(revealProgress);
+
+                            return LoginSheet(
+                              loginForm: authForm,
+                              brandSloganBar: sloganBar,
+                              loginImage: loginImage,
+                              imageHeight: imageHeight,
+                              brandBarHorizontalInset: _sloganHorizontalInset,
+                              brandBarWidthFactor: _sloganWidthFactor,
+                              brandSloganSlide: sloganSlide,
+                              brandSloganDropFraction: _sloganInitialDropFraction,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -126,129 +156,6 @@ class _LoginPageState extends State<LoginPage>
               },
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _AnimatedHeader extends StatelessWidget {
-  const _AnimatedHeader({required this.progress});
-
-  final double progress;
-
-  @override
-  Widget build(BuildContext context) {
-    final double t = progress;
-    final double headerScale = lerpDouble(
-      1.08,
-      0.76,
-      const Interval(0, 0.7, curve: Curves.easeOut).transform(t),
-    )!;
-    final double headerOffset = lerpDouble(
-      48,
-      40,
-      const Interval(0, 0.6, curve: Curves.easeOut).transform(t),
-    )!;
-
-    return Transform.translate(
-      offset: Offset(0, headerOffset),
-      child: Column(
-        children: [
-          Transform.scale(
-            scale: headerScale,
-            // RepaintBoundary isolates the brand logo so the per-frame
-            // scale/translate is applied to a cached raster layer.
-            child: const RepaintBoundary(
-              child: BrandHeader(
-                key: ValueKey('brand-extra'),
-                variant: 'extralarge',
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AnimatedGreeting extends StatelessWidget {
-  const _AnimatedGreeting({required this.animation});
-
-  final Animation<double> animation;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: AnimatedBuilder(
-        animation: animation,
-        child: const GreetingMessage(),
-        builder: (context, child) {
-          final double v = animation.value;
-          return Opacity(
-            opacity: (1 - v).clamp(0.0, 1.0),
-            child: Transform.translate(
-              offset: Offset(0, -12 * v),
-              child: child,
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _AnimatedSheets extends StatelessWidget {
-  const _AnimatedSheets({
-    required this.progress,
-    required this.loginForm,
-    required this.loginImage,
-    required this.sloganBar,
-    required this.imageHeight,
-    required this.collapsedWithPeek,
-  });
-
-  final double progress;
-  final Widget loginForm;
-  final Widget loginImage;
-  final Widget sloganBar;
-  final double imageHeight;
-  final double collapsedWithPeek;
-
-  @override
-  Widget build(BuildContext context) {
-    final double revealProgress = const Interval(
-      0.2,
-      1.0,
-      curve: Curves.easeInOut,
-    ).transform(progress);
-    final double heightFactor =
-        lerpDouble(collapsedWithPeek, 1.0, revealProgress) ?? 1.0;
-    final double sloganSlide = const Interval(
-      0.0,
-      0.9,
-      curve: Curves.easeOut,
-    ).transform(revealProgress);
-
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(66),
-        topRight: Radius.circular(66),
-      ),
-      child: ClipRect(
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          heightFactor: heightFactor,
-          child: LoginSheet(
-            loginForm: loginForm,
-            brandSloganBar: sloganBar,
-            loginImage: loginImage,
-            imageHeight: imageHeight,
-            brandBarHorizontalInset: _sloganHorizontalInset,
-            brandBarWidthFactor: _sloganWidthFactor,
-            brandSloganSlide: sloganSlide,
-            brandSloganDropFraction: _sloganInitialDropFraction,
-          ),
         ),
       ),
     );
