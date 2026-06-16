@@ -1,4 +1,3 @@
-import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
 import 'package:flutter/material.dart';
 
 List<String> normalizeStringList(List<String> values) {
@@ -64,20 +63,6 @@ String sanitizeRutInput(String value) {
   final digits = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
   final endsWithK = RegExp(r'[kK]$').hasMatch(trimmed);
   return endsWithK ? '${digits}K' : digits;
-}
-
-String? normalizeMemberId(String? value) {
-  final normalized = normOptString(value);
-  if (normalized == null) {
-    return null;
-  }
-
-  final sanitized = sanitizeRutInput(normalized);
-  if (sanitized.isEmpty) {
-    return null;
-  }
-
-  return formatRut(sanitized);
 }
 
 String normalizeAuthCode(String code) {

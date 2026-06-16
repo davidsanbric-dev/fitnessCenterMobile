@@ -405,10 +405,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
                       showPagination: true,
                     );
                   case FitnessDirectoryView.trainers:
-                    return TrainersDirectoryPage(
-                      locationOptions: locationLabels,
-                      locationLabelToId: locationLabelToId,
-                    );
+                    return const TrainersDirectoryPage();
                   case FitnessDirectoryView.options:
                     return ListView.separated(
                       padding: const EdgeInsets.symmetric(

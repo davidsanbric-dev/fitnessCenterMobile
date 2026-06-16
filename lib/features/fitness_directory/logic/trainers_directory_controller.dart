@@ -15,6 +15,10 @@ class TrainersController extends ControllerBase {
 
   final int? locationId;
   static const int _defaultPageSize = 6;
+  // Sentinel "filter" key for the no-discipline listing, so the load-cache
+  // guard in [loadAllTrainers] can tell an all-trainers result apart from a
+  // discipline/membership filtered one.
+  static const String _allTrainersFilterKey = '__all_trainers__';
   final TrainersDirectoryRepository _repository;
   int _trainersLoadSequence = 0;
   int _trainerAvailabilitySequence = 0;
@@ -215,17 +219,50 @@ class TrainersController extends ControllerBase {
     );
   }
 
-  Future<void> refreshTrainers() async {
-    final filter = selectedTrainersFilter.value;
-    if (filter == null || filter.isEmpty) {
-      await loadTrainersFilters(mode: trainersMode.value, forceRefresh: true);
+  // Loads every active trainer across all clubs, with no discipline or club
+  // filter. The discipline and club shown per row come from the API response.
+  Future<void> loadAllTrainers({bool forceRefresh = false}) async {
+    final isSameFilter =
+        !forceRefresh &&
+        trainers.isNotEmpty &&
+        _loadedTrainersFilter == _allTrainersFilterKey &&
+        error.value == null;
+    if (isSameFilter) {
+      stage.value = TrainersViewStage.results;
       return;
     }
-    await loadTrainers(
-      mode: trainersMode.value,
-      filterLabel: filter,
-      forceRefresh: true,
+
+    resetTrainerAvailability();
+    trainersPageNumber.value = 1;
+    isLoading.value = true;
+    error.value = null;
+
+    await runLatestLoadOperation<List<TrainerDirectoryDto>>(
+      isLoading: isLoading,
+      error: error,
+      loader: () => _repository.fetchAllTrainers(),
+      onSuccess: (mapped) {
+        trainers.assignAll(mapped);
+        _syncTrainersPagination();
+        _loadedTrainersFilter = _allTrainersFilterKey;
+        _loadedTrainersLocationId = null;
+        stage.value = TrainersViewStage.results;
+      },
+      onError: () {
+        trainers.clear();
+        _syncTrainersPagination();
+        _loadedTrainersFilter = null;
+        _loadedTrainersLocationId = null;
+        stage.value = TrainersViewStage.results;
+      },
+      unexpectedErrorMessage: 'Unexpected error while loading trainers',
+      startSequence: () => ++_trainersLoadSequence,
+      shouldApplyResult: (sequence) => sequence == _trainersLoadSequence,
     );
+  }
+
+  Future<void> refreshTrainers() async {
+    await loadAllTrainers(forceRefresh: true);
   }
 
   void backToFilters() {

@@ -26,12 +26,10 @@ class BookingAgendaApi extends ApiBase {
   /// home summary always mirrors the next entry the user sees in that table.
   /// Cancelled and completed bookings are skipped. Returns null when nothing
   /// is upcoming.
-  Future<AvailableSlotDto?> getNextUpcomingBooking({String? memberId}) async {
-    final trimmedId = memberId?.trim();
+  Future<AvailableSlotDto?> getNextUpcomingBooking() async {
     final now = DateTime.now().toLocal();
 
     final agendas = await getAgenda(
-      memberId: trimmedId?.isEmpty ?? true ? null : trimmedId,
       includeAllLocations: true,
       // The soonest upcoming booking can be more than 14 days out, so drop the
       // default date window. The backend orders booking_datetime DESC and caps
@@ -62,7 +60,6 @@ class BookingAgendaApi extends ApiBase {
   }
 
   Future<List<BookingDto>> getAgenda({
-    String? memberId,
     DateTime? startDate,
     DateTime? endDate,
     String? locationCode,
@@ -74,7 +71,6 @@ class BookingAgendaApi extends ApiBase {
     int? pageSize,
   }) async {
     final request = BookingRequest(
-      memberId: memberId,
       startDate: startDate,
       endDate: endDate,
       locationCode: locationCode,
@@ -82,7 +78,7 @@ class BookingAgendaApi extends ApiBase {
       disciplineId: disciplineId,
       trainerId: trainerId,
     );
-    final queryParameters = await request.toQueryParameters(
+    final queryParameters = request.toQueryParameters(
       defaultLocationCode: includeAllLocations ? '' : null,
     );
     final normalizedLocationCode = LocationCodeRegistry.instance.resolve(

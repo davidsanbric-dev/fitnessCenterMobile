@@ -1,9 +1,11 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/info_card.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/row_details_card_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 mixin BookingDetailsCardDialog {
@@ -91,23 +93,39 @@ mixin BookingDetailsCardDialog {
     ];
   }
 
-  static List<RowDetailsItem> _buildMemberItems(BookingDto detail) => [
-    RowDetailsItem(
-      label: 'Name',
-      value: detail.memberName.isEmpty ? 'No name' : detail.memberName,
-      icon: LucideIcons.user,
-    ),
-    RowDetailsItem(
-      label: 'RUT',
-      value: detail.memberRut.isEmpty ? 'Not available' : detail.memberRut,
-      icon: LucideIcons.idCard,
-    ),
-    RowDetailsItem(
-      label: 'Phone',
-      value: detail.memberPhone.isEmpty ? 'Not available' : detail.memberPhone,
-      icon: LucideIcons.phone,
-    ),
-  ];
+  static List<RowDetailsItem> _buildMemberItems(BookingDto detail) {
+    // The signed-in member's RUT and phone live in the decoded session claims,
+    // not in every booking projection, so fall back to them when the response's
+    // member node omits them. All booking-detail entry points in this member app
+    // show the member's own bookings, so the session identity matches.
+    final auth = Get.isRegistered<AuthService>() ? Get.find<AuthService>() : null;
+    final rut = detail.memberRut.isNotEmpty
+        ? detail.memberRut
+        : (auth?.userRut?.trim() ?? '');
+    final phone = detail.memberPhone.isNotEmpty
+        ? detail.memberPhone
+        : (auth?.userMobilePhone?.trim() ?? '');
+    final name = detail.memberName.isNotEmpty
+        ? detail.memberName
+        : (auth?.userName?.trim() ?? '');
+    return [
+      RowDetailsItem(
+        label: 'Name',
+        value: name.isEmpty ? 'No name' : name,
+        icon: LucideIcons.user,
+      ),
+      RowDetailsItem(
+        label: 'RUT',
+        value: rut.isEmpty ? 'Not available' : rut,
+        icon: LucideIcons.idCard,
+      ),
+      RowDetailsItem(
+        label: 'Phone',
+        value: phone.isEmpty ? 'Not available' : phone,
+        icon: LucideIcons.phone,
+      ),
+    ];
+  }
 
   static List<RowDetailsItem> _buildTrainerItems(BookingDto detail) {
     final items = <RowDetailsItem>[];

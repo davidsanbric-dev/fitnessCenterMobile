@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import '../../config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/double_text_cell.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/triple_text_cell.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/single_text_cell.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_dropdown.dart';
 
@@ -103,6 +104,27 @@ class TableBody extends StatelessWidget {
                       allowSecondaryWrap:
                           secondaryKey is String &&
                           wrapFields.contains(secondaryKey),
+                    );
+                  } else if (field is List && field.length == 3) {
+                    final primaryKey = field[0];
+                    final secondaryKey = field[1];
+                    final tertiaryKey = field[2];
+                    // Render TripleDataCell (e.g. name / specialty / club)
+                    return TripleDataCell(
+                      primaryText: row[primaryKey]?.toString() ?? '',
+                      secondaryText: row[secondaryKey]?.toString() ?? '',
+                      tertiaryText: row[tertiaryKey]?.toString() ?? '',
+                      textAlign: textAlign,
+                      crossAxisAlignment: crossAxisAlignment,
+                      allowPrimaryWrap:
+                          primaryKey is String &&
+                          wrapFields.contains(primaryKey),
+                      allowSecondaryWrap:
+                          secondaryKey is String &&
+                          wrapFields.contains(secondaryKey),
+                      allowTertiaryWrap:
+                          tertiaryKey is String &&
+                          wrapFields.contains(tertiaryKey),
                     );
                   } else if (field is String) {
                     // Render CustomDataCell

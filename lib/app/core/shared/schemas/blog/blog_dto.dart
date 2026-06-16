@@ -33,10 +33,10 @@ class BlogDto {
 
   factory BlogDto.fromJson(Map<String, dynamic> json) {
     return BlogDto(
-      id: normOptInt(json['id']) ?? 0,
-      title: normOptString(json['title']) ?? '',
-      text: normOptString(json['text']) ?? '',
-      heroImageUrl: normOptString(json['hero_image_url'] ?? json['heroImageUrl']),
+      id: normReqInt(json['id']),
+      title: normReqString(json['title']),
+      text: normReqString(json['text']),
+      heroImageUrl: normReqString(json['hero_image_url']),
     );
   }
 }

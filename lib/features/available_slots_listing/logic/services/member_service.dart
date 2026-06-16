@@ -1,6 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/api/members_api.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/member/member_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/member/member_request.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 
 class MemberService {
@@ -15,9 +14,7 @@ class MemberService {
       return null;
     }
 
-    final member = await _membersApi.getMember(
-      MemberRequest(memberId: trimmedId),
-    );
+    final member = await _membersApi.getCurrentMember();
     if (member == null) {
       return null;
     }

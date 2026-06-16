@@ -6,43 +6,26 @@ class TrainerDto {
     required this.trainerName,
     this.disciplineId = 0,
     this.disciplineName = '',
+    this.locationId = 0,
+    this.locationName = '',
   });
 
   final String trainerId;
   final String trainerName;
   final int disciplineId;
   final String disciplineName;
+  final int locationId;
+  final String locationName;
 
+  // Maps the `TrainerSummary` contract from GET /trainers (snake_case).
   factory TrainerDto.fromJson(Map<String, dynamic> json) {
-    final trainerId =
-        normOptString(json['trainerId']) ??
-        normOptString(json['trainer_id']) ??
-        normOptString(json['trainerId']) ??
-        '';
-    final trainerName =
-        normOptString(json['trainerName']) ??
-        normOptString(json['full_name']) ??
-        normOptString(json['fullName']) ??
-        '';
     return TrainerDto(
-      trainerId: trainerId,
-      trainerName: trainerName,
-      disciplineId:
-          normOptInt(
-            json['disciplineId'] ??
-                json['disciplineCode'] ??
-                json['discipline_id'] ??
-                json['disciplineId'],
-          ) ??
-          0,
-      disciplineName:
-          normOptString(
-            (json['disciplineName'] ??
-                    json['discipline_name'] ??
-                    json['disciplineName'])
-                ?.toString(),
-          ) ??
-          '',
+      trainerId: normOptString(json['trainer_id']) ?? '',
+      trainerName: normOptString(json['full_name']) ?? '',
+      disciplineId: normOptInt(json['discipline_id']) ?? 0,
+      disciplineName: normOptString(json['discipline_name']) ?? '',
+      locationId: normOptInt(json['location_id']) ?? 0,
+      locationName: normOptString(json['location_name']) ?? '',
     );
   }
 }

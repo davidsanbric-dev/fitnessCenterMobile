@@ -33,12 +33,6 @@ class AvailableSlotsRequest {
     return query;
   }
 
-  Map<String, dynamic> toJson() => {
-    'disciplineId': disciplineId,
-    'locationId': locationId,
-    if (trainerId?.isNotEmpty ?? false) 'trainerId': trainerId,
-  };
-
   AvailableSlotsRequest copyWith({
     int? disciplineId,
     String? trainerId,

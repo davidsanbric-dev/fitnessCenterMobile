@@ -9,12 +9,11 @@ class DisciplineDto {
   final int disciplineId;
   final String disciplineName;
 
+  // Maps the `DisciplineSummary` contract from GET /disciplines (snake_case).
   factory DisciplineDto.fromJson(Map<String, dynamic> json) {
     return DisciplineDto(
-      disciplineId:
-          normOptInt(json['disciplineId'] ?? json['discipline_id']) ?? 0,
-      disciplineName:
-          normOptString(json['disciplineName'] ?? json['name']) ?? '',
+      disciplineId: normOptInt(json['discipline_id']) ?? 0,
+      disciplineName: normOptString(json['name']) ?? '',
     );
   }
 

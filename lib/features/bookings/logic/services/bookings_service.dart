@@ -8,13 +8,11 @@ class BookingsService {
   final BookingAgendaApi _bookingsApi;
 
   Future<List<BookingDto>> fetchBookings({
-    String? memberId,
     String? bookingStatus,
     bool includeAllDates = false,
     int? pageSize,
   }) {
     return _bookingsApi.getAgenda(
-      memberId: memberId,
       bookingStatus: bookingStatus,
       includeAllLocations: true,
       includeAllDates: includeAllDates,

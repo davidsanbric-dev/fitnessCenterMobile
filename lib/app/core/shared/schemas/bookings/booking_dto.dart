@@ -45,96 +45,41 @@ class BookingDto {
   final String? preparation;
   final String? notes;
 
+  // Maps the `BookingResponse` contract from GET /bookings and
+  // GET /bookings/{id} (snake_case). `scheduled_at` is the booking's creation
+  // timestamp; `booking_datetime` is the session time. The discipline comes from
+  // the trainer node, falling back to the booking's class category (both are
+  // real nodes on the response, not legacy aliases).
   factory BookingDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
-    final service = normReqMap(json['service']);
     final classType = normReqMap(json['class_type']);
     final location = normReqMap(json['location']);
     final member = normReqMap(json['member']);
     final category = normReqMap(json['category']);
-    final resolvedService = service;
-    final resolvedCreationDate =
-        json['creationDate'] ??
-        json['scheduled_at'] ??
-        json['schedulingDateTime'];
-    final resolvedSchedulingDate =
-        json['booking_datetime'] ??
-        json['bookingDateTime'] ??
-        json['schedulingDate'] ??
-        json['schedulingDateTime'];
-    final resolvedTrainer = trainer;
-    final resolvedServiceNode = resolvedService.isNotEmpty
-        ? resolvedService
-        : classType;
-    final resolvedLocation = location;
-    final locationIdRaw =
-        resolvedLocation['locationId'] ??
-        resolvedLocation['location_id'] ??
-        resolvedLocation['locationId'] ??
-        json['locationId'];
-    final locationNameRaw =
-        resolvedLocation['locationName'] ??
-        resolvedLocation['name'] ??
-        json['locationName'];
-    final locationCodeRaw =
-        resolvedLocation['locationCode'] ??
-        resolvedLocation['location_code'] ??
-        json['locationCode'];
-    final serviceNameRaw =
-        resolvedServiceNode['serviceName'] ?? resolvedServiceNode['name'];
 
     return BookingDto(
-      bookingId: normReqString(json['bookingId'] ?? json['booking_id']),
-      creationDate: parseOptDateTime(resolvedCreationDate),
-      schedulingDate: parseOptDateTime(resolvedSchedulingDate),
-      state: normReqString(
-        json['bookingStatus'] ?? json['state'] ?? json['booking_status'],
-      ),
-      duration: normReqInt(
-        json['durationMinutes'] ??
-            json['duration'] ??
-            json['session_duration_minutes'],
-      ),
+      bookingId: normReqString(json['booking_id']),
+      creationDate: parseOptDateTime(json['scheduled_at']),
+      schedulingDate: parseOptDateTime(json['booking_datetime']),
+      state: normReqString(json['booking_status']),
+      duration: normReqInt(json['session_duration_minutes']),
       memberRut: normOptString(member['rut']) ?? '',
-      memberName: normOptString(member['fullName'] ?? member['name']) ?? '',
-      memberPhone:
-          normOptString(
-            member['mobilePhone'] ?? member['landlinePhone'] ?? member['phone'],
-          ) ??
-          '',
-      locationId: normReqInt(locationIdRaw ?? 0),
-      locationName: normReqString(locationNameRaw ?? ''),
-      locationCode: normOptString(locationCodeRaw),
-      trainerId: normOptString(
-        resolvedTrainer['trainerId'] ??
-            resolvedTrainer['trainer_id'] ??
-            resolvedTrainer['id'],
-      ),
-      trainerName: normOptString(
-        resolvedTrainer['fullName'] ??
-            resolvedTrainer['name'] ??
-            resolvedTrainer['full_name'],
-      ),
+      memberName: normOptString(member['full_name']) ?? '',
+      memberPhone: normOptString(member['mobile_phone']) ?? '',
+      locationId: normReqInt(location['location_id'] ?? 0),
+      locationName: normReqString(location['name'] ?? ''),
+      locationCode: normOptString(location['location_code']),
+      trainerId: normOptString(trainer['trainer_id']),
+      trainerName: normOptString(trainer['full_name']),
       disciplineId: normOptInt(
-        resolvedTrainer['disciplineId'] ??
-            resolvedTrainer['discipline_id'] ??
-            category['category_id'] ??
-            category['categoryId'],
+        trainer['discipline_id'] ?? category['category_id'],
       ),
       disciplineName: normOptString(
-        resolvedTrainer['disciplineName'] ??
-            resolvedTrainer['discipline_name'] ??
-            category['name'],
+        trainer['discipline_name'] ?? category['name'],
       ),
-      serviceId: normOptInt(
-        resolvedServiceNode['serviceId'] ??
-            resolvedServiceNode['class_type_id'] ??
-            resolvedServiceNode['classTypeId'],
-      ),
-      serviceName: normOptString(serviceNameRaw),
-      preparation:
-          normOptString(json['preparation']) ??
-          normOptString(json['preparation_info']),
+      serviceId: normOptInt(classType['class_type_id']),
+      serviceName: normOptString(classType['name']),
+      preparation: normOptString(json['preparation_info']),
       notes: normOptString(json['notes']),
     );
   }

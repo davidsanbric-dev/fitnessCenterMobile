@@ -209,10 +209,10 @@ class ActionsDropdown extends StatelessWidget {
       width: 48,
       child: Align(
         child: PopupMenuButton<String>(
-          icon: const Icon(
+          icon: Icon(
             LucideIcons.moreHorizontal,
             size: 20,
-            color: Colors.black87,
+            color: AppTheme.mutedTextColor(context),
           ),
           onSelected: (value) {
             switch (value) {

@@ -3,32 +3,14 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capabi
 
 void main() {
   group('CapabilityDto.fromJson', () {
-    test('parses snake_case capability payload', () {
+    test('maps the ClassTypeSummary contract', () {
       final dto = CapabilityDto.fromJson({
-        'subcategory_id': 11,
-        'name': 'Yoga Flow',
-        'location_id': 1,
+        'class_type_id': 22,
+        'name': 'Strength Intro',
+        'location_id': 2,
         'schedule_type': 'GROUP',
-        'preparation_info': 'Bring a mat',
-        'pdf_code': 'YOGA-001',
-      });
-
-      expect(dto.id, 11);
-      expect(dto.description, 'Yoga Flow');
-      expect(dto.locationId, 1);
-      expect(dto.scheduleType, 'GROUP');
-      expect(dto.preparation, 'Bring a mat');
-      expect(dto.pdfCode, 'YOGA-001');
-    });
-
-    test('parses camelCase capability payload', () {
-      final dto = CapabilityDto.fromJson({
-        'classTypeId': 22,
-        'description': 'Strength Intro',
-        'locationId': 2,
-        'scheduleType': 'GROUP',
-        'preparation': 'Bring towel',
-        'pdfCode': 'STR-022',
+        'preparation_info': 'Bring towel',
+        'pdf_code': 'STR-022',
       });
 
       expect(dto.id, 22);
@@ -39,16 +21,31 @@ void main() {
       expect(dto.pdfCode, 'STR-022');
     });
 
-    test('prioritizes explicit id when present', () {
+    test('maps the ClassSubcategorySummary contract (id from subcategory_id)', () {
       final dto = CapabilityDto.fromJson({
-        'id': 99,
-        'categoryId': 1,
-        'subcategoryId': 2,
-        'classTypeId': 3,
-        'name': 'Any',
+        'subcategory_id': 11,
+        'name': 'Yoga Flow',
       });
 
-      expect(dto.id, 99);
+      expect(dto.id, 11);
+      expect(dto.description, 'Yoga Flow');
+      // Subcategory summaries carry none of the class-type-only fields.
+      expect(dto.locationId, 0);
+      expect(dto.scheduleType, '');
+      expect(dto.preparation, '');
+      expect(dto.pdfCode, '');
+    });
+
+    test('maps the ClassCategorySummary contract (id from category_id)', () {
+      final dto = CapabilityDto.fromJson({
+        'category_id': 3,
+        'name': 'Conditioning',
+        'location_id': 1,
+      });
+
+      expect(dto.id, 3);
+      expect(dto.description, 'Conditioning');
+      expect(dto.locationId, 1);
     });
   });
 }

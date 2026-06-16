@@ -51,18 +51,17 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
     final mutedColor = AppTheme.secondaryTextColor(context);
     final noteText = (widget.booking.notes ?? '').trim();
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
+    // A borderRadius requires a *uniform* border, so the rounded outline uses a
+    // single border color and the brand accent is painted as a separate left
+    // stripe inside the clip. The previous non-uniform Border (accent left +
+    // soft other sides) + borderRadius threw during paint, which silently blanks
+    // the whole card in release builds.
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         color: panelColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border(
-          left: BorderSide(color: accent, width: 3),
-          top: BorderSide(color: borderColor),
-          right: BorderSide(color: borderColor),
-          bottom: BorderSide(color: borderColor),
-        ),
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
@@ -71,27 +70,33 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context, mutedColor, accent),
-                AnimatedCrossFade(
-                  duration: const Duration(milliseconds: 200),
-                  crossFadeState: _expanded
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  firstChild: const SizedBox.shrink(),
-                  secondChild: _buildNoteBody(context, noteText, mutedColor),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(color: accent, width: 3)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(context, mutedColor, accent),
+                    AnimatedCrossFade(
+                      duration: const Duration(milliseconds: 200),
+                      crossFadeState: _expanded
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
+                      firstChild: const SizedBox.shrink(),
+                      secondChild: _buildNoteBody(context, noteText, mutedColor),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

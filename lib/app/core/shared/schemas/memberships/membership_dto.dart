@@ -11,9 +11,7 @@ class MembershipDto {
 
   factory MembershipDto.fromJson(Map<String, dynamic> json) {
     return MembershipDto(
-      membershipId: normReqString(
-        json['id'] ?? json['membership_plan_id'] ?? json['membershipPlanId'],
-      ),
+      membershipId: normReqString(json['membership_plan_id']),
       membershipName: normReqString(json['name']),
     );
   }

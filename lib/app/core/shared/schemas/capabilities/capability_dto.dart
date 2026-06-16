@@ -17,36 +17,23 @@ class CapabilityDto {
   final String preparation;
   final String pdfCode;
 
+  // Unions the three class-hierarchy summary contracts from GET /class-categories,
+  // .../subcategories and .../class-types (all snake_case): the id comes from
+  // whichever node this is — a category, a subcategory or a class type. Only the
+  // class-type summary carries schedule_type/preparation_info/pdf_code.
   factory CapabilityDto.fromJson(Map<String, dynamic> json) {
     final id =
-        normOptInt(json['id']) ??
-        normOptInt(json['categoryId']) ??
         normOptInt(json['category_id']) ??
-        normOptInt(json['subcategoryId']) ??
         normOptInt(json['subcategory_id']) ??
-        normOptInt(json['classTypeId']) ??
         normOptInt(json['class_type_id']) ??
         0;
-    final description =
-        normOptString(json['description']) ?? normOptString(json['name']) ?? '';
-    final locationId =
-        normOptInt(json['locationId']) ?? normOptInt(json['location_id']) ?? 0;
     return CapabilityDto(
       id: id,
-      description: description,
-      locationId: locationId,
-      scheduleType:
-          normOptString(json['scheduleType']) ??
-          normOptString(json['schedule_type']) ??
-          '',
-      preparation:
-          normOptString(json['preparation']) ??
-          normOptString(json['preparation_info']) ??
-          '',
-      pdfCode:
-          normOptString(json['pdfCode']) ??
-          normOptString(json['pdf_code']) ??
-          '',
+      description: normOptString(json['name']) ?? '',
+      locationId: normOptInt(json['location_id']) ?? 0,
+      scheduleType: normOptString(json['schedule_type']) ?? '',
+      preparation: normOptString(json['preparation_info']) ?? '',
+      pdfCode: normOptString(json['pdf_code']) ?? '',
     );
   }
 }

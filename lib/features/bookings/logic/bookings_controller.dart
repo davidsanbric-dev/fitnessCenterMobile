@@ -47,11 +47,11 @@ class BookingsController extends ControllerBase {
     loadBookings();
   }
 
-  Future<void> loadBookings({String? memberId}) async {
+  Future<void> loadBookings() async {
     if (isLoading.value) return;
 
     await runLoading(
-      action: () => _bookingsService.fetchBookings(memberId: memberId),
+      action: () => _bookingsService.fetchBookings(),
       errorMessage: 'Unexpected error while loading bookings',
       onSuccess: (items) {
         bookings.assignAll(items);

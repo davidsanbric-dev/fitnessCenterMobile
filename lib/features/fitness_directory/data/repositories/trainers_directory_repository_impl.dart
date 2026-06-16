@@ -25,6 +25,11 @@ class TrainersDirectoryRepositoryImpl implements TrainersDirectoryRepository {
   }
 
   @override
+  Future<List<TrainerDirectoryDto>> fetchAllTrainers() {
+    return _service.fetchAllTrainers();
+  }
+
+  @override
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
     required int locationId,

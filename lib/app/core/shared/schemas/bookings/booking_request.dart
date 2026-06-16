@@ -1,11 +1,14 @@
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 
+/// Filters for the bookings agenda list. Emits a camelCase intermediate that
+/// `BookingAgendaApi.getAgenda` remaps to the backend's snake_case query params
+/// (date_from/date_to/location_code/booking_status/discipline_id/trainer_id).
+/// The endpoint scopes results to the authenticated user, so there is no member
+/// filter.
 class BookingRequest {
   const BookingRequest({
-    this.memberId,
     this.startDate,
     this.endDate,
     this.locationCode,
@@ -14,7 +17,6 @@ class BookingRequest {
     this.trainerId,
   });
 
-  final String? memberId;
   final DateTime? startDate;
   final DateTime? endDate;
   final String? locationCode;
@@ -29,22 +31,19 @@ class BookingRequest {
 
   static DateTime _defaultEndDate(DateTime baseStartDate) =>
       baseStartDate.add(const Duration(days: 14));
-  static const String _fallbackMemberId = '20.657.720-7';
   static const String _defaultLocationCode = '1';
   static const String _defaultBookingStatus = '';
   static const String _defaultDisciplineId = '0';
   static const String _defaultTrainerId = '0';
-  static final AuthSessionCache _sessionCache = AuthSessionCache();
 
-  Future<Map<String, String>> toQueryParameters({
+  Map<String, String> toQueryParameters({
     DateTime? defaultStartDate,
     DateTime? defaultEndDate,
-    String? defaultMemberId,
     String? defaultLocationCode,
     String? defaultBookingStatus,
     String? defaultDisciplineId,
     String? defaultTrainerId,
-  }) async {
+  }) {
     final resolvedStartDate =
         (startDate ?? defaultStartDate ?? _defaultStartDate()).toLocal();
     final resolvedEndDate =
@@ -54,11 +53,6 @@ class BookingRequest {
       throw const ApiException('End date must be later than start date.');
     }
 
-    final resolvedDefaultMemberId =
-        normalizeMemberId(defaultMemberId) ??
-        await _resolveDefaultMemberIdFromSession();
-    final resolvedMemberId =
-        normalizeMemberId(memberId) ?? resolvedDefaultMemberId;
     final resolvedLocationCode =
         normOptString(locationCode) ??
         defaultLocationCode ??
@@ -79,43 +73,8 @@ class BookingRequest {
       'endDate': formatDate(resolvedEndDate),
       'locationCode': resolvedLocationCode,
       'bookingStatus': resolvedStatus,
-      'memberId': resolvedMemberId,
       'disciplineId': resolvedDiscipline,
       'trainerId': resolvedTrainer,
     };
-  }
-
-  static Future<String> _resolveDefaultMemberIdFromSession() async {
-    final sessionUser = await _sessionCache.getUser();
-    final sessionMemberId = _extractSessionMemberId(sessionUser);
-    return normalizeMemberId(sessionMemberId) ?? _fallbackMemberId;
-  }
-
-  static String? _extractSessionMemberId(Map<String, dynamic>? sessionUser) {
-    if (sessionUser == null || sessionUser.isEmpty) {
-      return null;
-    }
-
-    return normOptString(sessionUser['memberId']);
-  }
-
-  BookingRequest copyWith({
-    String? memberId,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? locationCode,
-    String? bookingStatus,
-    String? disciplineId,
-    String? trainerId,
-  }) {
-    return BookingRequest(
-      memberId: memberId ?? this.memberId,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      locationCode: locationCode ?? this.locationCode,
-      bookingStatus: bookingStatus ?? this.bookingStatus,
-      disciplineId: disciplineId ?? this.disciplineId,
-      trainerId: trainerId ?? this.trainerId,
-    );
   }
 }

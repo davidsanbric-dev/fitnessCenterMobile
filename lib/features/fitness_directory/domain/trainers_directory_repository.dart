@@ -21,6 +21,8 @@ abstract interface class TrainersDirectoryRepository {
     required TrainersSearchMode mode,
   });
 
+  Future<List<TrainerDirectoryDto>> fetchAllTrainers();
+
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
     required int locationId,

@@ -62,6 +62,41 @@ class TrainersService {
     );
   }
 
+  Future<List<TrainerDirectoryDto>> fetchAllTrainers() async {
+    // No discipline or club filter: the API returns every active trainer when
+    // both ``discipline_id`` and ``location_code`` are omitted. Each trainer
+    // carries its own discipline and club in the response, so we map them
+    // straight through (the club is shown per row).
+    final response = await _trainersApi
+        .getTrainers(const TrainersRequest())
+        .timeout(
+          trainersLoadTimeout,
+          onTimeout: () =>
+              throw const ApiException('Timed out while loading trainers.'),
+        );
+
+    final mapped = response
+        .map(
+          (trainer) => TrainerDirectoryDto(
+            membershipId: '',
+            membershipName: '',
+            trainerId: trainer.trainerId,
+            trainerName: trainer.trainerName,
+            disciplineId: trainer.disciplineId,
+            disciplineName: trainer.disciplineName,
+            locationId: trainer.locationId,
+            locationName: trainer.locationName,
+          ),
+        )
+        .toList(growable: false);
+
+    if (mapped.isEmpty) {
+      throw const ApiException('No trainers were found.');
+    }
+
+    return mapped;
+  }
+
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
     required int locationId,

@@ -38,7 +38,6 @@ class BookingService {
     required String state,
     required Object locationCode,
     String? observation,
-    String? user,
   }) {
     return _agendaApi.updateBookingStatus(
       UpdateBookingStatusRequest(
@@ -46,7 +45,6 @@ class BookingService {
         state: state,
         locationCode: _resolveLocationCode(locationCode),
         observation: observation,
-        user: user,
       ),
     );
   }

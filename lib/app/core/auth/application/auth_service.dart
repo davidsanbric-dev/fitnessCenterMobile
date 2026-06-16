@@ -42,6 +42,18 @@ class AuthService extends GetxService {
   String? get mail => _claimAsString('mail');
   String? get userName => _claimAsString('userName');
   String? get userId => _claimAsString('userId');
+  // Member identity fields decoded from the session claims. Used to fill the
+  // booking-details "Member" section for the signed-in member, whose own RUT and
+  // phone live in the session rather than every booking projection.
+  String? get userRut => _claimAsString('rut');
+  String? get userMobilePhone {
+    final mobile = _claimAsString('mobilePhone');
+    if (mobile != null && mobile.trim().isNotEmpty) {
+      return mobile;
+    }
+    return _claimAsString('landlinePhone');
+  }
+
   Map<String, dynamic>? get claims => _claims;
 
   Future<void> init() async {

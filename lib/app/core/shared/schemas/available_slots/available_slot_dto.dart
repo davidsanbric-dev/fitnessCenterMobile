@@ -26,69 +26,24 @@ class AvailableSlotDto {
   final int? trainerCode;
   final int? disciplineCode;
 
+  // Maps the `SlotResponse` contract from GET /slots (snake_case). Slot search
+  // exposes only a `location_id` (no location name) and no service entity; the
+  // `schedule_type` doubles as the displayed service label, and there is no
+  // booking id yet, so a stable key is synthesized from the slot's identity.
   factory AvailableSlotDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
-    final service = normReqMap(json['service']);
-    final location = normReqMap(json['location']);
-    final trainerCode =
-        normOptString(trainer['id']) ??
-        normOptString(trainer['trainer_id']) ??
-        '';
-    final trainerName =
-        normOptString(trainer['name']) ??
-        normOptString(trainer['full_name']) ??
-        '';
-    final serviceName =
-        normOptString(service['serviceName']) ??
-        normOptString(json['schedule_type']) ??
-        normOptString(json['serviceName']) ??
-        '';
-    final disciplineName =
-        normOptString(trainer['discipline']) ??
-        normOptString(trainer['discipline_name']) ??
-        normOptString(trainer['disciplineName']) ??
-        '';
-    final locationName =
-        normOptString(json['locationName']) ??
-        normOptString(location['name']) ??
-        '';
-    final locationId =
-        parseOptInt(location['locationId']) ??
-        parseOptInt(location['location_id']) ??
-        parseOptInt(json['locationId']) ??
-        parseOptInt(json['location_id']);
-    final duration =
-        parseOptInt(json['durationMinutes']) ??
-        parseOptInt(json['bookingDuration']) ??
-        parseOptInt(json['duration']);
-    final parsedTrainerCode =
-        parseOptInt(trainer['trainer_code']) ??
-        parseOptInt(trainer['id']) ??
-        parseOptInt(trainer['trainer_id']) ??
-        parseOptInt(json['trainerCode']) ??
-        parseOptInt(json['trainer_id']) ??
-        parseOptInt(json['trainer_code']);
-    final parsedDisciplineCode =
-        parseOptInt(trainer['disciplineId']) ??
-        parseOptInt(trainer['discipline_id']) ??
-        parseOptInt(trainer['idDiscipline']) ??
-        parseOptInt(json['disciplineCode']) ??
-        parseOptInt(json['discipline_id']);
-    final parsedSchedulingDate =
-        parseOptDateTime(json['bookingDateTime']) !=
-            DateTime.fromMillisecondsSinceEpoch(0)
-        ? parseOptDateTime(json['bookingDateTime'])
-        : parseOptDateTime(
-            json['slot_datetime'] ?? json['slotDateTime'] ?? json['dateTime'],
-          );
-    final bookingId =
-        normOptString(json['bookingId']) ??
-        normOptString(json['id']) ??
-        [
-          locationId?.toString(),
-          parsedTrainerCode?.toString(),
-          parsedSchedulingDate.toIso8601String(),
-        ].whereType<String>().join('|');
+    final trainerName = normOptString(trainer['full_name']) ?? '';
+    final serviceName = normOptString(json['schedule_type']) ?? '';
+    final disciplineName = normOptString(trainer['discipline_name']) ?? '';
+    final locationId = parseOptInt(json['location_id']);
+    final trainerCode = parseOptInt(trainer['trainer_code']);
+    final disciplineCode = parseOptInt(trainer['discipline_id']);
+    final parsedSchedulingDate = parseOptDateTime(json['slot_datetime']);
+    final bookingId = [
+      locationId?.toString(),
+      trainerCode?.toString(),
+      parsedSchedulingDate.toIso8601String(),
+    ].whereType<String>().join('|');
 
     return AvailableSlotDto(
       bookingId: bookingId.isEmpty
@@ -96,13 +51,16 @@ class AvailableSlotDto {
           : bookingId,
       schedulingDate: parsedSchedulingDate,
       serviceName: serviceName,
-      trainerName: trainerName.isNotEmpty ? trainerName : trainerCode,
+      trainerName: trainerName.isNotEmpty
+          ? trainerName
+          : (trainerCode?.toString() ?? ''),
       disciplineName: disciplineName,
-      locationName: locationName,
-      duration: duration,
+      // SlotResponse carries no location name; the UI falls back to a label.
+      locationName: '',
+      duration: null,
       locationId: locationId,
-      trainerCode: parsedTrainerCode,
-      disciplineCode: parsedDisciplineCode,
+      trainerCode: trainerCode,
+      disciplineCode: disciplineCode,
     );
   }
 

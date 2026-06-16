@@ -8,6 +8,8 @@ class TrainerDirectoryDto {
     required this.trainerName,
     required this.disciplineId,
     required this.disciplineName,
+    this.locationId = 0,
+    this.locationName = '',
   });
 
   final String membershipId;
@@ -16,6 +18,8 @@ class TrainerDirectoryDto {
   final String trainerName;
   final int disciplineId;
   final String disciplineName;
+  final int locationId;
+  final String locationName;
 
   factory TrainerDirectoryDto.fromJson(Map<String, dynamic> json) {
     return TrainerDirectoryDto(
@@ -25,6 +29,8 @@ class TrainerDirectoryDto {
       trainerName: normReqString(json['trainerName']),
       disciplineId: normReqInt(json['disciplineId']),
       disciplineName: normReqString(json['disciplineName']),
+      locationId: normOptInt(json['locationId']) ?? 0,
+      locationName: normOptString(json['locationName']) ?? '',
     );
   }
 
@@ -35,6 +41,8 @@ class TrainerDirectoryDto {
       'trainerName': trainerName,
       'disciplineId': disciplineId,
       'disciplineName': disciplineName,
+      'locationId': locationId,
+      'locationName': locationName,
       'membershipId': membershipId,
       'membershipName': membershipName,
     };

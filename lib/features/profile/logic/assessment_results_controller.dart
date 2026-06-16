@@ -29,8 +29,14 @@ class AssessmentResultsController extends ControllerBase {
     if (isLoading.value) return;
 
     await runLoading(
-      action: () =>
-          _bookingsService.fetchBookings(bookingStatus: 'COMPLETED'),
+      action: () => _bookingsService.fetchBookings(
+        bookingStatus: 'COMPLETED',
+        // Completed sessions are past-dated; opt out of the default upcoming
+        // date window so they aren't filtered out server-side, and fetch the
+        // full set (page_size 0) so no assessment note is capped off.
+        includeAllDates: true,
+        pageSize: 0,
+      ),
       errorMessage: 'Unexpected error while loading assessment results',
       onSuccess: (items) => _completed.assignAll(items),
       onError: () => _completed.clear(),

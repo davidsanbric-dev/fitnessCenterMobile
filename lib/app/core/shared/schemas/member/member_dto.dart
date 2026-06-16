@@ -22,19 +22,15 @@ class MemberDto {
     return parts.join(' ');
   }
 
+  // Maps the `CurrentUserResponse` contract from GET /users/me (snake_case).
+  // The RUT is the member identification: it comes from `rut`, not the numeric
+  // user `id`.
   factory MemberDto.fromJson(Map<String, dynamic> json) {
-    final firstName = normOptString(json['name'] ?? json['first_name']) ?? '';
-    final paternal =
-        normOptString(json['paternalSurname'] ?? json['paternal_surname']) ??
-        '';
-    final maternal =
-        normOptString(json['maternalSurname'] ?? json['maternal_surname']) ??
-        '';
     return MemberDto(
-      memberRut: normReqString(json['memberId'] ?? json['id']),
-      memberName: firstName,
-      paternalSurname: paternal,
-      maternalSurname: maternal,
+      memberRut: normOptString(json['rut']) ?? '',
+      memberName: normOptString(json['first_name']) ?? '',
+      paternalSurname: normOptString(json['paternal_surname']) ?? '',
+      maternalSurname: normOptString(json['maternal_surname']) ?? '',
     );
   }
 }

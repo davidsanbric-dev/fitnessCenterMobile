@@ -3,72 +3,63 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/ava
 
 void main() {
   group('AvailableSlotDto.fromJson', () {
-    test('maps gym-domain booking availability payload', () {
+    test('maps the SlotResponse contract', () {
       final json = <String, dynamic>{
-        'bookingId': 'BK-SLOT-01',
-        'bookingDateTime': '2026-03-24T15:30:00Z',
-        'durationMinutes': 50,
-        'location': {'locationId': 4, 'name': 'North Gym'},
+        'slot_datetime': '2026-03-24T15:30:00Z',
+        'location_id': 4,
+        'slot_assignment_code': 'SL-1',
+        'schedule_type': 'GROUP',
+        'is_available': true,
         'trainer': {
-          'id': '11',
-          'name': 'Chris Trainer',
-          'discipline': 'Functional',
-          'disciplineId': 8,
+          'trainer_id': 11,
+          'trainer_code': 500,
+          'full_name': 'Chris Trainer',
+          'discipline_id': 8,
+          'discipline_name': 'Functional',
         },
-        'service': {'serviceName': 'Functional Group'},
       };
 
       final dto = AvailableSlotDto.fromJson(json);
 
-      expect(dto.bookingId, 'BK-SLOT-01');
       expect(
         dto.schedulingDate,
         DateTime.parse('2026-03-24T15:30:00Z').toLocal(),
       );
-      expect(dto.duration, 50);
+      // Slot search carries no service entity nor location name.
+      expect(dto.serviceName, 'GROUP');
+      expect(dto.locationName, '');
+      expect(dto.duration, null);
       expect(dto.locationId, 4);
-      expect(dto.locationName, 'North Gym');
-      expect(dto.trainerCode, 11);
+      expect(dto.trainerCode, 500);
       expect(dto.trainerName, 'Chris Trainer');
       expect(dto.disciplineCode, 8);
       expect(dto.disciplineName, 'Functional');
-      expect(dto.serviceName, 'Functional Group');
+      // No booking id exists yet; a stable key is synthesized from identity.
+      expect(dto.bookingId, startsWith('4|500|'));
     });
 
-    test('maps partial legacy availability payload with defaults', () {
+    test('synthesizes a date-only key when identity fields are missing', () {
       final json = <String, dynamic>{
-        'id': 'legacy-slot-9',
-        'bookingDateTime': '2026-03-25T07:00:00Z',
-        'duration': 30,
-        'Telemedicina': 1,
-        'idSucursal': 19,
-        'locationName': 'Legacy Branch Label',
-        'trainerCode': '15',
-        'disciplineCode': '44',
+        'slot_datetime': '2026-03-25T07:00:00Z',
+        'schedule_type': 'PERSONAL',
+        'is_available': true,
         'trainer': {
-          'id': '15',
-          'name': 'Legacy Professional',
-          'especialidad': 'Pilates',
-          'idespecialidad': '44',
+          'trainer_id': 15,
+          'full_name': 'Coach K',
+          'discipline_id': 3,
+          'discipline_name': 'Strength',
         },
-        'serviceName': 'Legacy Service Name',
       };
 
       final dto = AvailableSlotDto.fromJson(json);
 
-      expect(dto.bookingId, 'legacy-slot-9');
-      expect(
-        dto.schedulingDate,
-        DateTime.parse('2026-03-25T07:00:00Z').toLocal(),
-      );
-      expect(dto.duration, 30);
       expect(dto.locationId, null);
-      expect(dto.locationName, 'Legacy Branch Label');
-      expect(dto.trainerCode, 15);
-      expect(dto.trainerName, 'Legacy Professional');
-      expect(dto.disciplineCode, 44);
-      expect(dto.disciplineName, '');
-      expect(dto.serviceName, 'Legacy Service Name');
+      expect(dto.trainerCode, null);
+      expect(dto.trainerName, 'Coach K');
+      expect(dto.disciplineCode, 3);
+      expect(dto.disciplineName, 'Strength');
+      expect(dto.serviceName, 'PERSONAL');
+      expect(dto.bookingId, dto.schedulingDate.toIso8601String());
     });
   });
 }
