@@ -25,6 +25,9 @@ on:
 
 permissions:
   contents: write
+  # Needed by the promote path to read & download the APK artifact from a
+  # previous (push-to-main) workflow run.
+  actions: read
 
 # Every push to main triggers a build; cancel any in-flight run for the same
 # ref so a newer commit supersedes an older one and they don't race on the
@@ -60,6 +63,14 @@ jobs:
       ANDROID_MIN_VERSION: ${{ secrets.ANDROID_MIN_VERSION }}
       IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
       FIREBASE_DYNAMIC_LINK_DOMAIN: ${{ secrets.FIREBASE_DYNAMIC_LINK_DOMAIN }}
+      # DO_BUILD: compile a fresh APK. True for every push to main and for any
+      # dispatch that distributes to Firebase (firebase/both). A dispatch with
+      # target=github does NOT build — it promotes an existing tested build.
+      DO_BUILD: ${{ github.event_name == 'push' || inputs.target == 'firebase' || inputs.target == 'both' }}
+      # PROMOTE: don't build; download the exact APK from the latest successful
+      # push-to-main build and attach it to the GitHub Release. This is the
+      # "release the binary that was already tested on Firebase" path.
+      PROMOTE: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'github' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,7 +86,51 @@ jobs:
             exit 1
           fi
 
+      # Promote path: locate the most recent successful push-to-main build that
+      # still has a (non-expired) APK artifact and remember its run id so the
+      # next step can download the exact bytes — no rebuild.
+      - name: Find build to promote
+        id: promote
+        if: ${{ env.PROMOTE == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'android-release.yml',
+              branch: 'main',
+              event: 'push',
+              status: 'success',
+              per_page: 50,
+            });
+            for (const run of runs) {
+              const arts = await github.rest.actions.listWorkflowRunArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+              });
+              const apk = arts.data.artifacts.find(a => a.name === 'app-release-apk' && !a.expired);
+              if (apk) {
+                core.setOutput('run_id', String(run.id));
+                core.setOutput('sha', run.head_sha);
+                console.log(`Promoting app-release-apk from run ${run.id} (${run.head_sha})`);
+                return;
+              }
+            }
+            core.setFailed('No promotable app-release-apk artifact found on main. Run a build (push to main) first, or dispatch with target=both.');
+
+      - name: Download artifact to promote
+        if: ${{ env.PROMOTE == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk
+          run-id: ${{ steps.promote.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Assemble dart-defines from secrets
+        if: ${{ env.DO_BUILD == 'true' }}
         shell: bash
         run: |
           if [ -z "$BASE_URL" ]; then
@@ -99,12 +154,14 @@ jobs:
             }' > .dart-defines.ci.json
 
       - name: Set up Java
+        if: ${{ env.DO_BUILD == 'true' }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Set up Gradle
+        if: ${{ env.DO_BUILD == 'true' }}
         uses: gradle/actions/setup-gradle@v4
         with:
           # Runs on every push to main / manual dispatch. The concurrency group
@@ -113,6 +170,7 @@ jobs:
           cache-read-only: false
 
       - name: Set up Flutter
+        if: ${{ env.DO_BUILD == 'true' }}
         uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -123,10 +181,11 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        if: ${{ env.DO_BUILD == 'true' }}
         run: flutter pub get
 
       - name: Configure release keystore
-        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: ${{ env.DO_BUILD == 'true' && env.ANDROID_KEYSTORE_BASE64 != '' }}
         shell: bash
         run: |
           mkdir -p android/app
@@ -151,25 +210,27 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Build release APK
+        if: ${{ env.DO_BUILD == 'true' }}
         run: flutter build apk --release --dart-define-from-file=.dart-defines.ci.json
 
       - name: Prepare release notes
         shell: bash
+        env:
+          PROMOTED_FROM_RUN: ${{ steps.promote.outputs.run_id }}
+          PROMOTED_FROM_SHA: ${{ steps.promote.outputs.sha }}
         run: |
-          cat > release-notes.txt <<EOF
-          Build: $RELEASE_NAME
-          Commit: $GITHUB_SHA
-          Ref: $GITHUB_REF
-          EOF
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-          # The APK is already a compressed archive; skip re-compression to
-          # speed up the upload (default level 6 wastes CPU for ~0% gain).
-          compression-level: 0
+          {
+            echo "Build: $RELEASE_NAME"
+            echo "Ref: $GITHUB_REF"
+            if [ -n "$PROMOTED_FROM_RUN" ]; then
+              # Promote path: the released bytes are the artifact built (and
+              # Firebase-distributed) by an earlier run, not this run's commit.
+              echo "Commit: $PROMOTED_FROM_SHA"
+              echo "Promoted exact APK from build run: $PROMOTED_FROM_RUN"
+            else
+              echo "Commit: $GITHUB_SHA"
+            fi
+          } > release-notes.txt
 
       - name: Publish to GitHub Releases
         if: ${{ github.event_name == 'workflow_dispatch' && (inputs.target == 'github' || inputs.target == 'both') }}
@@ -191,3 +252,21 @@ jobs:
           groups: ${{ env.FIREBASE_APP_DISTRIBUTION_GROUPS }}
           file: build/app/outputs/flutter-apk/app-release.apk
           releaseNotesFile: release-notes.txt
+
+      # Kept last and non-blocking so a storage-quota error can never fail an
+      # in-progress release/distribution. Only runs when we actually built an
+      # APK (the promote path has nothing new to store). Retention is 90 days
+      # so a build stays promotable to a GitHub Release well after it shipped
+      # to Firebase; the Cleanup Artifacts workflow + per-run retention keep
+      # the storage footprint in check.
+      - name: Upload APK artifact
+        if: ${{ env.DO_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 90
+          # The APK is already a compressed archive; skip re-compression to
+          # speed up the upload (default level 6 wastes CPU for ~0% gain).
+          compression-level: 0
