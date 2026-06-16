@@ -7,7 +7,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipl
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/subpages.dart';
@@ -132,7 +131,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
 
   void _showDirectoryOptions() {
     _disciplinesController.error.value = null;
-    _disciplinesController.clearLocationSelection();
     _disciplinesController.showDisciplinesResults.value = false;
     _disciplinesController.resetDisciplineAvailability();
     if (Get.isRegistered<TrainersController>()) {
@@ -188,8 +186,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
         ),
       );
     }
-    final locationLabel =
-        _disciplinesController.selectedLocationLabel.value?.trim() ?? '';
+    final locationLabel = discipline.locationName?.trim() ?? '';
     if (locationLabel.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
@@ -286,32 +283,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     return const PageHeader(title: headerTitle);
   }
 
-  List<BookingsLocationOption> _resolveLocationOptions() {
-    final result = <BookingsLocationOption>[];
-    final seenIds = <int>{};
-    for (final location in _locationController.locations) {
-      final name = location.name.trim();
-      if (location.id <= 0 || name.isEmpty || !seenIds.add(location.id)) {
-        continue;
-      }
-      result.add(BookingsLocationOption(id: location.id, name: name));
-    }
-    return result;
-  }
-
-  List<String> _locationLabelsFor(List<BookingsLocationOption> locations) =>
-      locations.map((location) => location.name).toList(growable: false);
-
-  Map<String, int> _locationLabelToIdFor(
-    List<BookingsLocationOption> locations,
-  ) {
-    final map = <String, int>{};
-    for (final location in locations) {
-      map[location.name.trim().toLowerCase()] = location.id;
-    }
-    return map;
-  }
-
   @override
   Widget build(BuildContext context) {
     final options = [
@@ -343,11 +314,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
             Expanded(
               child: Obx(() {
                 final view = _controller.view.value;
-                final locationOptionsData = _resolveLocationOptions();
-                final locationLabels = _locationLabelsFor(locationOptionsData);
-                final locationLabelToId = _locationLabelToIdFor(
-                  locationOptionsData,
-                );
 
                 switch (view) {
                   case FitnessDirectoryView.capabilities:
@@ -357,8 +323,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
                       controller: _disciplinesController,
                       onShowAvailability:
                           _controller.showDisciplineAvailabilityView,
-                      locationOptions: locationLabels,
-                      locationLabelToId: locationLabelToId,
                     );
                   case FitnessDirectoryView.disciplineAvailability:
                     final selectedDiscipline =

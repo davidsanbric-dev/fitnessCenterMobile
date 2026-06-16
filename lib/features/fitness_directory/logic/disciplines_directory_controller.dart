@@ -18,9 +18,6 @@ class DisciplinesDirectoryController extends ControllerBase {
   final DisciplinesDirectoryRepository _repository;
   int _disciplineAvailabilitySequence = 0;
 
-  final selectedLocationId = RxnInt();
-  final selectedLocationLabel = RxnString();
-
   final disciplines = <DisciplineDto>[].obs;
   final _allDisciplines = <DisciplineDto>[];
   final pageNumber = 1.obs;
@@ -64,6 +61,7 @@ class DisciplinesDirectoryController extends ControllerBase {
     error.value = null;
 
     try {
+      // Unscoped: list every club's disciplines, each carrying its own club.
       final response = await _repository.fetchDisciplines(
         pageNumber: pageNumber.value,
         pageSize: pageSize.value,
@@ -105,13 +103,9 @@ class DisciplinesDirectoryController extends ControllerBase {
       return;
     }
 
-    final resolvedLocationId = locationId ?? this.locationId;
-    if (resolvedLocationId == null || resolvedLocationId <= 0) {
-      _disciplineAvailabilitySequence++;
-      disciplineAvailabilityError.value = 'Could not determine the club.';
-      return;
-    }
-    final activeLocationId = resolvedLocationId;
+    // The discipline carries its own club; 0 means "all clubs" so a discipline
+    // offered at several (or none) still lists availability.
+    final activeLocationId = locationId ?? this.locationId ?? 0;
 
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isDisciplineAvailabilityLoading,
@@ -156,11 +150,6 @@ class DisciplinesDirectoryController extends ControllerBase {
     _syncDisciplineAvailabilityPagination();
   }
 
-  void clearLocationSelection() {
-    selectedLocationId.value = null;
-    selectedLocationLabel.value = null;
-  }
-
   void setPageNumber(int value) => setTablePageNumber(
     pageNumber: pageNumber,
     value: value,
@@ -177,7 +166,6 @@ class DisciplinesDirectoryController extends ControllerBase {
   void resetToInitialState() {
     isLoading.value = false;
     error.value = null;
-    clearLocationSelection();
     disciplines.clear();
     _allDisciplines.clear();
     pageNumber.value = 1;

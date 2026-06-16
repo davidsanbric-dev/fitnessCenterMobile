@@ -4,6 +4,9 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
+/// Card-grid selector for a list of [CapabilityDto] nodes. Used for the class
+/// category groups and, with a different [title]/[iconData], to render class
+/// types the same way in the directory and booking drill-downs.
 class CapabilitiesGroupFilterBox extends StatelessWidget {
   const CapabilitiesGroupFilterBox({
     super.key,
@@ -12,6 +15,8 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
     required this.onGroupSelected,
     this.emptyStateMessage,
     this.isLoading = false,
+    this.title = 'What type of class are you looking for?',
+    this.iconData = LucideIcons.tags,
   });
 
   final Color? accentColor;
@@ -19,6 +24,8 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
   final ValueChanged<CapabilityDto> onGroupSelected;
   final String? emptyStateMessage;
   final bool isLoading;
+  final String title;
+  final IconData iconData;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
             child: Text(
-              'What type of class are you looking for?',
+              title,
               style: AppTheme.titleMediumEmphasis(context),
             ),
           ),
@@ -90,7 +97,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
 
                 return FilterBoxOptionButton(
                   label: group.description,
-                  iconData: LucideIcons.tags,
+                  iconData: iconData,
                   iconContainerSize: 34,
                   iconAlignment: Alignment.bottomRight,
                   iconOffset: const Offset(2, 2),

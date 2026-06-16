@@ -4,6 +4,8 @@ import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
 
 class DisciplinesApi extends ApiBase {
+  // Lists every club's disciplines; each row carries its own offering club
+  // (the API derives it from the discipline's slots), so it is never scoped.
   Future<PaginatedResult<DisciplineDto>> getDisciplines({
     int? pageNumber,
     int? pageSize,

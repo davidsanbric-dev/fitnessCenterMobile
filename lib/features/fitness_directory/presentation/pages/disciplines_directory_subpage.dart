@@ -5,7 +5,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipl
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
@@ -19,14 +18,10 @@ class DisciplinesDirectoryPage extends StatefulWidget {
     super.key,
     required this.controller,
     required this.onShowAvailability,
-    required this.locationOptions,
-    required this.locationLabelToId,
   });
 
   final DisciplinesDirectoryController controller;
   final VoidCallback onShowAvailability;
-  final List<String> locationOptions;
-  final Map<String, int> locationLabelToId;
 
   @override
   State<DisciplinesDirectoryPage> createState() =>
@@ -34,49 +29,15 @@ class DisciplinesDirectoryPage extends StatefulWidget {
 }
 
 class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
-  static const int _defaultDirectoryLocationId = 3;
-
   @override
   void initState() {
     super.initState();
-    _ensureDefaultLocationSelection();
+    _ensureDisciplinesLoaded();
   }
 
-  @override
-  void didUpdateWidget(covariant DisciplinesDirectoryPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _ensureDefaultLocationSelection();
-  }
-
-  void _ensureDefaultLocationSelection() {
-    final options = widget.locationOptions;
-    if (options.isEmpty) {
-      return;
-    }
-
-    final currentLocationId = widget.controller.selectedLocationId.value;
-    if (currentLocationId != null) {
-      final hasCurrent = options.any(
-        (option) => _resolveLocationId(option) == currentLocationId,
-      );
-      if (hasCurrent) {
-        return;
-      }
-    }
-
-    final defaultLabel = _resolveDefaultLocationLabel(options);
-    final label = defaultLabel ?? options.first;
-    final locationId = _resolveLocationId(label);
-    if (locationId == null) {
-      return;
-    }
-
-    widget.controller.selectedLocationId.value = locationId;
-    widget.controller.selectedLocationLabel.value = label.trim();
-    final shouldLoadDisciplines =
-        widget.controller.disciplines.isEmpty &&
-        !widget.controller.isLoading.value;
-    if (shouldLoadDisciplines) {
+  void _ensureDisciplinesLoaded() {
+    if (widget.controller.disciplines.isEmpty &&
+        !widget.controller.isLoading.value) {
       unawaited(
         widget.controller.loadDisciplines(
           forceRefresh: true,
@@ -84,33 +45,6 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
         ),
       );
     }
-  }
-
-  String? _resolveDefaultLocationLabel(List<String> options) {
-    for (final option in options) {
-      if (_resolveLocationId(option) == _defaultDirectoryLocationId) {
-        final label = option.trim();
-        if (label.isNotEmpty) {
-          return label;
-        }
-      }
-    }
-    return null;
-  }
-
-  void _handleLocationSelected(String? value) {
-    final label = value?.trim() ?? '';
-    if (label.isEmpty) {
-      widget.controller.clearLocationSelection();
-      return;
-    }
-    final locationId = _resolveLocationId(label);
-    if (locationId == null) {
-      widget.controller.clearLocationSelection();
-      return;
-    }
-    widget.controller.selectedLocationId.value = locationId;
-    widget.controller.selectedLocationLabel.value = label;
   }
 
   void _handleDisciplineSelected(
@@ -125,36 +59,18 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
       return;
     }
 
-    final locationId = widget.controller.selectedLocationId.value;
-    if (locationId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select a club before continuing.')),
-      );
-      return;
-    }
-
+    // The discipline carries its own club; a null id lists every club's slots.
     widget.controller.showDisciplineAvailability(
       discipline,
-      locationId: locationId,
+      locationId: discipline.locationId,
     );
     widget.onShowAvailability();
-  }
-
-  int? _resolveLocationId(String label) {
-    final normalized = label.trim().toLowerCase();
-    if (normalized.isEmpty) {
-      return null;
-    }
-    return widget.locationLabelToId[normalized];
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final locationOptions = widget.locationOptions.toList(growable: false);
       final isLoading = widget.controller.isLoading.value;
-      final selectedLocationLabel =
-          widget.controller.selectedLocationLabel.value ?? '';
 
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -172,9 +88,6 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
               showPagination: true,
               onDisciplineSelected: (row) =>
                   _handleDisciplineSelected(context, row),
-              locationOptions: locationOptions,
-              selectedLocationLabel: selectedLocationLabel,
-              onLocationSelected: _handleLocationSelected,
             ),
           ],
         ),
@@ -234,37 +147,13 @@ class _DisciplinesDirectoryStandalonePageState
   }
 
   Future<void> _loadLocations() async {
+    // Locations are loaded so the LocationCodeRegistry can resolve each
+    // discipline's club id to its `/statics` code when fetching availability.
     try {
       await _locationController.loadLocations();
     } catch (_) {
-      // Keep page usable without location options when API fails.
+      // Keep the page usable when the locations request fails.
     }
-  }
-
-  List<BookingsLocationOption> _resolveLocationOptions() {
-    final result = <BookingsLocationOption>[];
-    final seenIds = <int>{};
-    for (final location in _locationController.locations) {
-      final name = location.name.trim();
-      if (location.id <= 0 || name.isEmpty || !seenIds.add(location.id)) {
-        continue;
-      }
-      result.add(BookingsLocationOption(id: location.id, name: name));
-    }
-    return result;
-  }
-
-  List<String> _locationLabelsFor(List<BookingsLocationOption> locations) =>
-      locations.map((location) => location.name).toList(growable: false);
-
-  Map<String, int> _locationLabelToIdFor(
-    List<BookingsLocationOption> locations,
-  ) {
-    final map = <String, int>{};
-    for (final location in locations) {
-      map[location.name.trim().toLowerCase()] = location.id;
-    }
-    return map;
   }
 
   void _handleShowAvailability() {
@@ -315,7 +204,7 @@ class _DisciplinesDirectoryStandalonePageState
         ),
       );
     }
-    final locationLabel = _controller.selectedLocationLabel.value?.trim() ?? '';
+    final locationLabel = discipline.locationName?.trim() ?? '';
     if (locationLabel.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
@@ -370,15 +259,10 @@ class _DisciplinesDirectoryStandalonePageState
             Expanded(
               child: _showAvailability
                   ? _buildAvailabilityView()
-                  : Obx(() {
-                      final locationData = _resolveLocationOptions();
-                      return DisciplinesDirectoryPage(
-                        controller: _controller,
-                        onShowAvailability: _handleShowAvailability,
-                        locationOptions: _locationLabelsFor(locationData),
-                        locationLabelToId: _locationLabelToIdFor(locationData),
-                      );
-                    }),
+                  : DisciplinesDirectoryPage(
+                      controller: _controller,
+                      onShowAvailability: _handleShowAvailability,
+                    ),
             ),
           ],
         ),

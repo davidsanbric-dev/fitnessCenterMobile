@@ -8,7 +8,6 @@ import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_by_capability_table.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_group_filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_subgroup_filter_box.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/capabilities_subgroup_items_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -226,13 +225,10 @@ class _AvailableSlotsByCapabilityPageState
       final subgroup = _filtersController.capabilitySubgroup.toList(
         growable: false,
       );
-      final subgroupItems = _filtersController.capabilitySubgroupItemsPageRows;
-      final capabilitySubgroupItemsPageNumber =
-          _filtersController.capabilitySubgroupItemsPageNumber.value;
-      final capabilitySubgroupItemsPageSize =
-          _filtersController.capabilitySubgroupItemsPageSize.value;
-      final capabilitySubgroupItemsTotalItems =
-          _filtersController.capabilitySubgroupItemsTotalItems.value;
+      // Class types render as a card grid (no pagination), so use the full list.
+      final subgroupItems = _filtersController.capabilitySubgroupItems.toList(
+        growable: false,
+      );
       final availabilityRows = _filtersController.capabilityBookingsTableRows;
       final capabilityAvailabilityPageNumber =
           _filtersController.capabilityAvailabilityPageNumber.value;
@@ -325,31 +321,17 @@ class _AvailableSlotsByCapabilityPageState
                         isLoading: isSubgroupStageLoading,
                       )
                     else if (showSubgroupItemsStage)
-                      CapabilitiesSubgroupItemsTable(
-                        items: subgroupItems,
+                      // Class types render as the same card grid used for
+                      // groups/subgroups.
+                      CapabilitiesGroupFilterBox(
+                        groups: subgroupItems,
                         isLoading: isCapabilitySubgroupItemsLoading,
-                        errorMessage: capabilitySubgroupItemsError,
-                        pageNumber: capabilitySubgroupItemsPageNumber,
-                        pageSize: capabilitySubgroupItemsPageSize,
-                        totalItems: capabilitySubgroupItemsTotalItems,
-                        onPageChanged: _filtersController
-                            .setCapabilitySubgroupItemsPageNumber,
-                        showPagination: true,
-                        filterSummary: [
-                          if (_selectedGroup != null)
-                            TableFiltersSummaryItemData(
-                              label: 'Grupo',
-                              value: _selectedGroup?.description ?? '',
-                              icon: LucideIcons.tags,
-                            ),
-                          if (_selectedSubgroup != null)
-                            TableFiltersSummaryItemData(
-                              label: 'Subgrupo',
-                              value: _selectedSubgroup!.description.trim(),
-                              icon: LucideIcons.activity,
-                            ),
-                        ],
-                        onItemSelected: _handleSubgroupItemSelected,
+                        emptyStateMessage:
+                            capabilitySubgroupItemsError ??
+                            'No class types available for this subcategory.',
+                        title: 'Pick a class type',
+                        iconData: LucideIcons.dumbbell,
+                        onGroupSelected: _handleSubgroupItemSelected,
                       )
                     else if (showAvailabilityStage)
                       AvailableSlotsByCapabilityTable(

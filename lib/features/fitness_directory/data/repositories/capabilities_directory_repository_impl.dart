@@ -17,7 +17,7 @@ class CapabilitiesDirectoryRepositoryImpl
   final AvailableSlotsService _availableSlotsService;
 
   @override
-  Future<List<CapabilityDto>> fetchGroups({required int locationId}) {
+  Future<List<CapabilityDto>> fetchGroups({int? locationId}) {
     return _capabilitiesService.fetchGroups(locationId: locationId);
   }
 

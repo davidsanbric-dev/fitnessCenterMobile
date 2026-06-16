@@ -77,10 +77,8 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
       final stage = _controller.stage.value;
       final groups = _controller.groups.toList(growable: false);
       final subgroup = _controller.subgroup.toList(growable: false);
-      final subgroupItems = _controller.subgroupItemsPageRows;
-      final subgroupItemsPageNumber = _controller.subgroupItemsPageNumber.value;
-      final subgroupItemsPageSize = _controller.subgroupItemsPageSize.value;
-      final subgroupItemsTotalItems = _controller.subgroupItemsTotalItems.value;
+      // Class types render as a card grid (no pagination), so use the full list.
+      final subgroupItems = _controller.subgroupItems.toList(growable: false);
       final error = _controller.error.value;
       final isLoading = _controller.isLoading.value;
       final selectedGroup = _controller.selectedGroup.value;
@@ -158,9 +156,6 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
                         groups: groups,
                         subgroup: subgroup,
                         subgroupItems: subgroupItems,
-                        subgroupItemsPageNumber: subgroupItemsPageNumber,
-                        subgroupItemsPageSize: subgroupItemsPageSize,
-                        subgroupItemsTotalItems: subgroupItemsTotalItems,
                         selectedGroup: selectedGroup,
                         selectedSubgroup: selectedSubgroup,
                         selectedSubgroupItem: selectedSubgroupItem,
@@ -193,9 +188,6 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
     required List<CapabilityDto> groups,
     required List<CapabilityDto> subgroup,
     required List<CapabilityDto> subgroupItems,
-    required int subgroupItemsPageNumber,
-    required int subgroupItemsPageSize,
-    required int subgroupItemsTotalItems,
     required CapabilityDto? selectedGroup,
     required CapabilityDto? selectedSubgroup,
     required CapabilityDto? selectedSubgroupItem,
@@ -231,37 +223,17 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
           ],
         );
       case CapabilitiesViewStage.subgroupItemsSelection:
-        return Column(
+        // Class types render as the same card grid used for groups/subgroups.
+        return CapabilitiesGroupFilterBox(
           key: const ValueKey('subgroupItems'),
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 8),
-            CapabilitiesSubgroupItemsTable(
-              items: subgroupItems,
-              isLoading: subgroupItemsIsLoading,
-              errorMessage: subgroupItemsError,
-              pageNumber: subgroupItemsPageNumber,
-              pageSize: subgroupItemsPageSize,
-              totalItems: subgroupItemsTotalItems,
-              onPageChanged: _controller.setSubgroupItemsPageNumber,
-              showPagination: true,
-              filterSummary: [
-                if (selectedGroup != null)
-                  TableFiltersSummaryItemData(
-                    label: 'Group',
-                    value: selectedGroup.description,
-                    icon: LucideIcons.tags,
-                  ),
-                if (selectedSubgroup != null)
-                  TableFiltersSummaryItemData(
-                    label: 'Subgroup',
-                    value: selectedSubgroup.description.trim(),
-                    icon: LucideIcons.user,
-                  ),
-              ],
-              onItemSelected: _handleSubgroupItemSelected,
-            ),
-          ],
+          groups: subgroupItems,
+          isLoading: subgroupItemsIsLoading,
+          emptyStateMessage:
+              subgroupItemsError ??
+              'No class types available for this subcategory.',
+          title: 'Pick a class type',
+          iconData: LucideIcons.dumbbell,
+          onGroupSelected: _handleSubgroupItemSelected,
         );
       case CapabilitiesViewStage.capabilityAvailability:
         return Column(

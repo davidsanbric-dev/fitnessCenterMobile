@@ -18,6 +18,24 @@ class CapabilitiesController extends ControllerBase {
   final CapabilitiesDirectoryRepository _repository;
   final int locationId;
 
+  // Resolved from the selected group; the subgroup/items/availability steps are
+  // scoped to the club that owns the chosen group (mirrors the booking flow).
+  int? _selectedGroupLocationId;
+
+  int? _resolveLocationIdForGroup(CapabilityDto group) {
+    if (group.locationId > 0) {
+      return group.locationId;
+    }
+    return locationId > 0 ? locationId : null;
+  }
+
+  int? _resolveLocationIdForCapability(CapabilityDto capability) {
+    if (capability.locationId > 0) {
+      return capability.locationId;
+    }
+    return _selectedGroupLocationId ?? (locationId > 0 ? locationId : null);
+  }
+
   final stage = CapabilitiesViewStage.groupSelection.obs;
   final RxList<CapabilityDto> groups = <CapabilityDto>[].obs;
   final RxList<CapabilityDto> subgroup = <CapabilityDto>[].obs;
@@ -55,7 +73,8 @@ class CapabilitiesController extends ControllerBase {
     error.value = null;
 
     try {
-      final items = await _repository.fetchGroups(locationId: locationId);
+      // Unscoped so every club's groups show, like the booking flow.
+      final items = await _repository.fetchGroups();
       groups.assignAll(items);
       _resetSubgroupState();
       stage.value = CapabilitiesViewStage.groupSelection;
@@ -75,12 +94,19 @@ class CapabilitiesController extends ControllerBase {
       return;
     }
 
+    final groupLocationId = _resolveLocationIdForGroup(group);
+    if (groupLocationId == null) {
+      error.value = 'Could not determine the club.';
+      return;
+    }
+    _selectedGroupLocationId = groupLocationId;
+
     isLoading.value = true;
     error.value = null;
 
     try {
       final items = await _repository.fetchSubgroup(
-        locationId: locationId,
+        locationId: groupLocationId,
         groupId: group.id,
       );
       selectedGroup.value = group;
@@ -127,7 +153,7 @@ class CapabilitiesController extends ControllerBase {
 
     try {
       final items = await _repository.fetchSubgroupItems(
-        locationId: locationId,
+        locationId: _selectedGroupLocationId ?? locationId,
         groupId: groupId,
         subgroupId: subgroup.id,
       );
@@ -150,6 +176,12 @@ class CapabilitiesController extends ControllerBase {
       return;
     }
 
+    final capabilityLocationId = _resolveLocationIdForCapability(capability);
+    if (capabilityLocationId == null) {
+      capabilityAvailabilityError.value = 'Could not determine the club.';
+      return;
+    }
+
     error.value = null;
     isCapabilityAvailabilityLoading.value = true;
     capabilityAvailabilityError.value = null;
@@ -161,7 +193,7 @@ class CapabilitiesController extends ControllerBase {
 
     try {
       final items = await _repository.fetchAvailableBookingsByCapability(
-        locationId: locationId,
+        locationId: capabilityLocationId,
         capability: capability,
       );
       availableByCapability.assignAll(items);
@@ -250,6 +282,7 @@ class CapabilitiesController extends ControllerBase {
   void _resetSubgroupState() {
     subgroup.clear();
     selectedGroup.value = null;
+    _selectedGroupLocationId = null;
     _resetSubgroupItemsState();
   }
 
