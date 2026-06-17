@@ -5,6 +5,7 @@ import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
@@ -314,96 +315,110 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
             Expanded(
               child: Obx(() {
                 final view = _controller.view.value;
-
-                switch (view) {
-                  case FitnessDirectoryView.capabilities:
-                    return const CapabilitiesDirectoryPage();
-                  case FitnessDirectoryView.disciplines:
-                    return DisciplinesDirectoryPage(
-                      controller: _disciplinesController,
-                      onShowAvailability:
-                          _controller.showDisciplineAvailabilityView,
-                    );
-                  case FitnessDirectoryView.disciplineAvailability:
-                    final selectedDiscipline =
-                        _disciplinesController.selectedDiscipline.value;
-                    final summary = _buildDisciplineAvailabilitySummary(
-                      selectedDiscipline,
-                    );
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-                      child: AvailableBookingsByDisciplineTable(
-                        bookings:
-                            _disciplinesController.disciplineAvailabilityRows,
-                        isLoading: _disciplinesController
-                            .isDisciplineAvailabilityLoading
-                            .value,
-                        errorMessage: _disciplinesController
-                            .disciplineAvailabilityError
-                            .value,
-                        filterSummary: summary,
-                        onReserveBooking: _handleReserveBooking,
-                        pageNumber: _disciplinesController
-                            .disciplineAvailabilityPageNumber
-                            .value,
-                        pageSize: _disciplinesController
-                            .disciplineAvailabilityPageSize
-                            .value,
-                        totalItems: _disciplinesController
-                            .disciplineAvailabilityTotalItems
-                            .value,
-                        onPageChanged: _disciplinesController
-                            .setDisciplineAvailabilityPageNumber,
-                        showPagination: true,
-                      ),
-                    );
-                  case FitnessDirectoryView.memberships:
-                    return MembershipsDirectoryPage(
-                      memberships: _controller.membershipsRows,
-                      isLoading: _controller.isLoading.value,
-                      errorMessage: _controller.error.value,
-                      pageNumber: _controller.membershipsPageNumber.value,
-                      pageSize: _controller.membershipsPageSize.value,
-                      totalItems: _controller.membershipsTotalItems.value,
-                      onPageChanged: _controller.setMembershipsPageNumber,
-                      showPagination: true,
-                    );
-                  case FitnessDirectoryView.trainers:
-                    return const TrainersDirectoryPage();
-                  case FitnessDirectoryView.options:
-                    return ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 35,
-                        vertical: 25,
-                      ),
-                      itemCount: options.length,
-                      itemBuilder: (context, index) {
-                        final option = options[index];
-                        return ListTile(
-                          title: Text(
-                            option.title,
-                            style: AppTheme.listTileTitleStyle(context),
-                          ),
-                          onTap: option.onTap,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 10,
-                          ),
-                          minVerticalPadding: 10,
-                        );
-                      },
-                      separatorBuilder: (context, _) => Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey.shade300,
-                      ),
-                    );
-                }
+                return SlidePageSwitcher(
+                  depth: _directoryViewDepth(view),
+                  child: KeyedSubtree(
+                    key: ValueKey(view),
+                    child: _buildDirectoryView(view, options),
+                  ),
+                );
               }),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// Navigation depth per directory view, so the slide switcher knows which way
+  /// to animate: the options menu is the root, each section sits one level in,
+  /// and a discipline's availability table sits one level deeper still.
+  int _directoryViewDepth(FitnessDirectoryView view) {
+    switch (view) {
+      case FitnessDirectoryView.options:
+        return 0;
+      case FitnessDirectoryView.disciplineAvailability:
+        return 2;
+      case FitnessDirectoryView.disciplines:
+      case FitnessDirectoryView.capabilities:
+      case FitnessDirectoryView.trainers:
+      case FitnessDirectoryView.memberships:
+        return 1;
+    }
+  }
+
+  Widget _buildDirectoryView(
+    FitnessDirectoryView view,
+    List<DirectoryOption> options,
+  ) {
+    switch (view) {
+      case FitnessDirectoryView.capabilities:
+        return const CapabilitiesDirectoryPage();
+      case FitnessDirectoryView.disciplines:
+        return DisciplinesDirectoryPage(
+          controller: _disciplinesController,
+          onShowAvailability: _controller.showDisciplineAvailabilityView,
+        );
+      case FitnessDirectoryView.disciplineAvailability:
+        final selectedDiscipline =
+            _disciplinesController.selectedDiscipline.value;
+        final summary = _buildDisciplineAvailabilitySummary(selectedDiscipline);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+          child: AvailableBookingsByDisciplineTable(
+            bookings: _disciplinesController.disciplineAvailabilityRows,
+            isLoading:
+                _disciplinesController.isDisciplineAvailabilityLoading.value,
+            errorMessage:
+                _disciplinesController.disciplineAvailabilityError.value,
+            filterSummary: summary,
+            onReserveBooking: _handleReserveBooking,
+            pageNumber:
+                _disciplinesController.disciplineAvailabilityPageNumber.value,
+            pageSize:
+                _disciplinesController.disciplineAvailabilityPageSize.value,
+            totalItems:
+                _disciplinesController.disciplineAvailabilityTotalItems.value,
+            onPageChanged:
+                _disciplinesController.setDisciplineAvailabilityPageNumber,
+            showPagination: true,
+          ),
+        );
+      case FitnessDirectoryView.memberships:
+        return MembershipsDirectoryPage(
+          memberships: _controller.membershipsRows,
+          isLoading: _controller.isLoading.value,
+          errorMessage: _controller.error.value,
+          pageNumber: _controller.membershipsPageNumber.value,
+          pageSize: _controller.membershipsPageSize.value,
+          totalItems: _controller.membershipsTotalItems.value,
+          onPageChanged: _controller.setMembershipsPageNumber,
+          showPagination: true,
+        );
+      case FitnessDirectoryView.trainers:
+        return const TrainersDirectoryPage();
+      case FitnessDirectoryView.options:
+        return ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
+          itemCount: options.length,
+          itemBuilder: (context, index) {
+            final option = options[index];
+            return ListTile(
+              title: Text(
+                option.title,
+                style: AppTheme.listTileTitleStyle(context),
+              ),
+              onTap: option.onTap,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 10,
+              ),
+              minVerticalPadding: 10,
+            );
+          },
+          separatorBuilder: (context, _) =>
+              Divider(height: 1, thickness: 1, color: Colors.grey.shade300),
+        );
+    }
   }
 }

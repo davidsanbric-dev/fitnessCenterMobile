@@ -68,9 +68,10 @@ class TrainersTable extends StatelessWidget {
 
     return TableCard(
       icon: LucideIcons.user,
-      heightFactor: 0.71,
+      heightFactor: 0.65,
       margin: EdgeInsets.zero,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      toolbarSpacing: 0,
       body: TableBodySection(
         data: trainers,
         fields: fields,

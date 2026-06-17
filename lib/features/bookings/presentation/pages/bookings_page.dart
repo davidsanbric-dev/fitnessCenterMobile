@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
 import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
@@ -48,9 +49,13 @@ class _BookingsPageState extends State<BookingsPage> {
     //   2. Page mounts AFTER the request was set → ever() sees no change;
     //      the post-frame callback handles it by checking the current value.
     final navService = BookingsNavigationService.instance;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _consumePendingBookFlow());
-    _bookFlowWorker =
-        ever<bool>(navService.pendingBookFlow, (_) => _consumePendingBookFlow());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _consumePendingBookFlow(),
+    );
+    _bookFlowWorker = ever<bool>(
+      navService.pendingBookFlow,
+      (_) => _consumePendingBookFlow(),
+    );
   }
 
   @override
@@ -124,12 +129,26 @@ class _BookingsPageState extends State<BookingsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(),
-            if (_showBookFlow)
-              Expanded(child: _buildBookFlow())
-            else ...[
-              _buildBookSessionButton(),
-              Expanded(child: _buildBookingsList()),
-            ],
+            Expanded(
+              child: SlidePageSwitcher(
+                depth: _showBookFlow ? 1 : 0,
+                child: _showBookFlow
+                    ? KeyedSubtree(
+                        key: const ValueKey('book-flow'),
+                        child: _buildBookFlow(),
+                      )
+                    : KeyedSubtree(
+                        key: const ValueKey('bookings-list'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildBookSessionButton(),
+                            Expanded(child: _buildBookingsList()),
+                          ],
+                        ),
+                      ),
+              ),
+            ),
           ],
         ),
       ),

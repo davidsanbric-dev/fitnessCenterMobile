@@ -1,4 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
@@ -120,12 +121,7 @@ class BookSessionFlowState extends State<BookSessionFlow> {
       if (!mounted) {
         return;
       }
-      reporter(
-        stageKey,
-        secondarySubtitle,
-        secondarySubtitleIcon,
-        backHandler,
-      );
+      reporter(stageKey, secondarySubtitle, secondarySubtitleIcon, backHandler);
     });
   }
 
@@ -145,7 +141,15 @@ class BookSessionFlowState extends State<BookSessionFlow> {
       _scheduleHeaderReport('mode', null, null, widget.onExit);
     }
 
-    return showDisciplineFlow
+    // Each stage slides horizontally as the flow advances: the scheduling-mode
+    // selection is the root (depth 0) and the chosen branch slides in one level
+    // deeper (depth 1), matching the bookings card transition that hosts it.
+    final String stageKey = showDisciplineFlow
+        ? 'discipline'
+        : (showCapabilityFlow ? 'capability' : 'mode');
+    final int stageDepth = _hasSelectedSchedulingMode ? 1 : 0;
+
+    final Widget stage = showDisciplineFlow
         ? AvailableSlotsByDisciplineTrainerPage(
             isEmbedded: true,
             onBack: _backToSchedulingMode,
@@ -200,5 +204,10 @@ class BookSessionFlowState extends State<BookSessionFlow> {
               );
             },
           );
+
+    return SlidePageSwitcher(
+      depth: stageDepth,
+      child: KeyedSubtree(key: ValueKey(stageKey), child: stage),
+    );
   }
 }

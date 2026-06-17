@@ -22,7 +22,14 @@ class FitnessDirectoryController extends ControllerBase {
 
   List<Map<String, dynamic>> get membershipsRows {
     final rows = memberships
-        .map((item) => {'id': item.membershipId, 'name': item.membershipName})
+        .map(
+          (item) => {
+            'id': item.membershipId,
+            'name': item.membershipName,
+            'price': _formatPrice(item.price),
+            'maxBookings': _formatMaxBookings(item.maxBookingsPerMonth),
+          },
+        )
         .toList(growable: false);
     return sliceTablePage(
       rows,
@@ -107,6 +114,27 @@ class FitnessDirectoryController extends ControllerBase {
     value: value,
     syncPagination: _syncMembershipsPagination,
   );
+
+  String _formatPrice(double? price) {
+    if (price == null) {
+      return '';
+    }
+    // Drop the decimals for whole amounts (e.g. 30 -> "$30"), keep cents
+    // otherwise (e.g. 29.99 -> "$29.99").
+    final isWhole = price == price.roundToDouble();
+    final amount = isWhole
+        ? price.toStringAsFixed(0)
+        : price.toStringAsFixed(2);
+    return 'Price: \$$amount';
+  }
+
+  String _formatMaxBookings(int? maxBookings) {
+    if (maxBookings == null || maxBookings <= 0) {
+      return '';
+    }
+    final unit = maxBookings == 1 ? 'session' : 'sessions';
+    return 'Up to $maxBookings $unit / month';
+  }
 
   void _syncMembershipsPagination() {
     syncTablePaginationState(

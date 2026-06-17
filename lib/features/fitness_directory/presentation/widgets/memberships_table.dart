@@ -50,11 +50,15 @@ class MembershipsTable extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8),
       body: TableBodySection(
         data: memberships,
-        fields: const ['name'],
+        // Stack the plan name over its price and monthly session cap so the
+        // catalogue reads like the web admin's plan digest cell.
+        fields: const [
+          ['name', 'price', 'maxBookings'],
+        ],
         isLoading: isLoading,
         errorMessage: errorMessage,
         emptyLabel: 'No membership plans available.',
-        wrapFields: const {'name'},
+        wrapFields: const {'name', 'price', 'maxBookings'},
         onRowTap: (row) => _showComingSoonSnackBar(
           context,
           row['name']?.toString() ?? 'this membership plan',

@@ -83,6 +83,10 @@ class _AvailableSlotsByDisciplineTrainerPageState
 
   @override
   void dispose() {
+    // Tear down subscriptions before the resources they reference so a late
+    // worker/listener callback can never touch a disposed controller.
+    _filtersErrorWorker?.dispose();
+    _locationsWorker?.dispose();
     _primarySearchController.removeListener(_handleSearchInputChanged);
     _locationSearchController.removeListener(_handleSearchInputChanged);
     _primaryFocusNode.removeListener(_handlePrimaryFocusChange);
@@ -91,8 +95,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
     _locationSearchController.dispose();
     _primaryFocusNode.dispose();
     _locationFocusNode.dispose();
-    _filtersErrorWorker?.dispose();
-    _locationsWorker?.dispose();
     if (_ownsFiltersController) {
       Get.delete<AvailableSlotsController>();
     }
@@ -123,10 +125,12 @@ class _AvailableSlotsByDisciplineTrainerPageState
         showAppSnackBar(context, message);
       });
     });
-    _locationsWorker = ever<List<String>>(
-      _filtersController.locations,
-      (_) => _uiActions.ensureDefaultLocationSelection(),
-    );
+    _locationsWorker = ever<List<String>>(_filtersController.locations, (_) {
+      if (!mounted) {
+        return;
+      }
+      _uiActions.ensureDefaultLocationSelection();
+    });
   }
 
   void _handleSearchInputChanged() {

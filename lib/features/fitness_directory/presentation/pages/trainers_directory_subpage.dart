@@ -178,18 +178,23 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
     required bool isLoading,
     required String? errorMessage,
   }) {
-    return TrainersTable(
-      trainers: trainers,
-      mode: mode,
-      isLoading: isLoading,
-      errorMessage: errorMessage,
-      onTrainerSelected: _handleTrainerSelected,
-      pageNumber: _controller.trainersPageNumber.value,
-      pageSize: _controller.trainersPageSize.value,
-      totalItems: _controller.trainersTotalItems.value,
-      onPageChanged: _controller.setTrainersPageNumber,
-      showPagination: stage == TrainersViewStage.results,
-      emptyLabel: 'No trainers available.',
+    // Pad the card away from the screen edges so its rounded border breathes,
+    // matching the disciplines directory layout.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      child: TrainersTable(
+        trainers: trainers,
+        mode: mode,
+        isLoading: isLoading,
+        errorMessage: errorMessage,
+        onTrainerSelected: _handleTrainerSelected,
+        pageNumber: _controller.trainersPageNumber.value,
+        pageSize: _controller.trainersPageSize.value,
+        totalItems: _controller.trainersTotalItems.value,
+        onPageChanged: _controller.setTrainersPageNumber,
+        showPagination: stage == TrainersViewStage.results,
+        emptyLabel: 'No trainers available.',
+      ),
     );
   }
 
