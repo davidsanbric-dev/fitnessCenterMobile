@@ -138,28 +138,7 @@ class _PersonalDataViewState extends State<PersonalDataView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 14),
-        // const NotificationTestCard(),
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppTheme.brandAccentColor(context),
-                width: 3,
-              ),
-            ),
-            child: const Icon(
-              LucideIcons.plus,
-              size: 50,
-              color: Colors.black87,
-            ),
-          ),
-        ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 25),
         _buildReadOnlyField(
           controller: _fullNameController,
           label: 'Full Name',
