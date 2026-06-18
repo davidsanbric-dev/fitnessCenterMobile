@@ -66,13 +66,8 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       _showSnackBar('Could not select the trainer.');
       return;
     }
-    final locationId = trainer.locationId;
-    if (locationId <= 0) {
-      _showSnackBar('This trainer has no club assigned.');
-      return;
-    }
     unawaited(
-      _controller.showTrainerAvailability(trainer, locationId: locationId),
+      _controller.showTrainerAvailability(trainer),
     );
   }
 
@@ -130,16 +125,6 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
           label: 'Membership plan',
           value: membership,
           icon: LucideIcons.creditCard,
-        ),
-      );
-    }
-    final locationLabel = trainer.locationName.trim();
-    if (locationLabel.isNotEmpty) {
-      items.add(
-        TableFiltersSummaryItemData(
-          label: 'Club',
-          value: locationLabel,
-          icon: LucideIcons.building2,
         ),
       );
     }

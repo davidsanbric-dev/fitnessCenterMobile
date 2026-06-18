@@ -12,9 +12,6 @@ class BookingDto {
     required this.memberRut,
     required this.memberName,
     required this.memberPhone,
-    required this.locationId,
-    required this.locationName,
-    this.locationCode,
     this.trainerId,
     this.trainerName,
     this.disciplineId,
@@ -33,9 +30,6 @@ class BookingDto {
   final String memberRut;
   final String memberName;
   final String memberPhone;
-  final int locationId;
-  final String locationName;
-  final String? locationCode;
   final String? trainerId;
   final String? trainerName;
   final int? disciplineId;
@@ -53,7 +47,6 @@ class BookingDto {
   factory BookingDto.fromJson(Map<String, dynamic> json) {
     final trainer = normReqMap(json['trainer']);
     final classType = normReqMap(json['class_type']);
-    final location = normReqMap(json['location']);
     final member = normReqMap(json['member']);
     final category = normReqMap(json['category']);
 
@@ -66,9 +59,6 @@ class BookingDto {
       memberRut: normOptString(member['rut']) ?? '',
       memberName: normOptString(member['full_name']) ?? '',
       memberPhone: normOptString(member['mobile_phone']) ?? '',
-      locationId: normReqInt(location['location_id'] ?? 0),
-      locationName: normReqString(location['name'] ?? ''),
-      locationCode: normOptString(location['location_code']),
       trainerId: normOptString(trainer['trainer_id']),
       trainerName: normOptString(trainer['full_name']),
       disciplineId: normOptInt(
@@ -91,7 +81,6 @@ class BookingDto {
       'schedulingDateIso': schedulingDate.toIso8601String(),
       'state': state.isEmpty ? 'Sin estado' : state,
       'memberName': memberName,
-      'location': locationName,
     };
   }
 
@@ -104,9 +93,6 @@ class BookingDto {
     String? memberRut,
     String? memberName,
     String? memberPhone,
-    int? locationId,
-    String? locationName,
-    String? locationCode,
     String? trainerId,
     String? trainerName,
     int? disciplineId,
@@ -125,9 +111,6 @@ class BookingDto {
       memberRut: memberRut ?? this.memberRut,
       memberName: memberName ?? this.memberName,
       memberPhone: memberPhone ?? this.memberPhone,
-      locationId: locationId ?? this.locationId,
-      locationName: locationName ?? this.locationName,
-      locationCode: locationCode ?? this.locationCode,
       trainerId: trainerId ?? this.trainerId,
       trainerName: trainerName ?? this.trainerName,
       disciplineId: disciplineId ?? this.disciplineId,

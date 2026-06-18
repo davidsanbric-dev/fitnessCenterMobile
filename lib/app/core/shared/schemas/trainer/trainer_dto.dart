@@ -6,8 +6,6 @@ class TrainerDto {
     required this.trainerName,
     this.disciplineId = 0,
     this.disciplineName = '',
-    this.locationId = 0,
-    this.locationName = '',
     this.bio = '',
     this.photoUrl = '',
   });
@@ -16,8 +14,6 @@ class TrainerDto {
   final String trainerName;
   final int disciplineId;
   final String disciplineName;
-  final int locationId;
-  final String locationName;
   final String bio;
 
   /// Path relative to the API base (e.g. "/profile-images/media/3_ab12.webp"),
@@ -31,8 +27,6 @@ class TrainerDto {
       trainerName: normOptString(json['full_name']) ?? '',
       disciplineId: normOptInt(json['discipline_id']) ?? 0,
       disciplineName: normOptString(json['discipline_name']) ?? '',
-      locationId: normOptInt(json['location_id']) ?? 0,
-      locationName: normOptString(json['location_name']) ?? '',
       bio: normOptString(json['bio']) ?? '',
       photoUrl: normOptString(json['photo_url']) ?? '',
     );

@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/ava
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
@@ -59,11 +58,7 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
       return;
     }
 
-    // The discipline carries its own club; a null id lists every club's slots.
-    widget.controller.showDisciplineAvailability(
-      discipline,
-      locationId: discipline.locationId,
-    );
+    widget.controller.showDisciplineAvailability(discipline);
     widget.onShowAvailability();
   }
 
@@ -108,8 +103,6 @@ class _DisciplinesDirectoryStandalonePageState
     extends State<DisciplinesDirectoryStandalonePage> {
   late final DisciplinesDirectoryController _controller;
   late final bool _ownsController;
-  late final LocationController _locationController;
-  late final bool _ownsLocationController;
   bool _showAvailability = false;
 
   @override
@@ -123,16 +116,6 @@ class _DisciplinesDirectoryStandalonePageState
           FitnessDirectoryInjector.getDisciplinesDirectoryController();
       _ownsController = true;
     }
-    if (Get.isRegistered<LocationController>()) {
-      _locationController = Get.find<LocationController>();
-      _ownsLocationController = false;
-    } else {
-      _locationController = Get.put(LocationController());
-      _ownsLocationController = true;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_loadLocations());
-    });
   }
 
   @override
@@ -140,20 +123,7 @@ class _DisciplinesDirectoryStandalonePageState
     if (_ownsController) {
       Get.delete<DisciplinesDirectoryController>();
     }
-    if (_ownsLocationController && Get.isRegistered<LocationController>()) {
-      Get.delete<LocationController>();
-    }
     super.dispose();
-  }
-
-  Future<void> _loadLocations() async {
-    // Locations are loaded so the LocationCodeRegistry can resolve each
-    // discipline's club id to its `/statics` code when fetching availability.
-    try {
-      await _locationController.loadLocations();
-    } catch (_) {
-      // Keep the page usable when the locations request fails.
-    }
   }
 
   void _handleShowAvailability() {
@@ -201,16 +171,6 @@ class _DisciplinesDirectoryStandalonePageState
           label: 'Discipline',
           value: disciplineName,
           icon: LucideIcons.star,
-        ),
-      );
-    }
-    final locationLabel = discipline.locationName?.trim() ?? '';
-    if (locationLabel.isNotEmpty) {
-      items.add(
-        TableFiltersSummaryItemData(
-          label: 'Club',
-          value: locationLabel,
-          icon: LucideIcons.building2,
         ),
       );
     }

@@ -7,7 +7,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipl
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/subpages.dart';
@@ -34,8 +33,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
   late final FitnessDirectoryController _controller;
   late final DisciplinesDirectoryController _disciplinesController;
   late final bool _ownsDisciplinesController;
-  late final LocationController _locationController;
-  late final bool _ownsLocationController;
   bool _ownsTrainersController = false;
   bool _ownsCapabilitiesController = false;
   AppRouter? _appRouter;
@@ -50,16 +47,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     _disciplinesController =
         FitnessDirectoryInjector.getDisciplinesDirectoryController();
     _ownsDisciplinesController = !hasDisciplinesController;
-    if (Get.isRegistered<LocationController>()) {
-      _locationController = Get.find<LocationController>();
-      _ownsLocationController = false;
-    } else {
-      _locationController = Get.put(LocationController());
-      _ownsLocationController = true;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_loadLocations());
-    });
     _attachNavListener();
   }
 
@@ -76,18 +63,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     if (_ownsDisciplinesController) {
       Get.delete<DisciplinesDirectoryController>();
     }
-    if (_ownsLocationController && Get.isRegistered<LocationController>()) {
-      Get.delete<LocationController>();
-    }
     super.dispose();
-  }
-
-  Future<void> _loadLocations() async {
-    try {
-      await _locationController.loadLocations();
-    } catch (_) {
-      // Location filtering can stay disabled if location loading fails.
-    }
   }
 
   void _startTrainersFlow() {
@@ -189,16 +165,6 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
           label: 'Discipline',
           value: disciplineName,
           icon: LucideIcons.star,
-        ),
-      );
-    }
-    final locationLabel = discipline.locationName?.trim() ?? '';
-    if (locationLabel.isNotEmpty) {
-      items.add(
-        TableFiltersSummaryItemData(
-          label: 'Club',
-          value: locationLabel,
-          icon: LucideIcons.building2,
         ),
       );
     }

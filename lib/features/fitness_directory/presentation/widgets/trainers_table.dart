@@ -39,11 +39,11 @@ class TrainersTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDiscipline = mode == TrainersSearchMode.discipline;
-    // First cell stacks the trainer name, their specialty (discipline or
-    // membership plan) and their club, since the club is no longer a filter.
+    // First cell stacks the trainer name and their specialty (discipline or
+    // membership plan).
     final fieldPair = isDiscipline
-        ? ['trainerName', 'disciplineName', 'locationName']
-        : ['trainerName', 'membershipName', 'locationName'];
+        ? ['trainerName', 'disciplineName']
+        : ['trainerName', 'membershipName'];
     final showAction = onTrainerSelected != null;
     final showInfo = onTrainerInfo != null;
     final shouldShowPagination =

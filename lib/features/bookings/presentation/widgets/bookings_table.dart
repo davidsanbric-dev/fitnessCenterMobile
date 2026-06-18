@@ -49,7 +49,6 @@ class BookingsTable extends StatelessWidget {
         final serviceName = item.serviceName?.trim() ?? '';
         final trainerName = item.trainerName?.trim() ?? '';
         final disciplineName = item.disciplineName?.trim() ?? '';
-        final locationName = item.locationName.trim();
         const fallbackServiceName = 'Not specified';
 
         return <String, dynamic>{
@@ -64,11 +63,6 @@ class BookingsTable extends StatelessWidget {
               ? 'Trainer pending assignment'
               : trainerName,
           'disciplineName': disciplineName,
-          'locationName': locationName.isEmpty
-              ? 'Club pending assignment'
-              : locationName,
-          'locationId': item.locationId,
-          'locationCode': item.locationCode,
           'duration': item.duration,
           'slot': item,
         };

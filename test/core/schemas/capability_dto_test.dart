@@ -7,7 +7,6 @@ void main() {
       final dto = CapabilityDto.fromJson({
         'class_type_id': 22,
         'name': 'Strength Intro',
-        'location_id': 2,
         'schedule_type': 'GROUP',
         'preparation_info': 'Bring towel',
         'pdf_code': 'STR-022',
@@ -15,7 +14,6 @@ void main() {
 
       expect(dto.id, 22);
       expect(dto.description, 'Strength Intro');
-      expect(dto.locationId, 2);
       expect(dto.scheduleType, 'GROUP');
       expect(dto.preparation, 'Bring towel');
       expect(dto.pdfCode, 'STR-022');
@@ -30,7 +28,6 @@ void main() {
       expect(dto.id, 11);
       expect(dto.description, 'Yoga Flow');
       // Subcategory summaries carry none of the class-type-only fields.
-      expect(dto.locationId, 0);
       expect(dto.scheduleType, '');
       expect(dto.preparation, '');
       expect(dto.pdfCode, '');
@@ -40,12 +37,10 @@ void main() {
       final dto = CapabilityDto.fromJson({
         'category_id': 3,
         'name': 'Conditioning',
-        'location_id': 1,
       });
 
       expect(dto.id, 3);
       expect(dto.description, 'Conditioning');
-      expect(dto.locationId, 1);
     });
   });
 }

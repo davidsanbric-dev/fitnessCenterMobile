@@ -1,38 +1,28 @@
 import 'package:portfolio_mobile_app/app/core/controller/controller_base.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/lookup.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/capabilities_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:get/get.dart';
 
 class AvailableSlotsFiltersController extends ControllerBase {
   AvailableSlotsFiltersController({
-    LocationController? locationController,
     CapabilitiesController? capabilitiesController,
     MemberFiltersRepository? memberFiltersRepository,
-  }) : locationController =
-           locationController ??
-           (Get.isRegistered<LocationController>()
-               ? Get.find<LocationController>()
-               : Get.put(LocationController())),
-       capabilitiesController =
+  }) : capabilitiesController =
            capabilitiesController ??
            (throw ArgumentError.notNull('capabilitiesController')),
        _memberFiltersRepository =
            memberFiltersRepository ??
            (throw ArgumentError.notNull('memberFiltersRepository'));
 
-  final LocationController locationController;
   final CapabilitiesController capabilitiesController;
   final MemberFiltersRepository _memberFiltersRepository;
 
   final RxList<String> disciplines = <String>[].obs;
-  final RxList<String> locations = <String>[].obs;
 
   final isFiltersLoading = false.obs;
   final hasLoadedFilters = false.obs;
@@ -40,7 +30,6 @@ class AvailableSlotsFiltersController extends ControllerBase {
   final filtersError = RxnString();
 
   final Map<String, int> _disciplineNameToId = {};
-  final Map<String, int> _locationNameToId = {};
 
   RxList<FilterBoxOptionData> get capabilityOptions =>
       capabilitiesController.capabilityOptions;
@@ -93,19 +82,11 @@ class AvailableSlotsFiltersController extends ControllerBase {
     try {
       final disciplinesData = await _memberFiltersRepository
           .fetchDisciplinesFilterData();
-      await locationController.loadLocations();
-      final locationOptions = _sanitizeLocationOptions(
-        locationController.locations.toList(growable: false),
-      );
 
       disciplines.assignAll(disciplinesData.disciplines);
       _cacheDisciplines(disciplinesData.disciplineNameToId);
-      locations.assignAll(_deriveLocationNames(locationOptions));
-      _cacheLocations(locationOptions);
       hasLoadedFilters.value = true;
-      await capabilitiesController.loadCapabilitiesForLocations(
-        locationOptions: locationOptions,
-      );
+      await capabilitiesController.loadCapabilities();
       hasLoadedCapabilityFilters.value = true;
     } catch (err) {
       hasLoadedFilters.value = true;
@@ -165,12 +146,6 @@ class AvailableSlotsFiltersController extends ControllerBase {
   ) {
     final normalizedService = params.serviceLabel.trim();
     final trimmedPrimarySelection = params.primarySelectionLabel.trim();
-    final trimmedLocation = params.locationLabel.trim();
-    final locationId = _locationNameToId[normalizeKey(trimmedLocation)];
-
-    if (locationId == null) {
-      return null;
-    }
 
     int disciplineId = 0;
     String? trainerId;
@@ -200,63 +175,13 @@ class AvailableSlotsFiltersController extends ControllerBase {
       disciplineLabel: disciplineLabel,
       trainerId: trainerId,
       trainerLabel: trainerLabel,
-      locationId: locationId,
-      locationLabel: trimmedLocation,
       searchMode: params.searchMode,
     );
-  }
-
-  List<String> _deriveLocationNames(
-    Iterable<BookingsLocationOption> locations,
-  ) {
-    final seen = <String>{};
-    final result = <String>[];
-    for (final location in locations) {
-      final label = location.name.trim();
-      if (label.isEmpty) {
-        continue;
-      }
-
-      final normalized = label.toLowerCase();
-
-      if (seen.add(normalized)) {
-        result.add(label);
-      }
-    }
-    return result;
   }
 
   void _cacheDisciplines(Map<String, int> disciplineNameToId) {
     _disciplineNameToId
       ..clear()
       ..addAll(disciplineNameToId);
-  }
-
-  void _cacheLocations(Iterable<BookingsLocationOption> locationsData) {
-    _locationNameToId
-      ..clear()
-      ..addAll(
-        buildNormalizedLookupMap<BookingsLocationOption, int>(
-          data: locationsData,
-          labelSelector: (item) => item.name,
-          valueSelector: (item) => item.id,
-          isValueValid: (value) => value > 0,
-        ),
-      );
-  }
-
-  List<BookingsLocationOption> _sanitizeLocationOptions(
-    List<BookingsLocationOption> locations,
-  ) {
-    final seenIds = <int>{};
-    final sanitized = <BookingsLocationOption>[];
-    for (final location in locations) {
-      final name = location.name.trim();
-      if (location.id <= 0 || name.isEmpty || !seenIds.add(location.id)) {
-        continue;
-      }
-      sanitized.add(BookingsLocationOption(id: location.id, name: name));
-    }
-    return sanitized;
   }
 }

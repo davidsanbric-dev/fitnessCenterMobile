@@ -1,7 +1,7 @@
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:equatable/equatable.dart';
 
-enum ActiveFilterField { primary, location }
+enum ActiveFilterField { primary }
 
 class AvailableSlotsFilterUiState extends Equatable {
   const AvailableSlotsFilterUiState({
@@ -10,7 +10,6 @@ class AvailableSlotsFilterUiState extends Equatable {
     this.isSheetVisible = false,
     this.sheetSessionId = 0,
     this.primaryHasTypedSinceFocus = false,
-    this.locationHasTypedSinceFocus = false,
     this.isLoadingTrainers = false,
     this.trainers = const <String>[],
     this.trainersErrorMessage,
@@ -21,7 +20,6 @@ class AvailableSlotsFilterUiState extends Equatable {
   final bool isSheetVisible;
   final int sheetSessionId;
   final bool primaryHasTypedSinceFocus;
-  final bool locationHasTypedSinceFocus;
   final bool isLoadingTrainers;
   final List<String> trainers;
   final String? trainersErrorMessage;
@@ -34,14 +32,10 @@ class AvailableSlotsFilterUiState extends Equatable {
       isSheetVisible && activeField != null && !showAvailabilityTable;
 
   List<String> optionsForActiveField({
-    required List<String> locations,
     required List<String> primaryOptions,
-  }) => activeField == ActiveFilterField.location ? locations : primaryOptions;
+  }) => primaryOptions;
 
   String get sheetTitle {
-    if (activeField == ActiveFilterField.location) {
-      return 'Club';
-    }
     return searchMode == DisciplineSearchMode.discipline
         ? 'Disciplines'
         : 'Trainers';
@@ -49,19 +43,12 @@ class AvailableSlotsFilterUiState extends Equatable {
 
   String filterTextForActiveField({
     required String primaryFilterText,
-    required String locationFilterText,
   }) {
-    final useTypedFilter = activeField == ActiveFilterField.location
-        ? locationHasTypedSinceFocus
-        : primaryHasTypedSinceFocus;
-
-    if (!useTypedFilter) {
+    if (!primaryHasTypedSinceFocus) {
       return '';
     }
 
-    return activeField == ActiveFilterField.location
-        ? locationFilterText
-        : primaryFilterText;
+    return primaryFilterText;
   }
 
   AvailableSlotsFilterUiState copyWith({
@@ -70,7 +57,6 @@ class AvailableSlotsFilterUiState extends Equatable {
     bool? isSheetVisible,
     int? sheetSessionId,
     bool? primaryHasTypedSinceFocus,
-    bool? locationHasTypedSinceFocus,
     bool? isLoadingTrainers,
     List<String>? trainers,
     Object? trainersErrorMessage = _trainersErrorNotSet,
@@ -84,8 +70,6 @@ class AvailableSlotsFilterUiState extends Equatable {
       sheetSessionId: sheetSessionId ?? this.sheetSessionId,
       primaryHasTypedSinceFocus:
           primaryHasTypedSinceFocus ?? this.primaryHasTypedSinceFocus,
-      locationHasTypedSinceFocus:
-          locationHasTypedSinceFocus ?? this.locationHasTypedSinceFocus,
       isLoadingTrainers: isLoadingTrainers ?? this.isLoadingTrainers,
       trainers: trainers ?? this.trainers,
       trainersErrorMessage: trainersErrorMessage == _trainersErrorNotSet
@@ -101,7 +85,6 @@ class AvailableSlotsFilterUiState extends Equatable {
     isSheetVisible,
     sheetSessionId,
     primaryHasTypedSinceFocus,
-    locationHasTypedSinceFocus,
     isLoadingTrainers,
     ...trainers,
     trainersErrorMessage,

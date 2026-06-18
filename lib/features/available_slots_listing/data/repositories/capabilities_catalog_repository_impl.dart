@@ -10,26 +10,23 @@ class CapabilitiesCatalogRepositoryImpl
   final CapabilitiesService _service;
 
   @override
-  Future<List<CapabilityDto>> fetchCapabilities({int? locationId}) {
-    return _service.fetchCapabilities(locationId: locationId);
+  Future<List<CapabilityDto>> fetchCapabilities() {
+    return _service.fetchCapabilities();
   }
 
   @override
   Future<List<CapabilityDto>> fetchSubgroup({
-    required int locationId,
     required int groupId,
   }) {
-    return _service.fetchSubgroup(locationId: locationId, groupId: groupId);
+    return _service.fetchSubgroup(groupId: groupId);
   }
 
   @override
   Future<List<CapabilityDto>> fetchSubgroupItems({
-    required int locationId,
     required int groupId,
     required int subgroupId,
   }) {
     return _service.fetchSubgroupItems(
-      locationId: locationId,
       groupId: groupId,
       subgroupId: subgroupId,
     );

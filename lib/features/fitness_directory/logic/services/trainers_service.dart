@@ -63,10 +63,9 @@ class TrainersService {
   }
 
   Future<List<TrainerDirectoryDto>> fetchAllTrainers() async {
-    // No discipline or club filter: the API returns every active trainer when
-    // both ``discipline_id`` and ``location_code`` are omitted. Each trainer
-    // carries its own discipline and club in the response, so we map them
-    // straight through (the club is shown per row).
+    // No discipline filter: the API returns every active trainer when
+    // ``discipline_id`` is omitted. Each trainer carries its own discipline in
+    // the response, so we map them straight through.
     final response = await _trainersApi
         .getTrainers(const TrainersRequest())
         .timeout(
@@ -84,8 +83,6 @@ class TrainersService {
             trainerName: trainer.trainerName,
             disciplineId: trainer.disciplineId,
             disciplineName: trainer.disciplineName,
-            locationId: trainer.locationId,
-            locationName: trainer.locationName,
             bio: trainer.bio,
             photoUrl: trainer.photoUrl,
           ),
@@ -101,7 +98,6 @@ class TrainersService {
 
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
-    required int locationId,
     required Iterable<DisciplineDto> disciplines,
   }) async {
     final discipline = _findDisciplineByLabel(
@@ -112,7 +108,6 @@ class TrainersService {
     final response = await _trainersApi
         .getTrainers(
           TrainersRequest(
-            locationCode: locationId,
             disciplineCode: discipline.disciplineId,
           ),
         )
@@ -147,7 +142,6 @@ class TrainersService {
 
   Future<List<TrainerDirectoryDto>> fetchTrainersByMembership({
     required String filterLabel,
-    required int locationId,
     required Iterable<MembershipDto> memberships,
   }) async {
     final membership = _findMembershipByLabel(
@@ -159,7 +153,6 @@ class TrainersService {
         .getTrainersByMembership(
           TrainersByMembershipRequest(
             membershipId: membership.membershipId,
-            locationCode: locationId,
             disciplineCode: 0,
           ),
         )
@@ -195,13 +188,11 @@ class TrainersService {
   Future<List<AvailableSlotDto>> fetchTrainerAvailability({
     required String trainerId,
     required int disciplineId,
-    required int locationId,
   }) {
     return _availableSlotsApi.getAvailableBookings(
       AvailableSlotsRequest(
         disciplineId: disciplineId,
         trainerId: trainerId,
-        locationId: locationId,
       ),
     );
   }

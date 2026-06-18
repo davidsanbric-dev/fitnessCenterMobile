@@ -25,19 +25,16 @@ abstract interface class TrainersDirectoryRepository {
 
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
-    required int locationId,
     required Iterable<DisciplineDto> disciplines,
   });
 
   Future<List<TrainerDirectoryDto>> fetchTrainersByMembership({
     required String filterLabel,
-    required int locationId,
     required Iterable<MembershipDto> memberships,
   });
 
   Future<List<AvailableSlotDto>> fetchTrainerAvailability({
     required String trainerId,
     required int disciplineId,
-    required int locationId,
   });
 }

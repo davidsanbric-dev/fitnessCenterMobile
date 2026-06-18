@@ -35,7 +35,6 @@ class AvailableSlotsFilterUiNotifier
       activeField: null,
       isSheetVisible: false,
       primaryHasTypedSinceFocus: false,
-      locationHasTypedSinceFocus: false,
     );
     resetTrainerSelection();
   }
@@ -52,9 +51,6 @@ class AvailableSlotsFilterUiNotifier
       primaryHasTypedSinceFocus: field == ActiveFilterField.primary
           ? false
           : state.primaryHasTypedSinceFocus,
-      locationHasTypedSinceFocus: field == ActiveFilterField.location
-          ? false
-          : state.locationHasTypedSinceFocus,
     );
   }
 
@@ -69,11 +65,6 @@ class AvailableSlotsFilterUiNotifier
     if (field == ActiveFilterField.primary &&
         !state.primaryHasTypedSinceFocus) {
       state = state.copyWith(primaryHasTypedSinceFocus: true);
-      return;
-    }
-    if (field == ActiveFilterField.location &&
-        !state.locationHasTypedSinceFocus) {
-      state = state.copyWith(locationHasTypedSinceFocus: true);
     }
   }
 
@@ -89,7 +80,6 @@ class AvailableSlotsFilterUiNotifier
       activeField: null,
       isSheetVisible: false,
       primaryHasTypedSinceFocus: false,
-      locationHasTypedSinceFocus: false,
     );
   }
 

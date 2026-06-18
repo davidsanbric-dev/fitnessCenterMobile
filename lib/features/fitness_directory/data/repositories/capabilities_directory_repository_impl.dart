@@ -17,29 +17,25 @@ class CapabilitiesDirectoryRepositoryImpl
   final AvailableSlotsService _availableSlotsService;
 
   @override
-  Future<List<CapabilityDto>> fetchGroups({int? locationId}) {
-    return _capabilitiesService.fetchGroups(locationId: locationId);
+  Future<List<CapabilityDto>> fetchGroups() {
+    return _capabilitiesService.fetchGroups();
   }
 
   @override
   Future<List<CapabilityDto>> fetchSubgroup({
-    required int locationId,
     required int groupId,
   }) {
     return _capabilitiesService.fetchSubgroup(
-      locationId: locationId,
       groupId: groupId,
     );
   }
 
   @override
   Future<List<CapabilityDto>> fetchSubgroupItems({
-    required int locationId,
     required int groupId,
     required int subgroupId,
   }) {
     return _capabilitiesService.fetchSubgroupItems(
-      locationId: locationId,
       groupId: groupId,
       subgroupId: subgroupId,
     );
@@ -48,11 +44,9 @@ class CapabilitiesDirectoryRepositoryImpl
   @override
   Future<List<AvailableSlotByCapabilityDto>>
   fetchAvailableBookingsByCapability({
-    required int locationId,
     required CapabilityDto capability,
   }) {
     return _availableSlotsService.fetchAvailableBookingsByCapability(
-      locationId: locationId,
       capability: capability,
     );
   }

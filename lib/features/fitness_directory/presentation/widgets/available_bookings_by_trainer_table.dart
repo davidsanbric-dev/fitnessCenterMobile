@@ -83,7 +83,7 @@ class AvailableBookingsByTrainerTable extends StatelessWidget {
                 onReserve: onReserveBooking,
               )
             else
-              const ['service', 'location'],
+              'service',
           ],
           isLoading: isLoading,
           errorMessage: errorMessage,

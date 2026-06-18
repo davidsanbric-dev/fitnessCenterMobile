@@ -56,13 +56,9 @@ class _AvailableSlotsByDisciplineTrainerPageState
   late final bool _ownsFiltersController;
   late final String _uiScopeId;
   late final TextEditingController _primarySearchController;
-  late final TextEditingController _locationSearchController;
   late final FocusNode _primaryFocusNode;
-  late final FocusNode _locationFocusNode;
   final GlobalKey _primaryFieldKey = GlobalKey();
-  final GlobalKey _locationFieldKey = GlobalKey();
   Worker? _filtersErrorWorker;
-  Worker? _locationsWorker;
 
   // Set once a back/exit is underway. While true this (now outgoing) page stops
   // reporting its header state, so the slide-out rebuild can't clobber the
@@ -75,13 +71,9 @@ class _AvailableSlotsByDisciplineTrainerPageState
     super.initState();
     _uiScopeId = identityHashCode(this).toString();
     _primarySearchController = TextEditingController();
-    _locationSearchController = TextEditingController();
     _primaryFocusNode = FocusNode();
-    _locationFocusNode = FocusNode();
     _primarySearchController.addListener(_handleSearchInputChanged);
-    _locationSearchController.addListener(_handleSearchInputChanged);
     _primaryFocusNode.addListener(_handlePrimaryFocusChange);
-    _locationFocusNode.addListener(_handleLocationFocusChange);
     _initFiltersController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_filtersController.ensureFiltersLoaded());
@@ -93,15 +85,10 @@ class _AvailableSlotsByDisciplineTrainerPageState
     // Tear down subscriptions before the resources they reference so a late
     // worker/listener callback can never touch a disposed controller.
     _filtersErrorWorker?.dispose();
-    _locationsWorker?.dispose();
     _primarySearchController.removeListener(_handleSearchInputChanged);
-    _locationSearchController.removeListener(_handleSearchInputChanged);
     _primaryFocusNode.removeListener(_handlePrimaryFocusChange);
-    _locationFocusNode.removeListener(_handleLocationFocusChange);
     _primarySearchController.dispose();
-    _locationSearchController.dispose();
     _primaryFocusNode.dispose();
-    _locationFocusNode.dispose();
     if (_ownsFiltersController) {
       Get.delete<AvailableSlotsController>();
     }
@@ -132,12 +119,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
         showAppSnackBar(context, message);
       });
     });
-    _locationsWorker = ever<List<String>>(_filtersController.locations, (_) {
-      if (!mounted) {
-        return;
-      }
-      _uiActions.ensureDefaultLocationSelection();
-    });
   }
 
   void _handleSearchInputChanged() {
@@ -146,10 +127,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
 
   void _handlePrimaryFocusChange() {
     _uiActions.handlePrimaryFocusChange();
-  }
-
-  void _handleLocationFocusChange() {
-    _uiActions.handleLocationFocusChange();
   }
 
   void _handleBack() {
@@ -205,25 +182,19 @@ class _AvailableSlotsByDisciplineTrainerPageState
   bool _shouldShowConsultButton(
     bool showAvailabilityTable,
     List<String> primaryOptions,
-    List<String> locations,
     String? selectedService,
   ) {
     return !showAvailabilityTable &&
         shouldShowConsultButton(
           selectedService: selectedService,
           primaryController: _primarySearchController,
-          locationController: _locationSearchController,
           primaryOptions: primaryOptions,
-          locations: locations,
         );
   }
 
   FocusNode? _focusNodeForField(ActiveFilterField? field) {
     if (field == ActiveFilterField.primary) {
       return _primaryFocusNode;
-    }
-    if (field == ActiveFilterField.location) {
-      return _locationFocusNode;
     }
     return null;
   }
@@ -248,7 +219,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
     final uiController = ref.read(_uiProvider.notifier);
 
     final body = Obx(() {
-      final locations = _filtersController.locations.toList(growable: false);
       final disciplineOptions = _filtersController.disciplines.toList(
         growable: false,
       );
@@ -290,7 +260,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
           final showConsultButton = _shouldShowConsultButton(
             showAvailabilityTable,
             primaryOptions,
-            locations,
             '',
           );
           final shouldShowFiltersError =
@@ -298,18 +267,13 @@ class _AvailableSlotsByDisciplineTrainerPageState
               filtersError != null &&
               !isLoadingFilters;
           final sheetOptions = uiState.optionsForActiveField(
-            locations: locations,
             primaryOptions: primaryOptions,
           );
           final sheetTitle = uiState.sheetTitle;
           final sheetFilterText = uiState.filterTextForActiveField(
             primaryFilterText: _primarySearchController.text,
-            locationFilterText: _locationSearchController.text,
           );
-          final activeFieldKey =
-              uiState.activeField == ActiveFilterField.location
-              ? _locationFieldKey
-              : _primaryFieldKey;
+          final activeFieldKey = _primaryFieldKey;
 
           // The filters stage (search-mode box + fields) and the availability
           // stage (results table) are two keyed cards so the SlidePageSwitcher
@@ -339,21 +303,15 @@ class _AvailableSlotsByDisciplineTrainerPageState
                   else
                     AvailableSlotsFilterFields(
                       primaryController: _primarySearchController,
-                      locationController: _locationSearchController,
                       primaryFocusNode: _primaryFocusNode,
-                      locationFocusNode: _locationFocusNode,
                       primaryPlaceholder: uiState.primaryPlaceholder,
                       liftToTop: shouldLiftInputs,
                       showOnlyActiveField: shouldShowSheet,
                       activeFocusNode: _focusNodeForField(uiState.activeField),
                       primaryFieldKey: _primaryFieldKey,
-                      locationFieldKey: _locationFieldKey,
                       suppressActiveUnderline: shouldShowSheet,
                       onPrimaryTap: () => _uiActions.showSheetForField(
                         ActiveFilterField.primary,
-                      ),
-                      onLocationTap: () => _uiActions.showSheetForField(
-                        ActiveFilterField.location,
                       ),
                     ),
                   if (shouldShowFiltersError)
@@ -411,16 +369,13 @@ class _AvailableSlotsByDisciplineTrainerPageState
                       horizontalPadding: horizontalPadding,
                       selectedService: '',
                       primaryController: _primarySearchController,
-                      locationController: _locationSearchController,
                       searchMode: uiState.searchMode,
                       filtersController: _filtersController,
                       onHideSheet: _uiActions.hideSheet,
                       buildParams: () {
                         final primaryValue = _primarySearchController.text
                             .trim();
-                        final locationValue = _locationSearchController.text
-                            .trim();
-                        if (primaryValue.isEmpty || locationValue.isEmpty) {
+                        if (primaryValue.isEmpty) {
                           return null;
                         }
                         final trainerId =
@@ -442,7 +397,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
                         return MemberAvailabilityParams(
                           serviceLabel: '',
                           primarySelectionLabel: primaryValue,
-                          locationLabel: locationValue,
                           searchMode: uiState.searchMode,
                           trainerId: trainerId,
                           trainerDisciplineId: trainerDisciplineId,
@@ -517,8 +471,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
         uiScopeId: _uiScopeId,
         filtersController: _filtersController,
         primarySearchController: _primarySearchController,
-        locationSearchController: _locationSearchController,
         primaryFocusNode: _primaryFocusNode,
-        locationFocusNode: _locationFocusNode,
       );
 }

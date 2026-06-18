@@ -10,7 +10,6 @@ abstract interface class AvailabilityListingRepository {
 
   Future<List<AvailableSlotByCapabilityDto>>
   fetchAvailableBookingsByCapability({
-    required int locationId,
     required CapabilityDto capability,
   });
 }

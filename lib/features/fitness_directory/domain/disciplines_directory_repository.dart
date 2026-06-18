@@ -10,6 +10,5 @@ abstract interface class DisciplinesDirectoryRepository {
 
   Future<List<AvailableSlotDto>> fetchAvailableBookingsByDiscipline({
     required int disciplineId,
-    required int locationId,
   });
 }

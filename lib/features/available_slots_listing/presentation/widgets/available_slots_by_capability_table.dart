@@ -93,7 +93,6 @@ class AvailableSlotsByCapabilityTable extends StatelessWidget {
         fields: [
           (row) => DateTimeCell(value: row['schedulingDate'] as DateTime?),
           const ['trainer', 'discipline'],
-          // 'location',
           if (onReserveBooking != null)
             (row) => ReserveCellButton<AvailableSlotByCapabilityDto>.fromRow(
               row: row,

@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capabi
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -52,20 +51,13 @@ class CapabilitiesController extends ControllerBase {
       _defaultCapabilityAvailabilityPageSize.obs;
   final capabilityAvailabilityTotalItems = 0.obs;
 
-  int? _capabilitiesLocationId;
-  int? _selectedGroupLocationId;
-
-  Future<void> loadCapabilitiesForLocations({
-    required Iterable<BookingsLocationOption> locationOptions,
-  }) async {
-    _capabilitiesLocationId = _resolveCapabilitiesLocationId(locationOptions);
+  Future<void> loadCapabilities() async {
     final capabilitiesData = await _catalogRepository.fetchCapabilities();
     _applyCapabilities(capabilitiesData);
   }
 
   void resetSubgroup() {
     capabilitySubgroup.clear();
-    _selectedGroupLocationId = null;
     resetSubgroupItems();
   }
 
@@ -89,13 +81,6 @@ class CapabilitiesController extends ControllerBase {
       capabilitySubgroup.clear();
       return;
     }
-    final locationId = _resolveLocationIdForGroup(group);
-    if (locationId == null) {
-      error.value = 'Could not determine the club.';
-      capabilitySubgroup.clear();
-      return;
-    }
-    _selectedGroupLocationId = locationId;
 
     isLoading.value = true;
     error.value = null;
@@ -103,7 +88,6 @@ class CapabilitiesController extends ControllerBase {
 
     try {
       final items = await _catalogRepository.fetchSubgroup(
-        locationId: locationId,
         groupId: group.id,
       );
       capabilitySubgroup.assignAll(items);
@@ -129,13 +113,6 @@ class CapabilitiesController extends ControllerBase {
       capabilitySubgroupItems.clear();
       return;
     }
-    final locationId = _resolveLocationIdForGroup(group);
-    if (locationId == null) {
-      capabilitySubgroupItemsError.value = 'Could not determine the club.';
-      capabilitySubgroupItems.clear();
-      return;
-    }
-    _selectedGroupLocationId = locationId;
 
     selectedCapability.value = null;
     isCapabilitySubgroupItemsLoading.value = true;
@@ -146,7 +123,6 @@ class CapabilitiesController extends ControllerBase {
 
     try {
       final items = await _catalogRepository.fetchSubgroupItems(
-        locationId: locationId,
         groupId: group.id,
         subgroupId: subgroup.id,
       );
@@ -168,11 +144,6 @@ class CapabilitiesController extends ControllerBase {
       capabilityAvailabilityError.value = 'Select a valid class option.';
       return;
     }
-    final locationId = _resolveLocationIdForCapability(capability);
-    if (locationId == null) {
-      capabilityAvailabilityError.value = 'Could not determine the club.';
-      return;
-    }
 
     selectedCapability.value = capability;
     isCapabilityAvailabilityLoading.value = true;
@@ -184,7 +155,6 @@ class CapabilitiesController extends ControllerBase {
     try {
       final items = await _availabilityRepository
           .fetchAvailableBookingsByCapability(
-            locationId: locationId,
             capability: capability,
           );
       availableByCapability.assignAll(items);
@@ -294,31 +264,6 @@ class CapabilitiesController extends ControllerBase {
       return LucideIcons.dumbbell;
     }
     return LucideIcons.dumbbell;
-  }
-
-  int? _resolveCapabilitiesLocationId(
-    Iterable<BookingsLocationOption> locations,
-  ) {
-    for (final location in locations) {
-      if (location.id > 0 && location.name.trim().isNotEmpty) {
-        return location.id;
-      }
-    }
-    return null;
-  }
-
-  int? _resolveLocationIdForGroup(CapabilityDto group) {
-    if (group.locationId > 0) {
-      return group.locationId;
-    }
-    return _capabilitiesLocationId;
-  }
-
-  int? _resolveLocationIdForCapability(CapabilityDto capability) {
-    if (capability.locationId > 0) {
-      return capability.locationId;
-    }
-    return _selectedGroupLocationId ?? _capabilitiesLocationId;
   }
 
   void _syncCapabilityAvailabilityPagination() {

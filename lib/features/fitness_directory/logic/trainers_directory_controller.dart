@@ -10,10 +10,9 @@ import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:get/get.dart';
 
 class TrainersController extends ControllerBase {
-  TrainersController({this.locationId, TrainersDirectoryRepository? repository})
+  TrainersController({TrainersDirectoryRepository? repository})
     : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
-  final int? locationId;
   static const int _defaultPageSize = 6;
   // Sentinel "filter" key for the no-discipline listing, so the load-cache
   // guard in [loadAllTrainers] can tell an all-trainers result apart from a
@@ -23,14 +22,11 @@ class TrainersController extends ControllerBase {
   int _trainersLoadSequence = 0;
   int _trainerAvailabilitySequence = 0;
   String? _loadedTrainersFilter;
-  int? _loadedTrainersLocationId;
 
   final stage = TrainersViewStage.filters.obs;
   final trainersMode = TrainersSearchMode.discipline.obs;
   final trainerFilterOptions = <String>[].obs;
   final selectedTrainersFilter = RxnString();
-  final selectedLocationId = RxnInt();
-  final selectedLocationLabel = RxnString();
 
   final disciplines = <DisciplineDto>[].obs;
   final memberships = <MembershipDto>[].obs;
@@ -103,7 +99,6 @@ class TrainersController extends ControllerBase {
     trainers.clear();
     _syncTrainersPagination();
     _loadedTrainersFilter = null;
-    _loadedTrainersLocationId = null;
 
     try {
       final filters = await _repository.fetchTrainersFilterData(
@@ -137,23 +132,11 @@ class TrainersController extends ControllerBase {
     bool forceRefresh = false,
   }) async {
     final normalized = filterLabel.trim();
-    final resolvedLocationId = selectedLocationId.value ?? locationId;
-    if (resolvedLocationId == null || resolvedLocationId <= 0) {
-      error.value = 'Select a valid club.';
-      trainers.clear();
-      _syncTrainersPagination();
-      _loadedTrainersFilter = null;
-      _loadedTrainersLocationId = null;
-      stage.value = TrainersViewStage.filters;
-      return;
-    }
-    final activeLocationId = resolvedLocationId;
     if (normalized.isEmpty) {
       error.value = 'Select a valid filter.';
       trainers.clear();
       _syncTrainersPagination();
       _loadedTrainersFilter = null;
-      _loadedTrainersLocationId = null;
       stage.value = TrainersViewStage.filters;
       return;
     }
@@ -162,7 +145,6 @@ class TrainersController extends ControllerBase {
         !forceRefresh &&
         trainers.isNotEmpty &&
         _loadedTrainersFilter == normalized &&
-        _loadedTrainersLocationId == activeLocationId &&
         trainersMode.value == mode &&
         error.value == null;
     if (isSameFilter) {
@@ -189,13 +171,11 @@ class TrainersController extends ControllerBase {
         if (mode == TrainersSearchMode.discipline) {
           return _repository.fetchTrainersByDiscipline(
             filterLabel: filterLabel,
-            locationId: activeLocationId,
             disciplines: disciplines,
           );
         }
         return _repository.fetchTrainersByMembership(
           filterLabel: filterLabel,
-          locationId: activeLocationId,
           memberships: memberships,
         );
       },
@@ -203,15 +183,13 @@ class TrainersController extends ControllerBase {
         trainers.assignAll(mapped);
         _syncTrainersPagination();
         _loadedTrainersFilter = normalized;
-        _loadedTrainersLocationId = activeLocationId;
         stage.value = TrainersViewStage.results;
       },
       onError: () {
         trainers.clear();
         _syncTrainersPagination();
         _loadedTrainersFilter = null;
-        _loadedTrainersLocationId = null;
-        stage.value = TrainersViewStage.results;
+          stage.value = TrainersViewStage.results;
       },
       unexpectedErrorMessage: 'Unexpected error while loading trainers',
       startSequence: () => ++_trainersLoadSequence,
@@ -245,15 +223,13 @@ class TrainersController extends ControllerBase {
         trainers.assignAll(mapped);
         _syncTrainersPagination();
         _loadedTrainersFilter = _allTrainersFilterKey;
-        _loadedTrainersLocationId = null;
-        stage.value = TrainersViewStage.results;
+          stage.value = TrainersViewStage.results;
       },
       onError: () {
         trainers.clear();
         _syncTrainersPagination();
         _loadedTrainersFilter = null;
-        _loadedTrainersLocationId = null;
-        stage.value = TrainersViewStage.results;
+          stage.value = TrainersViewStage.results;
       },
       unexpectedErrorMessage: 'Unexpected error while loading trainers',
       startSequence: () => ++_trainersLoadSequence,
@@ -270,17 +246,14 @@ class TrainersController extends ControllerBase {
     trainers.clear();
     _syncTrainersPagination();
     _loadedTrainersFilter = null;
-    _loadedTrainersLocationId = null;
     selectedTrainersFilter.value = null;
-    clearLocationSelection();
     resetTrainerAvailability();
     stage.value = TrainersViewStage.filters;
   }
 
   Future<void> showTrainerAvailability(
-    TrainerDirectoryDto trainer, {
-    int? locationId,
-  }) async {
+    TrainerDirectoryDto trainer,
+  ) async {
     selectedTrainer.value = trainer;
     trainerAvailabilityError.value = null;
     isTrainerAvailabilityLoading.value = false;
@@ -304,21 +277,12 @@ class TrainersController extends ControllerBase {
       return;
     }
 
-    final resolvedLocationId = locationId ?? this.locationId;
-    if (resolvedLocationId == null || resolvedLocationId <= 0) {
-      _trainerAvailabilitySequence++;
-      trainerAvailabilityError.value = 'Could not determine the club.';
-      return;
-    }
-    final activeLocationId = resolvedLocationId;
-
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isTrainerAvailabilityLoading,
       error: trainerAvailabilityError,
       loader: () => _repository.fetchTrainerAvailability(
         trainerId: trainerId,
         disciplineId: disciplineId,
-        locationId: activeLocationId,
       ),
       onSuccess: (items) {
         availableByTrainer.assignAll(items);
@@ -355,11 +319,6 @@ class TrainersController extends ControllerBase {
     _syncTrainerAvailabilityPagination();
   }
 
-  void clearLocationSelection() {
-    selectedLocationId.value = null;
-    selectedLocationLabel.value = null;
-  }
-
   void setTrainersPageNumber(int value) => setTablePageNumber(
     pageNumber: trainersPageNumber,
     value: value,
@@ -393,9 +352,7 @@ class TrainersController extends ControllerBase {
     trainersMode.value = TrainersSearchMode.discipline;
     trainerFilterOptions.clear();
     _loadedTrainersFilter = null;
-    _loadedTrainersLocationId = null;
     selectedTrainersFilter.value = null;
-    clearLocationSelection();
     disciplines.clear();
     memberships.clear();
     trainers.clear();

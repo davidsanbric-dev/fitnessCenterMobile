@@ -50,10 +50,9 @@ class DisciplinesService {
 
   Future<List<AvailableSlotDto>> fetchAvailableBookingsByDiscipline({
     required int disciplineId,
-    required int locationId,
   }) {
     return _availableSlotsApi.getAvailableBookings(
-      AvailableSlotsRequest(disciplineId: disciplineId, locationId: locationId),
+      AvailableSlotsRequest(disciplineId: disciplineId),
     );
   }
 }

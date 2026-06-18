@@ -6,22 +6,15 @@ import 'package:flutter/material.dart';
 bool shouldShowConsultButton({
   required String? selectedService,
   required TextEditingController primaryController,
-  required TextEditingController locationController,
   required List<String> primaryOptions,
-  required List<String> locations,
 }) {
   if (selectedService == null) {
     return false;
   }
-  final hasPrimarySelection = _isControllerValueInOptions(
+  return _isControllerValueInOptions(
     primaryController,
     primaryOptions,
   );
-  final hasLocationSelection = _isControllerValueInOptions(
-    locationController,
-    locations,
-  );
-  return hasPrimarySelection && hasLocationSelection;
 }
 
 bool _isControllerValueInOptions(
@@ -42,7 +35,6 @@ class AvailableSlotsConsultButton extends StatefulWidget {
     required this.horizontalPadding,
     required this.selectedService,
     required this.primaryController,
-    required this.locationController,
     required this.searchMode,
     required this.filtersController,
     required this.onHideSheet,
@@ -52,7 +44,6 @@ class AvailableSlotsConsultButton extends StatefulWidget {
   final double horizontalPadding;
   final String? selectedService;
   final TextEditingController primaryController;
-  final TextEditingController locationController;
   final DisciplineSearchMode searchMode;
   final AvailableSlotsController filtersController;
   final VoidCallback onHideSheet;
@@ -68,9 +59,8 @@ class _AvailableSlotsConsultButtonState
   void _handleCheckPressed() {
     final service = widget.selectedService;
     final primaryValue = widget.primaryController.text.trim();
-    final locationValue = widget.locationController.text.trim();
 
-    if (service == null || primaryValue.isEmpty || locationValue.isEmpty) {
+    if (service == null || primaryValue.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Select valid options before searching.')),
       );
@@ -82,7 +72,6 @@ class _AvailableSlotsConsultButtonState
         : MemberAvailabilityParams(
             serviceLabel: service,
             primarySelectionLabel: primaryValue,
-            locationLabel: locationValue,
             searchMode: widget.searchMode,
           );
     if (params == null) {

@@ -10,13 +10,10 @@ void showReservationPreviewSnackBar(
   final trainer = slot.trainerName.trim().isEmpty
       ? 'Trainer pending confirmation'
       : slot.trainerName.trim();
-  final location = slot.locationName.trim().isEmpty
-      ? 'Club pending confirmation'
-      : slot.locationName.trim();
   final dateLabel = formatDateTimeLabel(slot.schedulingDate);
 
   showAppSnackBar(
     context,
-    'Book a session on $dateLabel with $trainer at $location.',
+    'Book a session on $dateLabel with $trainer.',
   );
 }

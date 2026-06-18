@@ -6,7 +6,6 @@ import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter
 import 'package:portfolio_mobile_app/features/available_slots_listing/data/repositories/repositories.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_availability_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/available_slots_filters_controller.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/capabilities_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
 import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
@@ -14,17 +13,11 @@ import 'package:get/get.dart';
 
 class AvailableSlotsController extends ControllerBase {
   factory AvailableSlotsController({
-    LocationController? locationController,
     CapabilitiesController? capabilitiesController,
   }) {
     final availabilityRepository = AvailabilityListingRepositoryImpl();
     final memberFiltersRepository = MemberFiltersRepositoryImpl();
     final capabilitiesCatalogRepository = CapabilitiesCatalogRepositoryImpl();
-    final LocationController resolvedLocationController =
-        locationController ??
-        (Get.isRegistered<LocationController>()
-            ? Get.find<LocationController>()
-            : Get.put(LocationController()));
     final CapabilitiesController resolvedCapabilitiesController =
         capabilitiesController ??
         CapabilitiesController(
@@ -32,7 +25,6 @@ class AvailableSlotsController extends ControllerBase {
           availabilityRepository: availabilityRepository,
         );
     final filtersController = AvailableSlotsFiltersController(
-      locationController: resolvedLocationController,
       capabilitiesController: resolvedCapabilitiesController,
       memberFiltersRepository: memberFiltersRepository,
     );
@@ -42,7 +34,6 @@ class AvailableSlotsController extends ControllerBase {
     );
 
     return AvailableSlotsController._(
-      locationController: resolvedLocationController,
       capabilitiesController: resolvedCapabilitiesController,
       filtersController: filtersController,
       availabilityController: availabilityController,
@@ -50,13 +41,11 @@ class AvailableSlotsController extends ControllerBase {
   }
 
   AvailableSlotsController._({
-    required this.locationController,
     required this.capabilitiesController,
     required this.filtersController,
     required this.availabilityController,
   });
 
-  final LocationController locationController;
   final CapabilitiesController capabilitiesController;
   final AvailableSlotsFiltersController filtersController;
   final AvailableSlotsAvailabilityController availabilityController;
@@ -74,7 +63,6 @@ class AvailableSlotsController extends ControllerBase {
   }
 
   RxList<String> get disciplines => filtersController.disciplines;
-  RxList<String> get locations => filtersController.locations;
 
   RxBool get isFiltersLoading => filtersController.isFiltersLoading;
   RxBool get hasLoadedFilters => filtersController.hasLoadedFilters;

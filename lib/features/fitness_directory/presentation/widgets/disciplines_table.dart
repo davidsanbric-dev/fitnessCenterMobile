@@ -31,8 +31,7 @@ class DisciplinesTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final showAction = onDisciplineSelected != null;
     final fields = [
-      // Discipline name above the club it is offered at (DualDataCell).
-      const ['name', 'location'],
+      'name',
       if (showAction)
         (row) => CheckAvailabilityButtonCell(
           row: row,
@@ -66,7 +65,7 @@ class DisciplinesTable extends StatelessWidget {
         isLoading: isLoading,
         errorMessage: errorMessage,
         emptyLabel: 'No disciplines available.',
-        wrapFields: const {'name', 'location'},
+        wrapFields: const {'name'},
       ),
       pagination: pagination,
     );

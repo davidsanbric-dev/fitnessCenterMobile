@@ -6,7 +6,6 @@ void main() {
     test('maps the SlotResponse contract', () {
       final json = <String, dynamic>{
         'slot_datetime': '2026-03-24T15:30:00Z',
-        'location_id': 4,
         'slot_assignment_code': 'SL-1',
         'schedule_type': 'GROUP',
         'is_available': true,
@@ -25,17 +24,15 @@ void main() {
         dto.schedulingDate,
         DateTime.parse('2026-03-24T15:30:00Z').toLocal(),
       );
-      // Slot search carries no service entity nor location name.
+      // Slot search carries no service entity.
       expect(dto.serviceName, 'GROUP');
-      expect(dto.locationName, '');
       expect(dto.duration, null);
-      expect(dto.locationId, 4);
       expect(dto.trainerCode, 500);
       expect(dto.trainerName, 'Chris Trainer');
       expect(dto.disciplineCode, 8);
       expect(dto.disciplineName, 'Functional');
       // No booking id exists yet; a stable key is synthesized from identity.
-      expect(dto.bookingId, startsWith('4|500|'));
+      expect(dto.bookingId, startsWith('500|'));
     });
 
     test('synthesizes a date-only key when identity fields are missing', () {
@@ -53,7 +50,6 @@ void main() {
 
       final dto = AvailableSlotDto.fromJson(json);
 
-      expect(dto.locationId, null);
       expect(dto.trainerCode, null);
       expect(dto.trainerName, 'Coach K');
       expect(dto.disciplineCode, 3);

@@ -5,12 +5,10 @@ class AvailableSlotsRequest {
   const AvailableSlotsRequest({
     required this.disciplineId,
     this.trainerId,
-    required this.locationId,
   });
 
   final int disciplineId;
   final String? trainerId;
-  final int locationId;
 
   // Update later to remove hardcoded date range values
   //(Including UI date-range picker)
@@ -26,7 +24,6 @@ class AvailableSlotsRequest {
       'endDateTime': formatDateIso(endDateTime),
       'bookingDuration': bookingDuration.toString(),
       if (disciplineId > 0) 'disciplineCode': disciplineId.toString(),
-      if (locationId > 0) 'locationCode': locationId.toString(),
       if (normalizedTrainer != null) 'trainerCode': normalizedTrainer,
     };
 
@@ -36,12 +33,10 @@ class AvailableSlotsRequest {
   AvailableSlotsRequest copyWith({
     int? disciplineId,
     String? trainerId,
-    int? locationId,
   }) {
     return AvailableSlotsRequest(
       disciplineId: disciplineId ?? this.disciplineId,
       trainerId: trainerId ?? this.trainerId,
-      locationId: locationId ?? this.locationId,
     );
   }
 }

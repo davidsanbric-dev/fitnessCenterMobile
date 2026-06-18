@@ -32,7 +32,6 @@ class AvailableSlotsService {
     final request = AvailableSlotsRequest(
       disciplineId: filters.disciplineId,
       trainerId: filters.trainerId,
-      locationId: filters.locationId,
     );
 
     return _runWithAvailabilityTimeout(
@@ -42,13 +41,11 @@ class AvailableSlotsService {
 
   Future<List<AvailableSlotByCapabilityDto>>
   fetchAvailableBookingsByCapability({
-    required int locationId,
     required CapabilityDto capability,
   }) {
     return _availableSlotsApi.getAvailableBookingsByCapability(
       request: AvailableSlotsByCapabilityRequest(
         capabilityId: capability.id,
-        locationId: locationId,
         capabilityDescription: capability.description,
       ),
     );
@@ -68,13 +65,11 @@ class AvailableSlotsService {
   Future<void> reserveBookingByCapability({
     required AvailableSlotByCapabilityDto slot,
   }) async {
-    final locationId = slot.locationId;
     final trainerCode = slot.trainerCode;
     final classTypeId = slot.classTypeId;
     final slotAssignmentCode = slot.slotAssignmentCode.trim();
 
-    if (locationId <= 0 ||
-        trainerCode <= 0 ||
+    if (trainerCode <= 0 ||
         classTypeId <= 0 ||
         slotAssignmentCode.isEmpty) {
       throw const ApiException(
@@ -88,7 +83,6 @@ class AvailableSlotsService {
       request: ScheduleBookingByClassTypeRequest(
         bookingDate: formatDateIso(schedulingDate),
         bookingTime: formatTimeIso(schedulingDate),
-        locationCode: locationId.toString(),
         trainerCode: trainerCode,
         slotAssignmentCode: slotAssignmentCode,
         classTypeId: classTypeId,
@@ -110,14 +104,12 @@ class AvailableSlotsService {
   }) {
     final disciplineCode = slot.disciplineCode ?? lastFilters?.disciplineId;
     final trainerCode = slot.trainerCode ?? parseOptInt(lastFilters?.trainerId);
-    final locationCode = slot.locationId ?? lastFilters?.locationId;
 
     final schedulingDate = slot.schedulingDate.toLocal();
 
     return ScheduleBookingRequest(
       date: formatDateIso(schedulingDate),
       time: formatTimeIso(schedulingDate),
-      locationCode: locationCode.toString(),
       bookingDuration: slot.duration ?? 0,
       disciplineCode: disciplineCode ?? 0,
       trainerCode: trainerCode ?? 0,

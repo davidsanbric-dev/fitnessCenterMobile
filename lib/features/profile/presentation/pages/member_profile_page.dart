@@ -186,12 +186,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('This section will be available soon.')),
-    );
-  }
-
   /// Tappable circular avatar shown above the options menu. Tapping opens the
   /// gallery picker and uploads the chosen image as the member's profile photo.
   Widget _buildAvatarHeader(BuildContext context) {
@@ -325,11 +319,6 @@ class _ProfilePageState extends State<ProfilePage> {
         title: 'Assessment Results',
         icon: LucideIcons.clipboardList,
         onTap: _openAssessmentResults,
-      ),
-      _ProfileOption(
-        title: 'Gym Locations',
-        icon: LucideIcons.building2,
-        onTap: () => _showComingSoon(context),
       ),
       _ProfileOption(
         title: 'Sign Out',

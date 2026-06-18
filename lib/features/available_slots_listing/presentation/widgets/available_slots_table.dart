@@ -152,17 +152,6 @@ class AvailableSlotsTable extends StatelessWidget {
       }
     }
 
-    final location = data.locationLabel.trim();
-    if (location.isNotEmpty) {
-      items.add(
-        TableFiltersSummaryItemData(
-          label: 'Club',
-          value: location,
-          icon: LucideIcons.building2,
-        ),
-      );
-    }
-
     return TableFiltersSummary.maybe(items: items);
   }
 

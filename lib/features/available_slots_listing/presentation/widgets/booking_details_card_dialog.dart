@@ -57,11 +57,6 @@ mixin BookingDetailsCardDialog {
   }
 
   static List<RowDetailsItem> _buildGeneralItems(BookingDto detail) {
-    final locationParts = <String>[];
-    if (detail.locationName.isNotEmpty) {
-      locationParts.add(detail.locationName);
-    }
-
     return [
       RowDetailsItem(
         label: 'Status',
@@ -82,13 +77,6 @@ mixin BookingDetailsCardDialog {
         label: 'Duration',
         value: detail.duration > 0 ? '${detail.duration} min' : 'Not defined',
         icon: LucideIcons.timer,
-      ),
-      RowDetailsItem(
-        label: 'Club',
-        value: locationParts.isEmpty
-            ? 'Not available'
-            : locationParts.join(' · '),
-        icon: LucideIcons.building2,
       ),
     ];
   }

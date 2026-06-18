@@ -14,8 +14,6 @@ void main() {
       memberRut: '',
       memberName: 'Alex Torres Vega',
       memberPhone: '',
-      locationId: 1,
-      locationName: 'Downtown Gym',
       trainerName: 'Jordan Pike',
       serviceName: 'Assessment Session',
       disciplineName: 'Yoga',

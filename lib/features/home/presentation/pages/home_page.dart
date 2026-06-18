@@ -126,7 +126,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<BookingDto?> _loadLastCompletedBooking() async {
     final items = await _bookingsApi.getAgenda(
       bookingStatus: 'COMPLETED',
-      includeAllLocations: true,
       // Completed sessions are past-dated; bypass the default upcoming window
       // so the home "History" summary can surface the most recent one.
       includeAllDates: true,
@@ -397,14 +396,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final timeText = DateTimeCell.formatTime(slot.schedulingDate);
     final service = slot.serviceName.isEmpty ? 'Class' : slot.serviceName;
     final trainer = slot.trainerName.isEmpty ? '' : ' with ${slot.trainerName}';
-    final location = slot.locationName.isEmpty
-        ? 'FitnessCenter'
-        : slot.locationName;
     if (_isToday(slot.schedulingDate)) {
-      return 'Today: $service$trainer at $location, $timeText.';
+      return 'Today: $service$trainer, $timeText.';
     }
     final dateText = DateTimeCell.formatDate(slot.schedulingDate);
-    return 'Next: $service$trainer at $location, $dateText at $timeText.';
+    return 'Next: $service$trainer, $dateText at $timeText.';
   }
 
   bool _isToday(DateTime value) {
@@ -439,7 +435,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     await local.showLocalNotification(
       title: 'Booking for today',
       body:
-          '${slot.serviceName.isEmpty ? 'Class' : slot.serviceName} · ${slot.locationName} · ${DateTimeCell.formatTime(slot.schedulingDate)}',
+          '${slot.serviceName.isEmpty ? 'Class' : slot.serviceName} · ${DateTimeCell.formatTime(slot.schedulingDate)}',
       payload: const {'action': 'open_member_bookings'},
     );
   }

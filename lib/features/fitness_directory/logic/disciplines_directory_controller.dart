@@ -9,11 +9,9 @@ import 'package:get/get.dart';
 
 class DisciplinesDirectoryController extends ControllerBase {
   DisciplinesDirectoryController({
-    this.locationId,
     DisciplinesDirectoryRepository? repository,
   }) : _repository = repository ?? (throw ArgumentError.notNull('repository'));
 
-  final int? locationId;
   static const int _defaultPageSize = 6;
   final DisciplinesDirectoryRepository _repository;
   int _disciplineAvailabilitySequence = 0;
@@ -85,9 +83,8 @@ class DisciplinesDirectoryController extends ControllerBase {
   }
 
   Future<void> showDisciplineAvailability(
-    DisciplineDto discipline, {
-    int? locationId,
-  }) async {
+    DisciplineDto discipline,
+  ) async {
     showDisciplinesResults.value = true;
     selectedDiscipline.value = discipline;
     disciplineAvailabilityError.value = null;
@@ -103,16 +100,11 @@ class DisciplinesDirectoryController extends ControllerBase {
       return;
     }
 
-    // The discipline carries its own club; 0 means "all clubs" so a discipline
-    // offered at several (or none) still lists availability.
-    final activeLocationId = locationId ?? this.locationId ?? 0;
-
     await runLatestLoadOperation<List<AvailableSlotDto>>(
       isLoading: isDisciplineAvailabilityLoading,
       error: disciplineAvailabilityError,
       loader: () => _repository.fetchAvailableBookingsByDiscipline(
         disciplineId: disciplineId,
-        locationId: activeLocationId,
       ),
       onSuccess: (items) {
         availableByDiscipline.assignAll(items);

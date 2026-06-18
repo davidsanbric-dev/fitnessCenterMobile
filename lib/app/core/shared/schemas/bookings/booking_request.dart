@@ -4,14 +4,12 @@ import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 
 /// Filters for the bookings agenda list. Emits a camelCase intermediate that
 /// `BookingAgendaApi.getAgenda` remaps to the backend's snake_case query params
-/// (date_from/date_to/location_code/booking_status/discipline_id/trainer_id).
-/// The endpoint scopes results to the authenticated user, so there is no member
-/// filter.
+/// (date_from/date_to/booking_status/discipline_id/trainer_id). The endpoint
+/// scopes results to the authenticated user, so there is no member filter.
 class BookingRequest {
   const BookingRequest({
     this.startDate,
     this.endDate,
-    this.locationCode,
     this.bookingStatus,
     this.disciplineId,
     this.trainerId,
@@ -19,7 +17,6 @@ class BookingRequest {
 
   final DateTime? startDate;
   final DateTime? endDate;
-  final String? locationCode;
   final String? bookingStatus;
   final String? disciplineId;
   final String? trainerId;
@@ -31,7 +28,6 @@ class BookingRequest {
 
   static DateTime _defaultEndDate(DateTime baseStartDate) =>
       baseStartDate.add(const Duration(days: 14));
-  static const String _defaultLocationCode = '1';
   static const String _defaultBookingStatus = '';
   static const String _defaultDisciplineId = '0';
   static const String _defaultTrainerId = '0';
@@ -39,7 +35,6 @@ class BookingRequest {
   Map<String, String> toQueryParameters({
     DateTime? defaultStartDate,
     DateTime? defaultEndDate,
-    String? defaultLocationCode,
     String? defaultBookingStatus,
     String? defaultDisciplineId,
     String? defaultTrainerId,
@@ -53,10 +48,6 @@ class BookingRequest {
       throw const ApiException('End date must be later than start date.');
     }
 
-    final resolvedLocationCode =
-        normOptString(locationCode) ??
-        defaultLocationCode ??
-        _defaultLocationCode;
     final resolvedStatus =
         normOptString(bookingStatus) ??
         defaultBookingStatus ??
@@ -71,7 +62,6 @@ class BookingRequest {
     return <String, String>{
       'startDate': formatDate(resolvedStartDate),
       'endDate': formatDate(resolvedEndDate),
-      'locationCode': resolvedLocationCode,
       'bookingStatus': resolvedStatus,
       'disciplineId': resolvedDiscipline,
       'trainerId': resolvedTrainer,

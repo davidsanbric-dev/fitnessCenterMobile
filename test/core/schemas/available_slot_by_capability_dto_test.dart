@@ -18,7 +18,6 @@ void main() {
 
       final dto = AvailableSlotByCapabilityDto.fromJson(
         json,
-        defaultLocationId: 4,
         defaultCapabilityId: 77,
         defaultCapabilityDescription: 'Sunrise Yoga',
       );
@@ -33,12 +32,10 @@ void main() {
       expect(dto.trainerName, 'Taylor Coach');
       expect(dto.disciplineName, 'Strength');
       expect(dto.slotAssignmentCode, 'SL-100');
-      // Class option, location and description aren't on the slot; they come
-      // from the request-provided defaults.
+      // Class option and description aren't on the slot; they come from the
+      // request-provided defaults.
       expect(dto.capabilityDescription, 'Sunrise Yoga');
       expect(dto.classTypeId, 77);
-      expect(dto.locationId, 4);
-      expect(dto.locationName, 'Club location');
     });
 
     test('falls back to placeholder labels when defaults are absent', () {
@@ -55,8 +52,6 @@ void main() {
       expect(dto.disciplineName, 'No discipline');
       expect(dto.capabilityDescription, 'Class option');
       expect(dto.classTypeId, 0);
-      expect(dto.locationId, 0);
-      expect(dto.locationName, 'Club location');
     });
   });
 }

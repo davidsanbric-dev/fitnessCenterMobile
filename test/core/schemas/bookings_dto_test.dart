@@ -33,11 +33,6 @@ void main() {
         },
         // Present to confirm the trainer discipline takes precedence over it.
         'category': {'category_id': 9, 'name': 'Conditioning'},
-        'location': {
-          'location_id': 2,
-          'name': 'Downtown Gym',
-          'location_code': 'DTG',
-        },
       };
 
       final dto = BookingDto.fromJson(json);
@@ -56,9 +51,6 @@ void main() {
       expect(dto.memberRut, '11111111-1');
       expect(dto.memberName, 'John Member');
       expect(dto.memberPhone, '+56912345678');
-      expect(dto.locationId, 2);
-      expect(dto.locationName, 'Downtown Gym');
-      expect(dto.locationCode, 'DTG');
       expect(dto.trainerId, '100');
       expect(dto.trainerName, 'Alex Trainer');
       expect(dto.disciplineId, 22);
@@ -103,9 +95,6 @@ void main() {
       expect(dto.memberRut, '');
       expect(dto.memberName, 'Jane Doe');
       expect(dto.memberPhone, '');
-      expect(dto.locationId, 0);
-      expect(dto.locationName, '');
-      expect(dto.locationCode, null);
       expect(dto.trainerId, null);
       expect(dto.trainerName, null);
       expect(dto.disciplineId, null);

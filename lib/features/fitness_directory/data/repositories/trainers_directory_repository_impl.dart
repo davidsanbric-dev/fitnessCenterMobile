@@ -32,12 +32,10 @@ class TrainersDirectoryRepositoryImpl implements TrainersDirectoryRepository {
   @override
   Future<List<TrainerDirectoryDto>> fetchTrainersByDiscipline({
     required String filterLabel,
-    required int locationId,
     required Iterable<DisciplineDto> disciplines,
   }) {
     return _service.fetchTrainersByDiscipline(
       filterLabel: filterLabel,
-      locationId: locationId,
       disciplines: disciplines,
     );
   }
@@ -45,12 +43,10 @@ class TrainersDirectoryRepositoryImpl implements TrainersDirectoryRepository {
   @override
   Future<List<TrainerDirectoryDto>> fetchTrainersByMembership({
     required String filterLabel,
-    required int locationId,
     required Iterable<MembershipDto> memberships,
   }) {
     return _service.fetchTrainersByMembership(
       filterLabel: filterLabel,
-      locationId: locationId,
       memberships: memberships,
     );
   }
@@ -59,12 +55,10 @@ class TrainersDirectoryRepositoryImpl implements TrainersDirectoryRepository {
   Future<List<AvailableSlotDto>> fetchTrainerAvailability({
     required String trainerId,
     required int disciplineId,
-    required int locationId,
   }) {
     return _service.fetchTrainerAvailability(
       trainerId: trainerId,
       disciplineId: disciplineId,
-      locationId: locationId,
     );
   }
 }

@@ -22,11 +22,9 @@ class AvailabilityListingRepositoryImpl
   @override
   Future<List<AvailableSlotByCapabilityDto>>
   fetchAvailableBookingsByCapability({
-    required int locationId,
     required CapabilityDto capability,
   }) {
     return _service.fetchAvailableBookingsByCapability(
-      locationId: locationId,
       capability: capability,
     );
   }

@@ -27,10 +27,8 @@ class TrainerInfoDialog extends StatelessWidget {
     final photoUrl = trainer.absolutePhotoUrl;
     final bio = trainer.bio.trim();
     final discipline = trainer.disciplineName.trim();
-    final club = trainer.locationName.trim();
     final subtitle = [
       if (discipline.isNotEmpty) discipline,
-      if (club.isNotEmpty) club,
     ].join(' · ');
 
     return Dialog(

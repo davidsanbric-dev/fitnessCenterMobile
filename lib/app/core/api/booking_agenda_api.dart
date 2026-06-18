@@ -1,6 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_request.dart';
@@ -22,15 +21,14 @@ class BookingAgendaApi extends ApiBase {
   };
 
   /// Returns the soonest booking at or after "now", drawn from the same full
-  /// agenda the Bookings table lists (all locations, no date window), so the
-  /// home summary always mirrors the next entry the user sees in that table.
+  /// agenda the Bookings table lists (no date window), so the home summary
+  /// always mirrors the next entry the user sees in that table.
   /// Cancelled and completed bookings are skipped. Returns null when nothing
   /// is upcoming.
   Future<AvailableSlotDto?> getNextUpcomingBooking() async {
     final now = DateTime.now().toLocal();
 
     final agendas = await getAgenda(
-      includeAllLocations: true,
       // The soonest upcoming booking can be more than 14 days out, so drop the
       // default date window. The backend orders booking_datetime DESC and caps
       // results, which could push the nearest future booking past that cap, so
@@ -62,28 +60,20 @@ class BookingAgendaApi extends ApiBase {
   Future<List<BookingDto>> getAgenda({
     DateTime? startDate,
     DateTime? endDate,
-    String? locationCode,
     String? bookingStatus,
     String? disciplineId,
     String? trainerId,
-    bool includeAllLocations = false,
     bool includeAllDates = false,
     int? pageSize,
   }) async {
     final request = BookingRequest(
       startDate: startDate,
       endDate: endDate,
-      locationCode: locationCode,
       bookingStatus: bookingStatus,
       disciplineId: disciplineId,
       trainerId: trainerId,
     );
-    final queryParameters = request.toQueryParameters(
-      defaultLocationCode: includeAllLocations ? '' : null,
-    );
-    final normalizedLocationCode = LocationCodeRegistry.instance.resolve(
-      queryParameters['locationCode'] ?? '',
-    );
+    final queryParameters = request.toQueryParameters();
 
     // BookingRequest always resolves a default [today, today+14] window when no
     // dates are given, which is right for the upcoming "My Bookings" list but
@@ -106,8 +96,6 @@ class BookingAgendaApi extends ApiBase {
         if (sendEndDate) 'date_to': endDateParam,
         // page_size == 0 asks the backend for the full set (no pagination).
         if (pageSize != null) 'page_size': pageSize.toString(),
-        if (normalizedLocationCode.trim().isNotEmpty)
-          'location_code': normalizedLocationCode,
         if ((queryParameters['bookingStatus'] ?? '').trim().isNotEmpty &&
             queryParameters['bookingStatus'] != '0')
           'booking_status': queryParameters['bookingStatus']!,
@@ -130,9 +118,6 @@ class BookingAgendaApi extends ApiBase {
       requestBody: <String, dynamic>{
         'booking_date': _toApiDate(request.trimmedDate),
         'booking_time': _toApiTime(request.trimmedTime),
-        'location_code': LocationCodeRegistry.instance.resolve(
-          request.trimmedLocationCode,
-        ),
         'session_duration_minutes': request.bookingDuration,
         'discipline_code': request.disciplineCode.toString(),
         'trainer_code': request.trainerCode,
@@ -150,9 +135,6 @@ class BookingAgendaApi extends ApiBase {
       requestBody: <String, dynamic>{
         'booking_date': _toApiDate(request.bookingDate),
         'booking_time': _toApiTime(request.bookingTime),
-        'location_code': LocationCodeRegistry.instance.resolve(
-          request.locationCode,
-        ),
         'trainer_code': request.trainerCode,
         'slot_assignment_code': request.slotAssignmentCode,
         'class_type_id': request.classTypeId,
@@ -193,9 +175,7 @@ class BookingAgendaApi extends ApiBase {
       serviceName: agenda.serviceName ?? '',
       trainerName: agenda.trainerName ?? '',
       disciplineName: agenda.disciplineName ?? '',
-      locationName: agenda.locationName,
       duration: agenda.duration,
-      locationId: agenda.locationId,
     );
   }
 }

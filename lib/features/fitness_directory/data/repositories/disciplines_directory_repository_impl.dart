@@ -25,11 +25,9 @@ class DisciplinesDirectoryRepositoryImpl
   @override
   Future<List<AvailableSlotDto>> fetchAvailableBookingsByDiscipline({
     required int disciplineId,
-    required int locationId,
   }) {
     return _service.fetchAvailableBookingsByDiscipline(
       disciplineId: disciplineId,
-      locationId: locationId,
     );
   }
 }

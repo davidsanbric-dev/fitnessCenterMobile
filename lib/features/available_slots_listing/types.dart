@@ -4,13 +4,6 @@ enum SchedulingMode { byService, byDisciplineTrainer }
 
 enum MemberFilterKind { rut, name }
 
-class BookingsLocationOption {
-  const BookingsLocationOption({required this.id, required this.name});
-
-  final int id;
-  final String name;
-}
-
 class BookingsMemberOption {
   const BookingsMemberOption({
     required this.key,
@@ -27,7 +20,6 @@ class MemberAvailabilityParams {
   const MemberAvailabilityParams({
     required this.serviceLabel,
     required this.primarySelectionLabel,
-    required this.locationLabel,
     required this.searchMode,
     this.trainerId,
     this.trainerDisciplineId,
@@ -36,7 +28,6 @@ class MemberAvailabilityParams {
 
   final String serviceLabel;
   final String primarySelectionLabel;
-  final String locationLabel;
   final DisciplineSearchMode searchMode;
   final String? trainerId;
   final int? trainerDisciplineId;
@@ -50,8 +41,6 @@ class MemberAvailabilityFilters {
     this.disciplineLabel,
     this.trainerId,
     this.trainerLabel,
-    required this.locationId,
-    required this.locationLabel,
     required this.searchMode,
   });
 
@@ -60,8 +49,6 @@ class MemberAvailabilityFilters {
   final String? disciplineLabel;
   final String? trainerId;
   final String? trainerLabel;
-  final int locationId;
-  final String locationLabel;
   final DisciplineSearchMode searchMode;
 
   String get primaryLabel => searchMode == DisciplineSearchMode.discipline

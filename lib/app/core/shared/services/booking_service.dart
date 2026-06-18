@@ -16,48 +16,31 @@ class BookingService {
 
   Future<BookingDto> fetchBooking({
     required String bookingId,
-    required Object locationCode,
   }) {
     return _agendaApi.getBooking(
       BookingRequest(
         bookingId: bookingId.trim(),
-        locationCode: _resolveLocationCode(locationCode),
       ),
     );
   }
 
   Future<BookingDto> fetchBookingDetails({
     required String bookingId,
-    required Object locationCode,
   }) {
-    return fetchBooking(bookingId: bookingId, locationCode: locationCode);
+    return fetchBooking(bookingId: bookingId);
   }
 
   Future<void> updateBookingStatus({
     required String bookingId,
     required String state,
-    required Object locationCode,
     String? observation,
   }) {
     return _agendaApi.updateBookingStatus(
       UpdateBookingStatusRequest(
         bookingId: bookingId,
         state: state,
-        locationCode: _resolveLocationCode(locationCode),
         observation: observation,
       ),
     );
-  }
-
-  String _resolveLocationCode(Object locationCode) {
-    final resolved = locationCode.toString().trim();
-    if (resolved.isEmpty) {
-      throw ArgumentError.value(
-        locationCode,
-        'locationCode',
-        'Cannot be empty',
-      );
-    }
-    return resolved;
   }
 }

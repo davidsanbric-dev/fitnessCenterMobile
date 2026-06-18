@@ -14,7 +14,6 @@ class BookingsService {
   }) {
     return _bookingsApi.getAgenda(
       bookingStatus: bookingStatus,
-      includeAllLocations: true,
       includeAllDates: includeAllDates,
       pageSize: pageSize,
     );

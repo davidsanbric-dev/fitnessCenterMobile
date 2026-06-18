@@ -5,7 +5,6 @@ import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
 import 'package:portfolio_mobile_app/app/core/shared/services/booking_service.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/assign_row_value_dialog.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/booking_details_card_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,16 +12,9 @@ import 'package:get/get.dart';
 class BookingController extends ControllerBase {
   BookingController({
     BookingService? service,
-    LocationController? locationController,
-  }) : _service = service ?? BookingService(),
-       locationController =
-           locationController ??
-           (Get.isRegistered<LocationController>()
-               ? Get.find<LocationController>()
-               : Get.put(LocationController()));
+  }) : _service = service ?? BookingService();
 
   final BookingService _service;
-  final LocationController locationController;
 
   final currentPage = 1.obs;
   final totalCount = 0.obs;
@@ -58,11 +50,8 @@ class BookingController extends ControllerBase {
     final trimmedId = bookingId.trim();
 
     try {
-      final locationCode = _resolveBookingLocationCode(trimmedId);
-
       final detail = await _service.fetchBooking(
         bookingId: trimmedId,
-        locationCode: locationCode,
       );
       if (!context.mounted) return;
 
@@ -99,7 +88,6 @@ class BookingController extends ControllerBase {
           await _service.updateBookingStatus(
             bookingId: bookingId,
             state: value,
-            locationCode: _resolveBookingLocationCode(bookingId),
           );
           _applyBookingState(bookingId: bookingId, state: value);
           return null;
@@ -114,15 +102,6 @@ class BookingController extends ControllerBase {
     if (updatedState != null) {
       Get.snackbar('Status updated', 'Booking changed to $updatedState.');
     }
-  }
-
-  int _resolveBookingLocationCode(String bookingId) {
-    for (final booking in bookings) {
-      if (booking.bookingId == bookingId) {
-        return booking.locationId;
-      }
-    }
-    return locationController.selectedLocationId.value;
   }
 
   void _applyBookingState({required String bookingId, required String state}) {

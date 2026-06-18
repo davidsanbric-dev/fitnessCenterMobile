@@ -71,7 +71,6 @@ class AvailableSlotsAvailabilityController extends ControllerBase {
         previousFilters != null &&
         previousFilters.disciplineId == filters.disciplineId &&
         previousFilters.trainerId == filters.trainerId &&
-        previousFilters.locationId == filters.locationId &&
         previousFilters.searchMode == filters.searchMode;
     if (isDuplicateRequest) {
       return;

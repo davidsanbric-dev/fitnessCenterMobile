@@ -4,7 +4,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dt
 import 'package:portfolio_mobile_app/app/core/shared/services/booking_service.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/booking_details_card_dialog.dart';
 import 'package:portfolio_mobile_app/features/bookings/logic/services/bookings_service.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +84,6 @@ class TrainingHistoryController extends ControllerBase {
     try {
       final detail = await _bookingService.fetchBookingDetails(
         bookingId: normReqString(row['bookingId']),
-        locationCode: _resolveLocationArg(row),
       );
 
       if (!context.mounted) return;
@@ -98,14 +96,6 @@ class TrainingHistoryController extends ControllerBase {
         'Could not show booking details: $error',
       );
     }
-  }
-
-  Object _resolveLocationArg(Map<String, dynamic> row) {
-    final code = normOptString(row['locationCode']);
-    if (code != null && code.isNotEmpty) {
-      return code;
-    }
-    return parseReqInt(row['locationId']);
   }
 
   void _syncPagination() {

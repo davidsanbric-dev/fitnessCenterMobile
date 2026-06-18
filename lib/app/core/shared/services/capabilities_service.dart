@@ -7,36 +7,32 @@ class CapabilitiesService {
 
   final CapabilitiesApi _capabilitiesApi;
 
-  Future<List<CapabilityDto>> fetchCapabilities({int? locationId}) async {
-    return fetchGroups(locationId: locationId);
+  Future<List<CapabilityDto>> fetchCapabilities() async {
+    return fetchGroups();
   }
 
-  Future<List<CapabilityDto>> fetchGroups({int? locationId}) async {
+  Future<List<CapabilityDto>> fetchGroups() async {
     return _sortCapabilities(
-      await _capabilitiesApi.getGroups(locationId: locationId),
+      await _capabilitiesApi.getGroups(),
     );
   }
 
   Future<List<CapabilityDto>> fetchSubgroup({
-    required int locationId,
     required int groupId,
   }) async {
     return _sortCapabilities(
       await _capabilitiesApi.getSubgroupFor(
-        locationId: locationId,
         groupId: groupId,
       ),
     );
   }
 
   Future<List<CapabilityDto>> fetchSubgroupItems({
-    required int locationId,
     required int groupId,
     required int subgroupId,
   }) async {
     return _sortCapabilities(
       await _capabilitiesApi.getSubgroupItemsFor(
-        locationId: locationId,
         groupId: groupId,
         subgroupId: subgroupId,
       ),

@@ -4,7 +4,6 @@ class CapabilityDto {
   const CapabilityDto({
     required this.id,
     required this.description,
-    required this.locationId,
     this.scheduleType = '',
     this.preparation = '',
     this.pdfCode = '',
@@ -12,7 +11,6 @@ class CapabilityDto {
 
   final int id;
   final String description;
-  final int locationId;
   final String scheduleType;
   final String preparation;
   final String pdfCode;
@@ -30,7 +28,6 @@ class CapabilityDto {
     return CapabilityDto(
       id: id,
       description: normOptString(json['name']) ?? '',
-      locationId: normOptInt(json['location_id']) ?? 0,
       scheduleType: normOptString(json['schedule_type']) ?? '',
       preparation: normOptString(json['preparation_info']) ?? '',
       pdfCode: normOptString(json['pdf_code']) ?? '',

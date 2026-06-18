@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart' show IconData;
 
-enum TrainerFilterField { discipline, location }
+enum TrainerFilterField { discipline }
 
 enum TrainersSearchMode { discipline, membership }
 

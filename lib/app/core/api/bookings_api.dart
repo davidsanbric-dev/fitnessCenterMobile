@@ -1,6 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
 import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/location_code_registry.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_state_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_request.dart';
@@ -9,7 +8,6 @@ import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/upd
 class BookingsApi extends ApiBase {
   BookingsApi() : super();
 
-  static const String _defaultLocationCode = '1';
   static const String _defaultObservation = '';
 
   Future<List<BookingStateDto>> getBookingStates() async {
@@ -26,11 +24,6 @@ class BookingsApi extends ApiBase {
       url: '${ApiUrls.bookingsUrl}/${request.bookingId.trim()}',
       requestErrorMessage: 'Error al obtener cita.',
       extractItems: ApiBase.extractSingleItemList,
-      queryParameters: {
-        'location_code': LocationCodeRegistry.instance.resolve(
-          request.locationCode.trim(),
-        ),
-      },
       fromJson: BookingDto.fromJson,
     );
 
@@ -42,11 +35,6 @@ class BookingsApi extends ApiBase {
       url: '${ApiUrls.bookingsUrl}/${request.bookingId.trim()}/status',
       requestBody: <String, dynamic>{
         'booking_status': request.trimmedBookingStatus,
-        'location_code': LocationCodeRegistry.instance.resolve(
-          request.trimmedLocationCode.isEmpty
-              ? _defaultLocationCode
-              : request.trimmedLocationCode,
-        ),
         'notes': request.trimmedObservation.isEmpty
             ? _defaultObservation
             : request.trimmedObservation,
