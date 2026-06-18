@@ -8,6 +8,7 @@ import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_trainer_table.dart';
+import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/trainer_info_dialog.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/trainers_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,6 +49,15 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       Get.delete<TrainersController>();
     }
     super.dispose();
+  }
+
+  void _handleTrainerInfo(Map<String, dynamic> row) {
+    final trainer = row['trainer'] as TrainerDirectoryDto?;
+    if (trainer == null) {
+      _showSnackBar('Could not open the trainer profile.');
+      return;
+    }
+    unawaited(TrainerInfoDialog.show(context, trainer));
   }
 
   void _handleTrainerSelected(Map<String, dynamic> row) {
@@ -188,6 +198,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         isLoading: isLoading,
         errorMessage: errorMessage,
         onTrainerSelected: _handleTrainerSelected,
+        onTrainerInfo: _handleTrainerInfo,
         pageNumber: _controller.trainersPageNumber.value,
         pageSize: _controller.trainersPageSize.value,
         totalItems: _controller.trainersTotalItems.value,

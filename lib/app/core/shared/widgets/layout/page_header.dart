@@ -82,11 +82,12 @@ class PageHeader extends StatelessWidget {
   final EdgeInsets leadingPadding;
   final double leadingSlotWidth;
 
-  /// How long the subtitle fade-in/fade-out and the header's height change take
-  /// when the feature flow moves between stages.
-  static const Duration _subtitleAnimationDuration = Duration(
-    milliseconds: 260,
-  );
+  /// How long the title and subtitle crossfade when their content changes (e.g.
+  /// switching tabs, or advancing through a feature flow). The gradient bar
+  /// itself never animates and never resizes — only the content inside it fades.
+  /// The fade only ever runs when the content actually changes, so a header
+  /// whose title is fixed never animates on its own.
+  static const Duration _contentFadeDuration = Duration(milliseconds: 260);
 
   /// Vertical space always reserved below the title for a single subtitle line.
   /// Reserving it even on subtitle-less pages keeps the bar (and the title's
@@ -99,41 +100,76 @@ class PageHeader extends StatelessWidget {
   /// exactly fills its reserved slot and never grows the bar.
   static const double _subtitleLineHeight = 20;
 
+  /// Gap above the second-level subtitle line.
+  static const double _secondarySubtitleSpacing = 3;
+
+  /// Fixed height of the second-level subtitle line (fontSize 15 × 1.1 line
+  /// height, rounded up), mirroring [_subtitleLineHeight] so it too exactly
+  /// fills its reserved slot.
+  static const double _secondarySubtitleLineHeight = 17;
+
+  /// Vertical space always reserved for the optional second-level subtitle.
+  /// Reserving it unconditionally — like [_reservedSubtitleHeight] does for the
+  /// first line — keeps the bar at its tallest (title › subtitle › secondary)
+  /// on every page, so it never resizes when a feature flow advances into a
+  /// stage that adds the secondary line (e.g. the booking flow's filters →
+  /// availability step).
+  static const double _reservedSecondarySubtitleHeight =
+      _secondarySubtitleSpacing + _secondarySubtitleLineHeight;
+
   /// Exact height of the title row. Comfortably clears both the title text and
   /// the trimmed back-button tap target so neither can resize the row.
   static const double _titleRowHeight = 40;
 
+  /// A fade-only [AnimatedSwitcher] shared by the title and subtitle slots: the
+  /// incoming content fades in over the outgoing one (stacked at [alignment])
+  /// without moving or animating anything around it — notably never the gradient
+  /// bar, whose drift this content/background separation exists to avoid.
+  static Widget _crossFade({
+    required Duration duration,
+    required AlignmentGeometry alignment,
+    required Widget child,
+  }) {
+    return AnimatedSwitcher(
+      duration: duration,
+      switchInCurve: Curves.easeIn,
+      switchOutCurve: Curves.easeOut,
+      layoutBuilder: (currentChild, previousChildren) => Stack(
+        alignment: alignment,
+        children: <Widget>[
+          ...previousChildren,
+          if (currentChild != null) currentChild,
+        ],
+      ),
+      transitionBuilder: (child, animation) =>
+          FadeTransition(opacity: animation, child: child),
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final resolvedSubtitle = subtitle?.trim();
-    final hasSubtitle = resolvedSubtitle != null && resolvedSubtitle.isNotEmpty;
-    final resolvedSecondary = secondarySubtitle?.trim();
-    final hasSecondary =
-        resolvedSecondary != null && resolvedSecondary.isNotEmpty;
-
     final onBackPressed = onBackButtonPressed;
-    final resolvedLeading = onBackPressed == null
-        ? null
-        : AppBackButton(onPressed: onBackPressed);
     // The leading slot always occupies the same width — holding the back button
-    // when present, empty otherwise — and the trailing slot mirrors it. This
-    // keeps the centered title truly centered, so it no longer shifts sideways
-    // when the back button appears on a subpage. (Logout now lives on the
-    // member profile page, so the trailing slot is purely a spacer.)
+    // when present, empty otherwise — and the trailing slot mirrors it, keeping
+    // the centered title truly centered so it never shifts sideways when the
+    // back button appears on a subpage.
     final Widget leadingSlot = SizedBox(
       width: leadingSlotWidth,
-      child: resolvedLeading == null
+      child: onBackPressed == null
           ? null
           : Align(
               alignment: Alignment.centerLeft,
-              child: Padding(padding: leadingPadding, child: resolvedLeading),
+              child: Padding(
+                padding: leadingPadding,
+                child: AppBackButton(onPressed: onBackPressed),
+              ),
             ),
     );
-    final Widget trailingSlot = SizedBox(width: leadingSlotWidth);
 
-    // The title (or custom child) is locked into a fixed row pinned to the top
-    // of the bar. It never moves when a subtitle appears below it, so reaching
-    // a subpage no longer makes the title jump upwards.
+    // The title (or custom brand child) is pinned to a fixed-height row at the
+    // top of the bar so it never moves when a subtitle appears below it. Only
+    // the content crossfades (keyed by its identity); the gradient stays put.
     final Widget titleContent =
         child ??
         Text(
@@ -141,53 +177,49 @@ class PageHeader extends StatelessWidget {
           style: AppTheme.orangeBarText.copyWith(height: 1.1),
           textAlign: TextAlign.center,
         );
-
+    final String titleContentKey = child != null
+        ? 'brand-child'
+        : 'title:${title ?? ''}';
     final Widget titleRow = Row(
       children: [
         leadingSlot,
-        Expanded(child: Align(child: titleContent)),
-        trailingSlot,
+        Expanded(
+          child: Align(
+            child: _crossFade(
+              duration: _contentFadeDuration,
+              alignment: Alignment.center,
+              child: KeyedSubtree(
+                key: ValueKey(titleContentKey),
+                child: titleContent,
+              ),
+            ),
+          ),
+        ),
+        // Mirrors the leading slot's width to keep the title centered.
+        SizedBox(width: leadingSlotWidth),
       ],
     );
 
-    // Subtitles live in their own animated slot below the title. A single
-    // subtitle line's worth of height is always reserved so the bar keeps the
-    // same dimensions with or without a subtitle; only a rare second-level
-    // subtitle grows it further, which the AnimatedSize then eases.
-    final Widget subtitleSlot = AnimatedSize(
-      duration: _subtitleAnimationDuration,
-      curve: Curves.easeInOut,
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: _reservedSubtitleHeight),
-        child: AnimatedSwitcher(
-          duration: _subtitleAnimationDuration,
-          switchInCurve: Curves.easeIn,
-          switchOutCurve: Curves.easeOut,
-          // Hug the top of the reserved slot so the subtitle sits right under
-          // the title instead of floating in the middle of the slot.
-          layoutBuilder: (currentChild, previousChildren) => Stack(
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              ...previousChildren,
-              if (currentChild != null) currentChild,
-            ],
-          ),
-          transitionBuilder: (child, animation) =>
-              FadeTransition(opacity: animation, child: child),
-          child: _buildSubtitleStack(
-            resolvedSubtitle,
-            hasSubtitle,
-            resolvedSecondary,
-            hasSecondary,
-          ),
-        ),
+    // Subtitles live in their own slot below the title. Both a subtitle line and
+    // a second-level subtitle line are always reserved, so the bar's height is
+    // identical on every page and across every flow stage — whether zero, one,
+    // or two subtitle lines are actually shown. Only the content crossfades; the
+    // bar never resizes, so there is nothing to ease.
+    final Widget subtitleSlot = ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: _reservedSubtitleHeight + _reservedSecondarySubtitleHeight,
+      ),
+      child: _crossFade(
+        duration: _contentFadeDuration,
+        alignment: Alignment.topCenter,
+        child: _buildSubtitleStack(),
       ),
     );
 
-    // Adds the status-bar inset to the base padding so the title clears the
-    // notch/camera cutout on every device instead of relying on a fixed inset.
+    // Fold the status-bar inset into the top padding so the title clears the
+    // notch/cutout on every device, keeping the bar one seamless gradient.
     final topInset = MediaQuery.of(context).padding.top;
+    final gradient = AppTheme.headerGradient(context);
 
     return Container(
       padding: EdgeInsets.fromLTRB(24, topInset + 14, 24, 14),
@@ -196,10 +228,8 @@ class PageHeader extends StatelessWidget {
       decoration: BoxDecoration(
         // Dark mode mirrors the web sidebar gradient so the aquamarine brand
         // mark reads as genuinely aqua; light mode keeps the solid brand blue.
-        gradient: AppTheme.headerGradient(context),
-        color: AppTheme.headerGradient(context) == null
-            ? AppTheme.brandAccentColor(context)
-            : null,
+        gradient: gradient,
+        color: gradient == null ? AppTheme.brandAccentColor(context) : null,
         border: Border(
           bottom: BorderSide(color: AppTheme.borderColor(context)),
         ),
@@ -213,9 +243,8 @@ class PageHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Pin the title row to an exact height (not just a minimum) so the
-          // back button's tap target can never grow the row taller on a
-          // subpage, which would otherwise nudge both the centered title and
-          // the subtitle below it downwards.
+          // back button's tap target can never grow it on a subpage, which would
+          // otherwise nudge the centered title and subtitle downwards.
           SizedBox(height: _titleRowHeight, child: titleRow),
           subtitleSlot,
         ],
@@ -223,17 +252,18 @@ class PageHeader extends StatelessWidget {
     );
   }
 
-  /// Builds the keyed subtitle stack consumed by the header's [AnimatedSwitcher].
+  /// Builds the keyed subtitle stack consumed by the header's crossfade.
   ///
   /// Returns a zero-height placeholder (keyed `none`) when there is no subtitle
-  /// so the switcher fades the previous subtitle out. The key encodes the
-  /// subtitle text so moving between two subpages still cross-fades.
-  Widget _buildSubtitleStack(
-    String? resolvedSubtitle,
-    bool hasSubtitle,
-    String? resolvedSecondary,
-    bool hasSecondary,
-  ) {
+  /// so the switcher fades the previous one out; otherwise the key encodes the
+  /// subtitle text so moving between two subpages still crossfades.
+  Widget _buildSubtitleStack() {
+    final resolvedSubtitle = subtitle?.trim();
+    final hasSubtitle = resolvedSubtitle != null && resolvedSubtitle.isNotEmpty;
+    final resolvedSecondary = secondarySubtitle?.trim();
+    final hasSecondary =
+        resolvedSecondary != null && resolvedSecondary.isNotEmpty;
+
     if (!hasSubtitle && !hasSecondary) {
       return const SizedBox(width: double.infinity, key: ValueKey('none'));
     }
@@ -244,18 +274,37 @@ class PageHeader extends StatelessWidget {
       children: [
         if (hasSubtitle) ...[
           SizedBox(height: _resolvedSubtitleSpacing()),
-          // Fixed line height so spacing + line exactly fills the reserved slot
-          // (_reservedSubtitleHeight); the FittedBox scales the label to fit.
-          // This keeps the bar the same height with or without a subtitle, so
-          // it no longer elongates when a subtitle fades in.
+          // Fixed line height so spacing + line exactly fills the reserved slot,
+          // keeping the bar the same height with or without a subtitle.
           SizedBox(
             height: _subtitleLineHeight,
-            child: _buildSubtitleRow(resolvedSubtitle!),
+            child: _subtitleLabel(
+              label: resolvedSubtitle,
+              icon: subtitleIcon,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              alpha: 0.75,
+              iconSize: subtitleIconSize - 2,
+              iconGap: 6,
+            ),
           ),
         ],
         if (hasSecondary) ...[
-          const SizedBox(height: 3),
-          _buildSecondarySubtitleRow(resolvedSecondary!),
+          const SizedBox(height: _secondarySubtitleSpacing),
+          // Fixed line height so spacing + line exactly fills the reserved
+          // secondary slot, matching the height the bar always carries.
+          SizedBox(
+            height: _secondarySubtitleLineHeight,
+            child: _subtitleLabel(
+              label: resolvedSecondary,
+              icon: secondarySubtitleIcon,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              alpha: 0.62,
+              iconSize: subtitleIconSize - 4,
+              iconGap: 5,
+            ),
+          ),
         ],
       ],
     );
@@ -268,15 +317,24 @@ class PageHeader extends StatelessWidget {
     return subtitleSpacing.clamp(2, 8);
   }
 
-  Widget _buildSubtitleRow(String label) {
-    final mutedColor = Colors.white.withValues(alpha: 0.75);
-    final labelStyle = AppTheme.orangeBarTextNormal.copyWith(
-      fontSize: 18,
+  /// Shared builder for both subtitle tiers — a centered, scale-to-fit icon+label
+  /// row differing only in size, weight and muted opacity.
+  Widget _subtitleLabel({
+    required String label,
+    required IconData? icon,
+    required double fontSize,
+    required FontWeight fontWeight,
+    required double alpha,
+    required double iconSize,
+    required double iconGap,
+  }) {
+    final color = Colors.white.withValues(alpha: alpha);
+    final style = AppTheme.orangeBarTextNormal.copyWith(
+      fontSize: fontSize,
       height: 1.1,
-      fontWeight: FontWeight.w600,
-      color: mutedColor,
+      fontWeight: fontWeight,
+      color: color,
     );
-    final resolvedIconSize = subtitleIconSize - 2;
 
     return FittedBox(
       fit: BoxFit.scaleDown,
@@ -284,39 +342,11 @@ class PageHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (subtitleIcon != null)
-            Icon(subtitleIcon, size: resolvedIconSize, color: mutedColor),
-          if (subtitleIcon != null) const SizedBox(width: 6),
-          Text(label, style: labelStyle, textAlign: TextAlign.center),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSecondarySubtitleRow(String label) {
-    final mutedColor = Colors.white.withValues(alpha: 0.62);
-    final labelStyle = AppTheme.orangeBarTextNormal.copyWith(
-      fontSize: 15,
-      height: 1.1,
-      fontWeight: FontWeight.w500,
-      color: mutedColor,
-    );
-    final resolvedIconSize = subtitleIconSize - 4;
-
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (secondarySubtitleIcon != null)
-            Icon(
-              secondarySubtitleIcon,
-              size: resolvedIconSize,
-              color: mutedColor,
-            ),
-          if (secondarySubtitleIcon != null) const SizedBox(width: 5),
-          Text(label, style: labelStyle, textAlign: TextAlign.center),
+          if (icon != null) ...[
+            Icon(icon, size: iconSize, color: color),
+            SizedBox(width: iconGap),
+          ],
+          Text(label, style: style, textAlign: TextAlign.center),
         ],
       ),
     );

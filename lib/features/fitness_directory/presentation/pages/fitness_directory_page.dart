@@ -4,7 +4,7 @@ import 'package:portfolio_mobile_app/app/config/app_router.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/logic/location_controller.dart';
@@ -18,7 +18,12 @@ import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class FitnessDirectoryPage extends StatefulWidget {
-  const FitnessDirectoryPage({super.key});
+  const FitnessDirectoryPage({super.key, this.onHeaderChanged});
+
+  /// When provided, Directory reports its header up instead of rendering it
+  /// directly, letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between tabs.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<FitnessDirectoryPage> createState() => _FitnessDirectoryPageState();
@@ -232,10 +237,10 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     }
   }
 
-  PageHeader _buildHeader(FitnessDirectoryView view) {
+  PageHeaderConfig _resolveHeaderConfig(FitnessDirectoryView view) {
     const headerTitle = 'Fitness Directory';
     if (view == FitnessDirectoryView.disciplines) {
-      return PageHeader(
+      return PageHeaderConfig(
         title: headerTitle,
         subtitle: 'Disciplines',
         subtitleIcon: LucideIcons.dumbbell,
@@ -243,7 +248,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       );
     }
     if (view == FitnessDirectoryView.disciplineAvailability) {
-      return PageHeader(
+      return PageHeaderConfig(
         title: headerTitle,
         subtitle: 'Disciplines',
         subtitleIcon: LucideIcons.dumbbell,
@@ -251,7 +256,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       );
     }
     if (view == FitnessDirectoryView.capabilities) {
-      return PageHeader(
+      return PageHeaderConfig(
         title: headerTitle,
         subtitle: 'Class Types',
         subtitleIcon: LucideIcons.trophy,
@@ -263,7 +268,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
           ? Get.find<TrainersController>().stage.value
           : null;
       final isAvailability = stage == TrainersViewStage.availability;
-      return PageHeader(
+      return PageHeaderConfig(
         title: headerTitle,
         subtitle: 'Trainers',
         subtitleIcon: LucideIcons.user,
@@ -273,7 +278,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       );
     }
     if (view == FitnessDirectoryView.memberships) {
-      return PageHeader(
+      return PageHeaderConfig(
         title: headerTitle,
         subtitle: 'Membership Plans',
         subtitleIcon: LucideIcons.creditCard,
@@ -281,26 +286,33 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       );
     }
 
-    return const PageHeader(title: headerTitle);
+    return const PageHeaderConfig(title: headerTitle);
   }
 
   @override
   Widget build(BuildContext context) {
     final options = [
       DirectoryOption(
-        title: 'Browse disciplines',
+        title: 'Disciplines',
+        icon: LucideIcons.dumbbell,
         onTap: () {
           _controller.showDisciplines();
           _disciplinesController.loadDisciplines();
         },
       ),
       DirectoryOption(
-        title: 'Browse class types',
+        title: 'Class Types',
+        icon: LucideIcons.trophy,
         onTap: _startCapabilitiesFlow,
       ),
-      DirectoryOption(title: 'Browse trainers', onTap: _startTrainersFlow),
       DirectoryOption(
-        title: 'Browse membership plans',
+        title: 'Trainers',
+        icon: LucideIcons.user,
+        onTap: _startTrainersFlow,
+      ),
+      DirectoryOption(
+        title: 'Membership Plans',
+        icon: LucideIcons.creditCard,
         onTap: () => _controller.loadMemberships(),
       ),
     ];
@@ -311,7 +323,12 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Obx(() => _buildHeader(_controller.view.value)),
+            Obx(
+              () => PageHeaderSlot(
+                config: _resolveHeaderConfig(_controller.view.value),
+                reporter: widget.onHeaderChanged,
+              ),
+            ),
             Expanded(
               child: Obx(() {
                 final view = _controller.view.value;
@@ -404,6 +421,11 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
           itemBuilder: (context, index) {
             final option = options[index];
             return ListTile(
+              leading: Icon(
+                option.icon,
+                size: 22,
+                color: AppTheme.brandAccentColor(context),
+              ),
               title: Text(
                 option.title,
                 style: AppTheme.listTileTitleStyle(context),

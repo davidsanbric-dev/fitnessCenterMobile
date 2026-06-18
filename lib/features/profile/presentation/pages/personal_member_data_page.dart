@@ -1,7 +1,7 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
 import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/features/profile/bloc/profile_bloc.dart';
 import 'package:portfolio_mobile_app/features/profile/bloc/profile_event.dart';
 import 'package:portfolio_mobile_app/features/profile/bloc/profile_state.dart';
@@ -14,16 +14,19 @@ class PersonalDataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: PersonalDataView(),
-    );
+    return const Scaffold(body: PersonalDataView());
   }
 }
 
 class PersonalDataView extends StatefulWidget {
-  const PersonalDataView({super.key, this.onBack});
+  const PersonalDataView({super.key, this.onBack, this.onHeaderChanged});
 
   final VoidCallback? onBack;
+
+  /// When provided, reports the header up instead of rendering it directly,
+  /// letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between tabs.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<PersonalDataView> createState() => _PersonalDataViewState();
@@ -96,18 +99,25 @@ class _PersonalDataViewState extends State<PersonalDataView> {
     return formatRut(sanitizedRut);
   }
 
-  Widget _buildHeader() {
+  PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeader(title: 'Personal Information');
+      return const PageHeaderConfig(title: 'Personal Information');
     }
 
     // Mirror the Directory page breadcrumb pattern: keep the master section
     // title and surface the current sub-view as an iconed subtitle hint.
-    return PageHeader(
+    return PageHeaderConfig(
       title: 'My Profile',
       subtitle: 'Personal Information',
       subtitleIcon: LucideIcons.idCard,
       onBackButtonPressed: widget.onBack,
+    );
+  }
+
+  Widget _buildHeader() {
+    return PageHeaderSlot(
+      config: _resolveHeaderConfig(),
+      reporter: widget.onHeaderChanged,
     );
   }
 

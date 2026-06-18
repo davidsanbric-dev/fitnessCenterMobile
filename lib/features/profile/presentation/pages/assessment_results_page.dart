@@ -1,5 +1,5 @@
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/features/profile/logic/assessment_results_controller.dart';
 import 'package:portfolio_mobile_app/features/profile/presentation/widgets/assessment_feedback_card.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +10,14 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 /// feedback note. Opened as an in-page sub-view of the profile, mirroring the
 /// Personal Information / Training History breadcrumb pattern.
 class AssessmentResultsView extends StatefulWidget {
-  const AssessmentResultsView({super.key, this.onBack});
+  const AssessmentResultsView({super.key, this.onBack, this.onHeaderChanged});
 
   final VoidCallback? onBack;
+
+  /// When provided, reports the header up instead of rendering it directly,
+  /// letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between tabs.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<AssessmentResultsView> createState() => _AssessmentResultsViewState();
@@ -42,15 +47,22 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView> {
     super.dispose();
   }
 
-  Widget _buildHeader() {
+  PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeader(title: 'Assessment Results');
+      return const PageHeaderConfig(title: 'Assessment Results');
     }
-    return PageHeader(
+    return PageHeaderConfig(
       title: 'My Profile',
       subtitle: 'Assessment Results',
       subtitleIcon: LucideIcons.clipboardList,
       onBackButtonPressed: widget.onBack,
+    );
+  }
+
+  Widget _buildHeader() {
+    return PageHeaderSlot(
+      config: _resolveHeaderConfig(),
+      reporter: widget.onHeaderChanged,
     );
   }
 
@@ -95,9 +107,9 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView> {
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppTheme.danger,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppTheme.danger),
         ),
       ),
     );
@@ -140,8 +152,7 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                         itemCount: items.length,
-                        itemBuilder: (context, index) =>
-                            AssessmentFeedbackCard(
+                        itemBuilder: (context, index) => AssessmentFeedbackCard(
                           booking: items[index],
                           initiallyExpanded: index == 0,
                         ),

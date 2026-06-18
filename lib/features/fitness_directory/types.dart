@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/widgets.dart' show IconData;
+
 enum TrainerFilterField { discipline, location }
 
 enum TrainersSearchMode { discipline, membership }
@@ -14,9 +16,14 @@ enum CapabilitiesViewStage {
 }
 
 class DirectoryOption {
-  const DirectoryOption({required this.title, required this.onTap});
+  const DirectoryOption({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
 
   final String title;
+  final IconData icon;
   final VoidCallback onTap;
 }
 

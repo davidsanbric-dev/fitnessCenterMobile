@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
 import 'package:portfolio_mobile_app/features/profile/logic/training_history_controller.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +8,14 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 /// Read-only list of the member's COMPLETED bookings, opened as an in-page
 /// sub-view of the profile (mirrors the Personal Information breadcrumb pattern).
 class TrainingHistoryView extends StatefulWidget {
-  const TrainingHistoryView({super.key, this.onBack});
+  const TrainingHistoryView({super.key, this.onBack, this.onHeaderChanged});
 
   final VoidCallback? onBack;
+
+  /// When provided, reports the header up instead of rendering it directly,
+  /// letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between tabs.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<TrainingHistoryView> createState() => _TrainingHistoryViewState();
@@ -42,15 +47,22 @@ class _TrainingHistoryViewState extends State<TrainingHistoryView> {
 
   Future<void> _refresh() => _controller.reload();
 
-  Widget _buildHeader() {
+  PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeader(title: 'Training History');
+      return const PageHeaderConfig(title: 'Training History');
     }
-    return PageHeader(
+    return PageHeaderConfig(
       title: 'My Profile',
       subtitle: 'Training History',
       subtitleIcon: LucideIcons.history,
       onBackButtonPressed: widget.onBack,
+    );
+  }
+
+  Widget _buildHeader() {
+    return PageHeaderSlot(
+      config: _resolveHeaderConfig(),
+      reporter: widget.onHeaderChanged,
     );
   }
 

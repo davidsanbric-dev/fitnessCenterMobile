@@ -8,7 +8,7 @@ import 'package:portfolio_mobile_app/features/home/logic/blog_controller.dart';
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
@@ -24,7 +24,12 @@ import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.onHeaderChanged});
+
+  /// When provided, Home reports its brand header up instead of rendering it
+  /// directly, letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between the brand mark and other tabs' titles.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -245,7 +250,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           padding: EdgeInsets.zero,
           child: Column(
             children: [
-              const PageHeader(child: BrandHeader(variant: 'small')),
+              PageHeaderSlot(
+                config: const PageHeaderConfig(
+                  child: BrandHeader(variant: 'small'),
+                ),
+                reporter: widget.onHeaderChanged,
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 10, 12, 32),
                 child: Column(
@@ -290,14 +300,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             }
                             final upcomingDescription =
                                 _buildUpcomingDescription(
-                              slot,
-                              isLoading:
-                                  snapshot.connectionState ==
-                                  ConnectionState.waiting,
-                              error: snapshot.error,
-                            );
-                            final historyDescription =
-                                _buildHistoryDescription(
+                                  slot,
+                                  isLoading:
+                                      snapshot.connectionState ==
+                                      ConnectionState.waiting,
+                                  error: snapshot.error,
+                                );
+                            final historyDescription = _buildHistoryDescription(
                               historySnapshot.data,
                               isLoading:
                                   historySnapshot.connectionState ==

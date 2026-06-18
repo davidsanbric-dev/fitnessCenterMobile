@@ -1,3 +1,4 @@
+import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 
 class MemberDto {
@@ -6,12 +7,30 @@ class MemberDto {
     required this.memberName,
     this.paternalSurname,
     this.maternalSurname = '',
+    this.avatarUrl = '',
   });
 
   final String memberRut;
   final String memberName;
   final String? paternalSurname;
   final String? maternalSurname;
+
+  /// Path relative to the API base (e.g. "/profile-images/media/3_ab12.webp"),
+  /// or empty when the member has no avatar. Use [absoluteAvatarUrl] to fetch.
+  final String avatarUrl;
+
+  /// Fully-qualified avatar URL, or null when no avatar is set. Built from the
+  /// same API base every other endpoint uses (which includes /api/v1).
+  String? get absoluteAvatarUrl {
+    final path = avatarUrl.trim();
+    if (path.isEmpty) {
+      return null;
+    }
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return '${AppStrings.baseUrl}$path';
+  }
 
   String get fullName {
     final parts =
@@ -31,6 +50,7 @@ class MemberDto {
       memberName: normOptString(json['first_name']) ?? '',
       paternalSurname: normOptString(json['paternal_surname']) ?? '',
       maternalSurname: normOptString(json['maternal_surname']) ?? '',
+      avatarUrl: normOptString(json['avatar_url']) ?? '',
     );
   }
 }

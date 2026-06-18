@@ -1,8 +1,10 @@
 import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_status_cell.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 class BookingsTable extends StatelessWidget {
   const BookingsTable({
@@ -14,6 +16,7 @@ class BookingsTable extends StatelessWidget {
     this.onConfirmReservation,
     this.onCancelReservation,
     this.onUpdateBookingStatus,
+    this.onBookSession,
     this.pageNumber,
     this.pageSize,
     this.totalItems,
@@ -33,6 +36,7 @@ class BookingsTable extends StatelessWidget {
   onCancelReservation;
   final Future<void> Function(BuildContext context, Map<String, dynamic> row)?
   onUpdateBookingStatus;
+  final VoidCallback? onBookSession;
   final int? pageNumber;
   final int? pageSize;
   final int? totalItems;
@@ -125,8 +129,20 @@ class BookingsTable extends StatelessWidget {
       heightFactor: 0.72,
       margin: const EdgeInsets.fromLTRB(2, 0, 2, 16),
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+      toolbar: onBookSession != null ? _buildBookSessionButton() : null,
       toolbarSpacing: 6,
       pagination: pagination,
+    );
+  }
+
+  Widget _buildBookSessionButton() {
+    return CreateButton(
+      label: 'Book a Session',
+      onPressed: onBookSession,
+      icon: const Icon(LucideIcons.calendarPlus, size: 18),
+      alignment: Alignment.centerRight,
+      spacing: 0,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 }

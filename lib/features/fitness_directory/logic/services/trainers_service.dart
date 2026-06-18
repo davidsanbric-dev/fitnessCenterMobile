@@ -86,6 +86,8 @@ class TrainersService {
             disciplineName: trainer.disciplineName,
             locationId: trainer.locationId,
             locationName: trainer.locationName,
+            bio: trainer.bio,
+            photoUrl: trainer.photoUrl,
           ),
         )
         .toList(growable: false);
@@ -130,6 +132,8 @@ class TrainersService {
             trainerName: trainer.trainerName,
             disciplineId: discipline.disciplineId,
             disciplineName: discipline.disciplineName,
+            bio: trainer.bio,
+            photoUrl: trainer.photoUrl,
           ),
         )
         .toList(growable: false);
@@ -175,6 +179,8 @@ class TrainersService {
             trainerName: trainer.trainerName,
             disciplineId: 0,
             disciplineName: '',
+            bio: trainer.bio,
+            photoUrl: trainer.photoUrl,
           ),
         )
         .toList(growable: false);

@@ -1,4 +1,5 @@
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/trainer_info_button_cell.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
@@ -13,6 +14,7 @@ class TrainersTable extends StatelessWidget {
     this.isLoading = false,
     this.errorMessage,
     this.onTrainerSelected,
+    this.onTrainerInfo,
     this.pageNumber,
     this.pageSize,
     this.totalItems,
@@ -26,6 +28,7 @@ class TrainersTable extends StatelessWidget {
   final bool isLoading;
   final String? errorMessage;
   final void Function(Map<String, dynamic> row)? onTrainerSelected;
+  final void Function(Map<String, dynamic> row)? onTrainerInfo;
   final int? pageNumber;
   final int? pageSize;
   final int? totalItems;
@@ -42,6 +45,7 @@ class TrainersTable extends StatelessWidget {
         ? ['trainerName', 'disciplineName', 'locationName']
         : ['trainerName', 'membershipName', 'locationName'];
     final showAction = onTrainerSelected != null;
+    final showInfo = onTrainerInfo != null;
     final shouldShowPagination =
         showPagination ||
         pageNumber != null ||
@@ -59,10 +63,25 @@ class TrainersTable extends StatelessWidget {
 
     final fields = [
       fieldPair,
-      if (showAction)
-        (row) => CheckAvailabilityButtonCell(
-          row: row,
-          onCheckAvailability: onTrainerSelected,
+      // A single action column holding the info button (profile dialog) beside
+      // the existing Schedule availability button, so the name/specialty/club
+      // cell keeps its width instead of being squeezed by a third column.
+      if (showInfo || showAction)
+        (row) => Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (showInfo)
+              TrainerInfoButtonCell(row: row, onInfo: onTrainerInfo),
+            if (showInfo && showAction) const SizedBox(width: 8),
+            if (showAction)
+              Flexible(
+                child: CheckAvailabilityButtonCell(
+                  row: row,
+                  onCheckAvailability: onTrainerSelected,
+                ),
+              ),
+          ],
         ),
     ];
 

@@ -1,3 +1,4 @@
+import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
 import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
 
 class TrainerDirectoryDto {
@@ -10,6 +11,8 @@ class TrainerDirectoryDto {
     required this.disciplineName,
     this.locationId = 0,
     this.locationName = '',
+    this.bio = '',
+    this.photoUrl = '',
   });
 
   final String membershipId;
@@ -20,6 +23,24 @@ class TrainerDirectoryDto {
   final String disciplineName;
   final int locationId;
   final String locationName;
+  final String bio;
+
+  /// Path relative to the API base (e.g. "/profile-images/media/3_ab12.webp").
+  /// Use [absolutePhotoUrl] to obtain a fetchable URL.
+  final String photoUrl;
+
+  /// Fully-qualified photo URL, or null when no photo is set. Built from the
+  /// same API base every other endpoint uses (which includes /api/v1).
+  String? get absolutePhotoUrl {
+    final path = photoUrl.trim();
+    if (path.isEmpty) {
+      return null;
+    }
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return '${AppStrings.baseUrl}$path';
+  }
 
   factory TrainerDirectoryDto.fromJson(Map<String, dynamic> json) {
     return TrainerDirectoryDto(
@@ -31,6 +52,8 @@ class TrainerDirectoryDto {
       disciplineName: normReqString(json['disciplineName']),
       locationId: normOptInt(json['locationId']) ?? 0,
       locationName: normOptString(json['locationName']) ?? '',
+      bio: normOptString(json['bio']) ?? '',
+      photoUrl: normOptString(json['photoUrl']) ?? '',
     );
   }
 
@@ -45,6 +68,8 @@ class TrainerDirectoryDto {
       'locationName': locationName,
       'membershipId': membershipId,
       'membershipName': membershipName,
+      'bio': bio,
+      'photoUrl': photoUrl,
     };
   }
 }

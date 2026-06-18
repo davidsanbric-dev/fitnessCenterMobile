@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:portfolio_mobile_app/features/profile/presentation/pages/member_profile_page.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +23,27 @@ class HomeWrapper extends StatefulWidget {
 }
 
 class _HomeWrapperState extends State<HomeWrapper> {
+  static const int _homeTabIndex = 0;
+
   final Set<int> _visitedIndexes = <int>{};
   bool _loggedFirstInteractiveFrame = false;
+
+  // Each tab page reports what its header should show instead of rendering its
+  // own, so the single hoisted PageHeader below can crossfade its title/subtitle
+  // between them (its gradient bar stays static). Home's config is seeded
+  // eagerly since it's the brand mark and always the first tab seen.
+  final Map<int, PageHeaderConfig> _headerConfigs = {
+    _homeTabIndex: const PageHeaderConfig(child: BrandHeader(variant: 'small')),
+  };
+
+  void _setHeaderConfig(int index, PageHeaderConfig config) {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _headerConfigs[index] = config;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +63,16 @@ class _HomeWrapperState extends State<HomeWrapper> {
       ];
 
       final pagesByIndex = <int, Widget>{
-        0: const HomePage(),
-        1: const BookingsPage(),
-        6: const FitnessDirectoryPage(),
-        5: const ProfilePage(),
+        0: HomePage(onHeaderChanged: (config) => _setHeaderConfig(0, config)),
+        1: BookingsPage(
+          onHeaderChanged: (config) => _setHeaderConfig(1, config),
+        ),
+        6: FitnessDirectoryPage(
+          onHeaderChanged: (config) => _setHeaderConfig(6, config),
+        ),
+        5: ProfilePage(
+          onHeaderChanged: (config) => _setHeaderConfig(5, config),
+        ),
       };
 
       final navIndexes = navItems
@@ -91,8 +119,27 @@ class _HomeWrapperState extends State<HomeWrapper> {
           )
           .toList();
 
+      final activeHeaderConfig =
+          _headerConfigs[safeIndex] ?? const PageHeaderConfig(title: '');
+
       return Scaffold(
-        body: Stack(children: visitedChildren),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // A single persistent PageHeader: its gradient bar stays put while
+            // its title/subtitle content crossfades on every tab switch.
+            PageHeader(
+              title: activeHeaderConfig.title,
+              subtitle: activeHeaderConfig.subtitle,
+              subtitleIcon: activeHeaderConfig.subtitleIcon,
+              secondarySubtitle: activeHeaderConfig.secondarySubtitle,
+              secondarySubtitleIcon: activeHeaderConfig.secondarySubtitleIcon,
+              onBackButtonPressed: activeHeaderConfig.onBackButtonPressed,
+              child: activeHeaderConfig.child,
+            ),
+            Expanded(child: Stack(children: visitedChildren)),
+          ],
+        ),
         bottomNavigationBar: MainBottomNavBar(
           currentIndex: displayIndex,
           onTap: navCtrl.changeTab,

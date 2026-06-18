@@ -1,16 +1,19 @@
 import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
 import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller.dart';
 import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
 
 class BookingsPage extends StatefulWidget {
-  const BookingsPage({super.key});
+  const BookingsPage({super.key, this.onHeaderChanged});
+
+  /// When provided, Bookings reports its header up instead of rendering it
+  /// directly, letting a host (the bottom-nav shell) own a single header that
+  /// crossfades between tabs.
+  final PageHeaderReporter? onHeaderChanged;
 
   @override
   State<BookingsPage> createState() => _BookingsPageState();
@@ -109,7 +112,23 @@ class _BookingsPageState extends State<BookingsPage> {
     IconData? secondarySubtitleIcon,
     VoidCallback? backHandler,
   ) {
-    if (!mounted || _flowStageKey == stageKey) {
+    if (!mounted) {
+      return;
+    }
+    // Update when ANY field changes — crucially including the back handler's
+    // identity. A stage can be re-entered by a fresh subpage instance (the flow
+    // briefly builds the subpage twice during its slide transition), and the new
+    // instance's handler must replace the previous one even though the stage key
+    // is unchanged; otherwise the header keeps calling a handler bound to the
+    // disposed instance and the back button silently does nothing. Dart
+    // canonicalises instance-method tear-offs, so a stable live instance keeps
+    // comparing equal here and never triggers a rebuild loop.
+    final unchanged =
+        _flowStageKey == stageKey &&
+        _flowSecondarySubtitle == secondarySubtitle &&
+        _flowSecondarySubtitleIcon == secondarySubtitleIcon &&
+        _flowBackHandler == backHandler;
+    if (unchanged) {
       return;
     }
     setState(() {
@@ -139,13 +158,7 @@ class _BookingsPageState extends State<BookingsPage> {
                       )
                     : KeyedSubtree(
                         key: const ValueKey('bookings-list'),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildBookSessionButton(),
-                            Expanded(child: _buildBookingsList()),
-                          ],
-                        ),
+                        child: _buildBookingsList(),
                       ),
               ),
             ),
@@ -155,11 +168,11 @@ class _BookingsPageState extends State<BookingsPage> {
     );
   }
 
-  Widget _buildHeader() {
+  PageHeaderConfig _resolveHeaderConfig() {
     if (!_showBookFlow) {
-      return const PageHeader(title: 'My Bookings');
+      return const PageHeaderConfig(title: 'My Bookings');
     }
-    return PageHeader(
+    return PageHeaderConfig(
       title: 'My Bookings',
       subtitle: 'Book a Session',
       secondarySubtitle: _flowSecondarySubtitle,
@@ -168,25 +181,18 @@ class _BookingsPageState extends State<BookingsPage> {
     );
   }
 
+  Widget _buildHeader() {
+    return PageHeaderSlot(
+      config: _resolveHeaderConfig(),
+      reporter: widget.onHeaderChanged,
+    );
+  }
+
   Widget _buildBookFlow() {
     return BookSessionFlow(
       scrollBottomPadding: 24,
       onExit: _closeBookFlow,
       onHeaderStateChanged: _handleFlowHeaderState,
-    );
-  }
-
-  Widget _buildBookSessionButton() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
-      child: CreateButton(
-        label: 'Book a Session',
-        onPressed: _openBookFlow,
-        icon: const Icon(LucideIcons.calendarPlus, size: 18),
-        alignment: Alignment.centerRight,
-        spacing: 0,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
     );
   }
 
@@ -211,6 +217,7 @@ class _BookingsPageState extends State<BookingsPage> {
                 onConfirmReservation: _controller.confirmReservation,
                 onCancelReservation: _controller.cancelReservation,
                 onUpdateBookingStatus: _controller.updateBookingStatus,
+                onBookSession: _openBookFlow,
                 pageNumber: bookingsPageNumber,
                 pageSize: bookingsPageSize,
                 totalItems: bookingsTotalItems,

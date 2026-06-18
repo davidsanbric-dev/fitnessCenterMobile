@@ -8,6 +8,8 @@ class TrainerDto {
     this.disciplineName = '',
     this.locationId = 0,
     this.locationName = '',
+    this.bio = '',
+    this.photoUrl = '',
   });
 
   final String trainerId;
@@ -16,6 +18,11 @@ class TrainerDto {
   final String disciplineName;
   final int locationId;
   final String locationName;
+  final String bio;
+
+  /// Path relative to the API base (e.g. "/profile-images/media/3_ab12.webp"),
+  /// or empty when the trainer has no photo.
+  final String photoUrl;
 
   // Maps the `TrainerSummary` contract from GET /trainers (snake_case).
   factory TrainerDto.fromJson(Map<String, dynamic> json) {
@@ -26,6 +33,8 @@ class TrainerDto {
       disciplineName: normOptString(json['discipline_name']) ?? '',
       locationId: normOptInt(json['location_id']) ?? 0,
       locationName: normOptString(json['location_name']) ?? '',
+      bio: normOptString(json['bio']) ?? '',
+      photoUrl: normOptString(json['photo_url']) ?? '',
     );
   }
 }
