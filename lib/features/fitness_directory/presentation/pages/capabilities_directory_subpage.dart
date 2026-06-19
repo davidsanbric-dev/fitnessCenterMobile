@@ -1,6 +1,7 @@
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/widgets.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
@@ -142,15 +143,21 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
                     ),
                   ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontalPadding,
-                      useCompactHeaderGap ? 6 : _navButtonsGap,
-                      horizontalPadding,
-                      24,
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
+                  // Slide horizontally between the class-types stages (group →
+                  // subgroup → class type → availability) the same way the
+                  // directory sections slide, using the stage's position in the
+                  // flow as the navigation depth. Each stage scrolls on its own
+                  // so the switcher gets the bounded height its cards fill.
+                  child: SlidePageSwitcher(
+                    depth: stage.index,
+                    stageKey: stage,
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        horizontalPadding,
+                        useCompactHeaderGap ? 6 : _navButtonsGap,
+                        horizontalPadding,
+                        24,
+                      ),
                       child: _buildStageContent(
                         stage: stage,
                         groups: groups,
@@ -204,14 +211,12 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
     switch (stage) {
       case CapabilitiesViewStage.groupSelection:
         return CapabilitiesGroupFilterBox(
-          key: const ValueKey('group'),
           groups: groups,
           isLoading: isLoading,
           onGroupSelected: _handleGroupSelected,
         );
       case CapabilitiesViewStage.subgroupSelection:
         return Column(
-          key: const ValueKey('subgroup'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             CapabilitiesSubgroupFilterBox(
@@ -225,7 +230,6 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
       case CapabilitiesViewStage.subgroupItemsSelection:
         // Class types render as the same card grid used for groups/subgroups.
         return CapabilitiesGroupFilterBox(
-          key: const ValueKey('subgroupItems'),
           groups: subgroupItems,
           isLoading: subgroupItemsIsLoading,
           emptyStateMessage:
@@ -237,7 +241,6 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage> {
         );
       case CapabilitiesViewStage.capabilityAvailability:
         return Column(
-          key: const ValueKey('capabilityAvailability'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 8),

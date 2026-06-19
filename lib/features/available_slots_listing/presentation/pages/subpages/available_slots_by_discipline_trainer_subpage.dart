@@ -276,10 +276,9 @@ class _AvailableSlotsByDisciplineTrainerPageState
           final activeFieldKey = _primaryFieldKey;
 
           // The filters stage (search-mode box + fields) and the availability
-          // stage (results table) are two keyed cards so the SlidePageSwitcher
-          // can slide between them, matching the earlier flow transitions.
+          // stage (results table) are the two cards the SlidePageSwitcher
+          // slides between, matching the earlier flow transitions.
           final Widget filtersStage = SingleChildScrollView(
-            key: const ValueKey('disc:filters'),
             padding: const EdgeInsets.only(bottom: 120),
             child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -322,7 +321,6 @@ class _AvailableSlotsByDisciplineTrainerPageState
           );
 
           final Widget availabilityStage = SingleChildScrollView(
-            key: const ValueKey('disc:availability'),
             padding: const EdgeInsets.only(bottom: 120),
             child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -360,6 +358,9 @@ class _AvailableSlotsByDisciplineTrainerPageState
                 children: [
                   SlidePageSwitcher(
                     depth: showAvailabilityTable ? 1 : 0,
+                    stageKey: showAvailabilityTable
+                        ? 'availability'
+                        : 'filters',
                     child: showAvailabilityTable
                         ? availabilityStage
                         : filtersStage,

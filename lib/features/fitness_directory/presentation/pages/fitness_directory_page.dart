@@ -300,10 +300,8 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
                 final view = _controller.view.value;
                 return SlidePageSwitcher(
                   depth: _directoryViewDepth(view),
-                  child: KeyedSubtree(
-                    key: ValueKey(view),
-                    child: _buildDirectoryView(view, options),
-                  ),
+                  stageKey: view,
+                  child: _buildDirectoryView(view, options),
                 );
               }),
             ),

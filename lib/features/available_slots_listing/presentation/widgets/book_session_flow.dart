@@ -207,7 +207,8 @@ class BookSessionFlowState extends State<BookSessionFlow> {
 
     return SlidePageSwitcher(
       depth: stageDepth,
-      child: KeyedSubtree(key: ValueKey(stageKey), child: stage),
+      stageKey: stageKey,
+      child: stage,
     );
   }
 }

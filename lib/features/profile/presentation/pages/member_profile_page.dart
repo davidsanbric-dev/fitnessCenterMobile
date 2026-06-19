@@ -8,6 +8,7 @@ import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/member/member_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -256,54 +257,65 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Each profile view is a self-contained card (its own header + content);
+    // the menu is the root (depth 0) and any sub-view sits one level deeper
+    // (depth 1), so the slide switcher slides the menu out to the left while a
+    // sub-view slides in from the right, and reverses on back.
+    final String viewKey;
+    final Widget viewChild;
     if (_showPersonalData) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          _closePersonalData();
-        },
-        child: Scaffold(
-          body: PersonalDataView(
-            onBack: _closePersonalData,
-            onHeaderChanged: widget.onHeaderChanged,
-          ),
-        ),
+      viewKey = 'personal';
+      viewChild = PersonalDataView(
+        onBack: _closePersonalData,
+        onHeaderChanged: widget.onHeaderChanged,
       );
+    } else if (_showTrainingHistory) {
+      viewKey = 'training';
+      viewChild = TrainingHistoryView(
+        onBack: _closeTrainingHistory,
+        onHeaderChanged: widget.onHeaderChanged,
+      );
+    } else if (_showAssessmentResults) {
+      viewKey = 'assessment';
+      viewChild = AssessmentResultsView(
+        onBack: _closeAssessmentResults,
+        onHeaderChanged: widget.onHeaderChanged,
+      );
+    } else {
+      viewKey = 'menu';
+      viewChild = _buildMenu(context);
     }
 
-    if (_showTrainingHistory) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          _closeTrainingHistory();
-        },
-        child: Scaffold(
-          body: TrainingHistoryView(
-            onBack: _closeTrainingHistory,
-            onHeaderChanged: widget.onHeaderChanged,
-          ),
+    final isSubView = viewKey != 'menu';
+    return PopScope(
+      // Only intercept the system back gesture while a sub-view is open, where
+      // it should return to the menu instead of leaving the profile tab.
+      canPop: !isSubView,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop || !isSubView) return;
+        _closeCurrentSubView();
+      },
+      child: Scaffold(
+        body: SlidePageSwitcher(
+          depth: isSubView ? 1 : 0,
+          stageKey: viewKey,
+          child: viewChild,
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    if (_showAssessmentResults) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          _closeAssessmentResults();
-        },
-        child: Scaffold(
-          body: AssessmentResultsView(
-            onBack: _closeAssessmentResults,
-            onHeaderChanged: widget.onHeaderChanged,
-          ),
-        ),
-      );
+  void _closeCurrentSubView() {
+    if (_showPersonalData) {
+      _closePersonalData();
+    } else if (_showTrainingHistory) {
+      _closeTrainingHistory();
+    } else if (_showAssessmentResults) {
+      _closeAssessmentResults();
     }
+  }
 
+  Widget _buildMenu(BuildContext context) {
     final options = [
       _ProfileOption(
         title: 'Personal Information',
@@ -328,59 +340,57 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     ];
 
-    return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            PageHeaderScope(
-              showLogout: false,
-              child: PageHeaderSlot(
-                config: const PageHeaderConfig(title: 'My Profile'),
-                reporter: widget.onHeaderChanged,
-              ),
+    return SafeArea(
+      top: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PageHeaderScope(
+            showLogout: false,
+            child: PageHeaderSlot(
+              config: const PageHeaderConfig(title: 'My Profile'),
+              reporter: widget.onHeaderChanged,
             ),
-            _buildAvatarHeader(context),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 35,
-                  vertical: 25,
-                ),
-                itemBuilder: (context, index) {
-                  final option = options[index];
-                  final titleStyle = AppTheme.listTileTitleStyle(
-                    context,
-                    isDestructive: option.isDestructive,
-                  );
-                  return ListTile(
-                    leading: Icon(
-                      option.icon,
-                      size: 22,
-                      color: option.isDestructive
-                          ? titleStyle.color
-                          : AppTheme.brandAccentColor(context),
-                    ),
-                    title: Text(option.title, style: titleStyle),
-                    onTap: option.onTap,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 10,
-                    ),
-                    minVerticalPadding: 10,
-                  );
-                },
-                separatorBuilder: (context, _) => Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: Colors.grey.shade300,
-                ),
-                itemCount: options.length,
+          ),
+          _buildAvatarHeader(context),
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 35,
+                vertical: 25,
               ),
+              itemBuilder: (context, index) {
+                final option = options[index];
+                final titleStyle = AppTheme.listTileTitleStyle(
+                  context,
+                  isDestructive: option.isDestructive,
+                );
+                return ListTile(
+                  leading: Icon(
+                    option.icon,
+                    size: 22,
+                    color: option.isDestructive
+                        ? titleStyle.color
+                        : AppTheme.brandAccentColor(context),
+                  ),
+                  title: Text(option.title, style: titleStyle),
+                  onTap: option.onTap,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 10,
+                  ),
+                  minVerticalPadding: 10,
+                );
+              },
+              separatorBuilder: (context, _) => Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.grey.shade300,
+              ),
+              itemCount: options.length,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

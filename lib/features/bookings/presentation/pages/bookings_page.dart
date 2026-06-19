@@ -151,15 +151,10 @@ class _BookingsPageState extends State<BookingsPage> {
             Expanded(
               child: SlidePageSwitcher(
                 depth: _showBookFlow ? 1 : 0,
+                stageKey: _showBookFlow ? 'book-flow' : 'bookings-list',
                 child: _showBookFlow
-                    ? KeyedSubtree(
-                        key: const ValueKey('book-flow'),
-                        child: _buildBookFlow(),
-                      )
-                    : KeyedSubtree(
-                        key: const ValueKey('bookings-list'),
-                        child: _buildBookingsList(),
-                      ),
+                    ? _buildBookFlow()
+                    : _buildBookingsList(),
               ),
             ),
           ],

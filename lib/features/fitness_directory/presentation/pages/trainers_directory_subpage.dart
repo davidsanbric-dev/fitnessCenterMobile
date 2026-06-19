@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
 import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
@@ -148,20 +149,28 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       final availabilityError = _controller.trainerAvailabilityError.value;
       final selectedTrainer = _controller.selectedTrainer.value;
 
-      if (stage == TrainersViewStage.availability) {
-        return _buildAvailabilityView(
-          bookings: availabilityRows,
-          isLoading: availabilityLoading,
-          errorMessage: availabilityError,
-          selectedTrainer: selectedTrainer,
-        );
-      }
-      return _buildTrainersView(
-        stage: stage,
-        trainers: trainers,
-        mode: mode,
-        isLoading: isLoading,
-        errorMessage: errorMessage,
+      final isAvailability = stage == TrainersViewStage.availability;
+      // Slide between the trainers table and a trainer's availability table the
+      // same way the directory sections slide: the table list is the root and
+      // the availability table sits one level deeper. Keyed by the logical view
+      // so a filters→results change keeps the table in place without sliding.
+      return SlidePageSwitcher(
+        depth: isAvailability ? 1 : 0,
+        stageKey: isAvailability ? 'availability' : 'trainers',
+        child: isAvailability
+            ? _buildAvailabilityView(
+                bookings: availabilityRows,
+                isLoading: availabilityLoading,
+                errorMessage: availabilityError,
+                selectedTrainer: selectedTrainer,
+              )
+            : _buildTrainersView(
+                stage: stage,
+                trainers: trainers,
+                mode: mode,
+                isLoading: isLoading,
+                errorMessage: errorMessage,
+              ),
       );
     });
   }
