@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/app_assets.dart';
 
 class BrandLogo extends StatelessWidget {
   final double height;

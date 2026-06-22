@@ -1,22 +1,20 @@
-import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
-import 'package:get/get.dart';
+import 'package:fitnesscenter_mobile/app/core/di/locator.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
+import 'package:fitnesscenter_mobile/features/class_booking/feature.dart';
 
 class AvailableSlotsListingInjector {
   static void ensureRegistered() {
     ClassBookingInjector.ensureRegistered();
   }
 
-  static AvailableSlotsController createAvailableSlotsController() {
+  static AvailableSlotsViewModel createAvailableSlotsViewModel() {
     ensureRegistered();
-    return AvailableSlotsController();
+    return AvailableSlotsViewModel();
   }
 
-  static AvailableSlotsController getSharedAvailableSlotsController() {
-    ensureRegistered();
-    if (!Get.isRegistered<AvailableSlotsController>()) {
-      Get.put(AvailableSlotsController());
-    }
-    return Get.find<AvailableSlotsController>();
-  }
+  /// Returns the shared view-model, registering it on first use. Idempotent so
+  /// sibling subpages (by-capability / by-discipline-trainer) bind to the same
+  /// instance via [SharedViewModelHost].
+  static AvailableSlotsViewModel getAvailableSlotsViewModel() =>
+      getOrPut(createAvailableSlotsViewModel);
 }

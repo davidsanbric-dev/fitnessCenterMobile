@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/consult_button.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/consult_button.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
 
 bool shouldShowConsultButton({
@@ -11,10 +11,7 @@ bool shouldShowConsultButton({
   if (selectedService == null) {
     return false;
   }
-  return _isControllerValueInOptions(
-    primaryController,
-    primaryOptions,
-  );
+  return _isControllerValueInOptions(primaryController, primaryOptions);
 }
 
 bool _isControllerValueInOptions(
@@ -45,7 +42,7 @@ class AvailableSlotsConsultButton extends StatefulWidget {
   final String? selectedService;
   final TextEditingController primaryController;
   final DisciplineSearchMode searchMode;
-  final AvailableSlotsController filtersController;
+  final AvailableSlotsViewModel filtersController;
   final VoidCallback onHideSheet;
   final MemberAvailabilityParams? Function()? buildParams;
 

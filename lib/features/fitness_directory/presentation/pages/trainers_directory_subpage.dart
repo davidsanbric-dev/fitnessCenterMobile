@@ -1,16 +1,17 @@
 import 'dart:async';
 
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_trainer_table.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/trainer_info_dialog.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/trainers_table.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_filters_summary.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/class_booking/feature.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/feature.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/available_bookings_by_trainer_table.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/trainer_info_dialog.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/trainers_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -22,33 +23,27 @@ class TrainersDirectoryPage extends StatefulWidget {
   State<TrainersDirectoryPage> createState() => _TrainersDirectoryPageState();
 }
 
-class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
-  late final TrainersController _controller;
-  late final bool _ownsController;
+class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
+    with SharedViewModelHost<TrainersDirectoryPage, TrainersViewModel> {
+  @override
+  TrainersViewModel createViewModel() =>
+      FitnessDirectoryInjector.getTrainersViewModel();
 
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<TrainersController>()) {
-      _controller = Get.find<TrainersController>();
-      _ownsController = false;
-    } else {
-      _controller = FitnessDirectoryInjector.getTrainersController();
-      _ownsController = true;
-    }
+    acquireViewModel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
       }
-      unawaited(_controller.loadAllTrainers());
+      unawaited(viewModel.loadAllTrainers());
     });
   }
 
   @override
   void dispose() {
-    if (_ownsController) {
-      Get.delete<TrainersController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
@@ -67,20 +62,18 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       _showSnackBar('Could not select the trainer.');
       return;
     }
-    unawaited(
-      _controller.showTrainerAvailability(trainer),
-    );
+    unawaited(viewModel.showTrainerAvailability(trainer));
   }
 
   Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
-    await ClassBookingFlow.bookStandard(
-      context: context,
-      controller: ClassBookingInjector.getSharedClassBookingController(),
-      slot: slot,
-      onBooked: () async {
-        _controller.removeBookedAvailabilitySlot(slot);
-      },
-    );
+    await ClassBookingInjector.getSharedClassBookingViewModel()
+        .bookStandardAndNotify(
+          context: context,
+          slot: slot,
+          onBooked: () async {
+            viewModel.removeBookedAvailabilitySlot(slot);
+          },
+        );
   }
 
   void _showSnackBar(String message, {Duration? duration}) {
@@ -137,42 +130,44 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final stage = _controller.stage.value;
-      final isLoading = _controller.isLoading.value;
-      final errorMessage = _controller.error.value;
-      final trainers = _controller.trainersTableRows;
-      final mode = _controller.trainersMode.value;
-      final availabilityRows = _controller.trainerAvailabilityRows;
-      final availabilityLoading =
-          _controller.isTrainerAvailabilityLoading.value;
-      final availabilityError = _controller.trainerAvailabilityError.value;
-      final selectedTrainer = _controller.selectedTrainer.value;
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, _) {
+        final stage = viewModel.stage;
+        final isLoading = viewModel.isLoading;
+        final errorMessage = viewModel.error;
+        final trainers = viewModel.trainersTableRows;
+        final mode = viewModel.trainersMode;
+        final availabilityRows = viewModel.trainerAvailabilityRows;
+        final availabilityLoading = viewModel.isTrainerAvailabilityLoading;
+        final availabilityError = viewModel.trainerAvailabilityError;
+        final selectedTrainer = viewModel.selectedTrainer;
 
-      final isAvailability = stage == TrainersViewStage.availability;
-      // Slide between the trainers table and a trainer's availability table the
-      // same way the directory sections slide: the table list is the root and
-      // the availability table sits one level deeper. Keyed by the logical view
-      // so a filters→results change keeps the table in place without sliding.
-      return SlidePageSwitcher(
-        depth: isAvailability ? 1 : 0,
-        stageKey: isAvailability ? 'availability' : 'trainers',
-        child: isAvailability
-            ? _buildAvailabilityView(
-                bookings: availabilityRows,
-                isLoading: availabilityLoading,
-                errorMessage: availabilityError,
-                selectedTrainer: selectedTrainer,
-              )
-            : _buildTrainersView(
-                stage: stage,
-                trainers: trainers,
-                mode: mode,
-                isLoading: isLoading,
-                errorMessage: errorMessage,
-              ),
-      );
-    });
+        final isAvailability = stage == TrainersViewStage.availability;
+        // Slide between the trainers table and a trainer's availability table the
+        // same way the directory sections slide: the table list is the root and
+        // the availability table sits one level deeper. Keyed by the logical view
+        // so a filters→results change keeps the table in place without sliding.
+        return SlidePageSwitcher(
+          depth: isAvailability ? 1 : 0,
+          stageKey: isAvailability ? 'availability' : 'trainers',
+          child: isAvailability
+              ? _buildAvailabilityView(
+                  bookings: availabilityRows,
+                  isLoading: availabilityLoading,
+                  errorMessage: availabilityError,
+                  selectedTrainer: selectedTrainer,
+                )
+              : _buildTrainersView(
+                  stage: stage,
+                  trainers: trainers,
+                  mode: mode,
+                  isLoading: isLoading,
+                  errorMessage: errorMessage,
+                ),
+        );
+      },
+    );
   }
 
   Widget _buildTrainersView({
@@ -193,10 +188,10 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
         errorMessage: errorMessage,
         onTrainerSelected: _handleTrainerSelected,
         onTrainerInfo: _handleTrainerInfo,
-        pageNumber: _controller.trainersPageNumber.value,
-        pageSize: _controller.trainersPageSize.value,
-        totalItems: _controller.trainersTotalItems.value,
-        onPageChanged: _controller.setTrainersPageNumber,
+        pageNumber: viewModel.trainersPageNumber,
+        pageSize: viewModel.trainersPageSize,
+        totalItems: viewModel.trainersTotalItems,
+        onPageChanged: viewModel.setTrainersPageNumber,
         showPagination: stage == TrainersViewStage.results,
         emptyLabel: 'No trainers available.',
       ),
@@ -217,10 +212,10 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage> {
       errorMessage: errorMessage,
       filterSummary: summary,
       onReserveBooking: _handleReserveBooking,
-      pageNumber: _controller.trainerAvailabilityPageNumber.value,
-      pageSize: _controller.trainerAvailabilityPageSize.value,
-      totalItems: _controller.trainerAvailabilityTotalItems.value,
-      onPageChanged: _controller.setTrainerAvailabilityPageNumber,
+      pageNumber: viewModel.trainerAvailabilityPageNumber,
+      pageSize: viewModel.trainerAvailabilityPageSize,
+      totalItems: viewModel.trainerAvailabilityTotalItems,
+      onPageChanged: viewModel.setTrainerAvailabilityPageNumber,
       showPagination: true,
     );
   }
@@ -237,9 +232,9 @@ class TrainersDirectoryStandalonePage extends StatefulWidget {
 class _TrainersDirectoryStandalonePageState
     extends State<TrainersDirectoryStandalonePage> {
   void _handleBack() {
-    if (Get.isRegistered<TrainersController>()) {
-      final controller = Get.find<TrainersController>();
-      if (controller.stage.value == TrainersViewStage.availability) {
+    if (Get.isRegistered<TrainersViewModel>()) {
+      final controller = Get.find<TrainersViewModel>();
+      if (controller.stage == TrainersViewStage.availability) {
         controller.backToResults();
         return;
       }

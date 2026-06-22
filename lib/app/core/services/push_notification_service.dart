@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
-import 'package:portfolio_mobile_app/app/core/api/devices_api.dart';
-import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
+import 'package:fitnesscenter_mobile/app/core/api/devices_api.dart';
+import 'package:fitnesscenter_mobile/app/core/services/local_notification_service.dart';
 
 class PushNotificationService extends GetxService {
   PushNotificationService({
@@ -43,12 +43,22 @@ class PushNotificationService extends GetxService {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
 
     await _messaging.setAutoInitEnabled(true);
-    await _requestPermission();
-    await _syncToken();
 
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleOpenedApp);
     FirebaseMessaging.instance.onTokenRefresh.listen(_handleTokenRefresh);
+
+    // The permission prompt blocks on a user dialog (Android 13+) and token
+    // sync waits on a slow FCM round-trip plus a backend call — both routinely
+    // exceed the startup step timeout. Run them off the startup critical path;
+    // listeners and onTokenRefresh above ensure nothing is missed in the
+    // meantime, and AuthService re-registers the token after login.
+    unawaited(_requestPermissionThenSyncToken());
+  }
+
+  Future<void> _requestPermissionThenSyncToken() async {
+    await _requestPermission();
+    await _syncToken();
   }
 
   static Future<void> handleBackgroundMessage(RemoteMessage message) async {

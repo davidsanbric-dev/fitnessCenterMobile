@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
 
 void main() {
   group('BookingDto.fromJson', () {

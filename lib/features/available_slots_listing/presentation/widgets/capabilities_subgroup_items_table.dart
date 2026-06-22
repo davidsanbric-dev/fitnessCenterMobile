@@ -1,9 +1,9 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/info_card.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/info_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_filters_summary.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

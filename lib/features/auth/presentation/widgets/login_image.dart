@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_assets.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/app_assets.dart';
 
 class LoginImage extends StatelessWidget {
   /// Height fraction of the soft fade applied to the top edge of the image.

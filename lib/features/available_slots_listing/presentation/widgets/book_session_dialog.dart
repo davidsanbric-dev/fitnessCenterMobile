@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card_height_scope.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_scope.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card_height_scope.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -26,9 +26,7 @@ Future<void> showBookSessionDialog(BuildContext context) {
       return Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: SizedBox(
           width: dialogWidth,
           height: dialogHeight,

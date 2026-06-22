@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/capabilities_service.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/services/available_slots_service.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/services/capabilities_service.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/domain/domain.dart';
 
 class CapabilitiesDirectoryRepositoryImpl
     implements CapabilitiesDirectoryRepository {
@@ -22,12 +22,8 @@ class CapabilitiesDirectoryRepositoryImpl
   }
 
   @override
-  Future<List<CapabilityDto>> fetchSubgroup({
-    required int groupId,
-  }) {
-    return _capabilitiesService.fetchSubgroup(
-      groupId: groupId,
-    );
+  Future<List<CapabilityDto>> fetchSubgroup({required int groupId}) {
+    return _capabilitiesService.fetchSubgroup(groupId: groupId);
   }
 
   @override
@@ -43,9 +39,7 @@ class CapabilitiesDirectoryRepositoryImpl
 
   @override
   Future<List<AvailableSlotByCapabilityDto>>
-  fetchAvailableBookingsByCapability({
-    required CapabilityDto capability,
-  }) {
+  fetchAvailableBookingsByCapability({required CapabilityDto capability}) {
     return _availableSlotsService.fetchAvailableBookingsByCapability(
       capability: capability,
     );

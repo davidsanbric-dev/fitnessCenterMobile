@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:portfolio_mobile_app/app/core/api/shared/api_envelope.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/api_shared.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_exception_messages.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_envelope.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_shared.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_exception_messages.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
 import 'package:http/http.dart' as http;
 
 class DocumentApi extends ApiBase {

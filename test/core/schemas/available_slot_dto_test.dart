@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 
 void main() {
   group('AvailableSlotDto.fromJson', () {

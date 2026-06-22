@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/api/bookings_api.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_state_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/update_booking_status_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/bookings_api.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/booking_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/booking_state_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/update_booking_status_request.dart';
 
 class BookingService {
   BookingService({BookingsApi? agendaApi})
@@ -14,19 +14,11 @@ class BookingService {
     return _agendaApi.getBookingStates();
   }
 
-  Future<BookingDto> fetchBooking({
-    required String bookingId,
-  }) {
-    return _agendaApi.getBooking(
-      BookingRequest(
-        bookingId: bookingId.trim(),
-      ),
-    );
+  Future<BookingDto> fetchBooking({required String bookingId}) {
+    return _agendaApi.getBooking(BookingRequest(bookingId: bookingId.trim()));
   }
 
-  Future<BookingDto> fetchBookingDetails({
-    required String bookingId,
-  }) {
+  Future<BookingDto> fetchBookingDetails({required String bookingId}) {
     return fetchBooking(bookingId: bookingId);
   }
 

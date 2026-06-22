@@ -1,10 +1,11 @@
-import 'package:portfolio_mobile_app/app/core/middleware/auth_middleware.dart';
-import 'package:portfolio_mobile_app/app/core/constants/route_paths.dart';
-import 'package:portfolio_mobile_app/features/auth/presentation/pages/login_page.dart';
-import 'package:portfolio_mobile_app/features/auth/presentation/pages/post_login_transition_page.dart';
-import 'package:portfolio_mobile_app/features/auth/presentation/pages/unauthorized_page.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/home_wrapper.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/available_slots_page.dart';
+import 'package:fitnesscenter_mobile/app/config/app_router.dart';
+import 'package:fitnesscenter_mobile/app/core/middleware/auth_middleware.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/route_paths.dart';
+import 'package:fitnesscenter_mobile/features/auth/presentation/pages/login_page.dart';
+import 'package:fitnesscenter_mobile/features/auth/presentation/pages/post_login_transition_page.dart';
+import 'package:fitnesscenter_mobile/features/auth/presentation/pages/unauthorized_page.dart';
+import 'package:fitnesscenter_mobile/features/home/presentation/widgets/home_wrapper.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/pages/available_slots_page.dart';
 import 'package:get/get.dart';
 
 mixin AppRoutes {
@@ -20,6 +21,9 @@ mixin AppRoutes {
     GetPage(
       name: home,
       page: () => const HomeWrapper(),
+      binding: BindingsBuilder(() {
+        Get.put(AppRouter(), permanent: true);
+      }),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

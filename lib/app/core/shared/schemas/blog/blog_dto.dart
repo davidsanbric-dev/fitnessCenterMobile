@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/app_strings.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 
 /// Read-only blog entry surfaced in the mobile home info-slider.
 class BlogDto {

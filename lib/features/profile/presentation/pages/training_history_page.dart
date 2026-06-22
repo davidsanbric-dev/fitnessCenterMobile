@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
-import 'package:portfolio_mobile_app/features/profile/logic/training_history_controller.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/bookings/presentation/widgets/bookings_table.dart';
+import 'package:fitnesscenter_mobile/features/profile/feature.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Read-only list of the member's COMPLETED bookings, opened as an in-page
@@ -21,31 +21,33 @@ class TrainingHistoryView extends StatefulWidget {
   State<TrainingHistoryView> createState() => _TrainingHistoryViewState();
 }
 
-class _TrainingHistoryViewState extends State<TrainingHistoryView> {
-  late final TrainingHistoryController _controller;
-  late final bool _ownsController;
+class _TrainingHistoryViewState extends State<TrainingHistoryView>
+    with SharedViewModelHost<TrainingHistoryView, TrainingHistoryViewModel> {
+  @override
+  TrainingHistoryViewModel createViewModel() =>
+      ProfileInjector.getTrainingHistoryViewModel();
 
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<TrainingHistoryController>()) {
-      _controller = Get.find<TrainingHistoryController>();
-      _ownsController = false;
-    } else {
-      _controller = Get.put(TrainingHistoryController());
-      _ownsController = true;
-    }
+    acquireViewModel();
+    // The controller used to load on GetX `onReady`; the ChangeNotifier model
+    // has no such hook, so kick off the initial load once mounted.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      viewModel.loadHistory();
+    });
   }
 
   @override
   void dispose() {
-    if (_ownsController) {
-      Get.delete<TrainingHistoryController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
-  Future<void> _refresh() => _controller.reload();
+  Future<void> _refresh() => viewModel.reload();
 
   PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
@@ -77,28 +79,31 @@ class _TrainingHistoryViewState extends State<TrainingHistoryView> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-              child: Obx(() {
-                return RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      BookingsTable(
-                        bookings: _controller.pageRows,
-                        isLoading: _controller.isLoading.value,
-                        errorMessage: _controller.error.value,
-                        onViewDetails: _controller.showBookingDetails,
-                        pageNumber: _controller.pageNumber.value,
-                        pageSize: _controller.pageSize.value,
-                        totalItems: _controller.totalItems.value,
-                        onPageChanged: _controller.setPageNumber,
-                        showPagination: true,
-                        emptyLabel: 'No completed sessions yet.',
-                      ),
-                    ],
-                  ),
-                );
-              }),
+              child: ListenableBuilder(
+                listenable: viewModel,
+                builder: (context, _) {
+                  return RefreshIndicator(
+                    onRefresh: _refresh,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        BookingsTable(
+                          bookings: viewModel.pageRows,
+                          isLoading: viewModel.isLoading,
+                          errorMessage: viewModel.error,
+                          onViewDetails: viewModel.showBookingDetails,
+                          pageNumber: viewModel.pageNumber,
+                          pageSize: viewModel.pageSize,
+                          totalItems: viewModel.totalItems,
+                          onPageChanged: viewModel.setPageNumber,
+                          showPagination: true,
+                          emptyLabel: 'No completed sessions yet.',
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

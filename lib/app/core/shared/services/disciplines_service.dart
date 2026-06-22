@@ -1,10 +1,10 @@
-import 'package:portfolio_mobile_app/app/core/api/available_slots_api.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/types.dart';
-import 'package:portfolio_mobile_app/app/core/api/disciplines_api.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/lookup.dart';
+import 'package:fitnesscenter_mobile/app/core/api/available_slots_api.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/types.dart';
+import 'package:fitnesscenter_mobile/app/core/api/disciplines_api.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slots_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/disciplines/discipline_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/lookup.dart';
 
 class DisciplinesService {
   DisciplinesService({

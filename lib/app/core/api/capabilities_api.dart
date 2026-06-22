@@ -1,7 +1,7 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capabilities_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capabilities_request.dart';
 
 class CapabilitiesApi extends ApiBase {
   static const int queryTypeGroup = 1;
@@ -36,21 +36,13 @@ class CapabilitiesApi extends ApiBase {
     }
   }
 
-  Future<List<CapabilityDto>> getGroups() => getCapabilities(
-    CapabilitiesRequest(
-      queryType: queryTypeGroup,
-      id: 0,
-    ),
-  );
+  Future<List<CapabilityDto>> getGroups() =>
+      getCapabilities(CapabilitiesRequest(queryType: queryTypeGroup, id: 0));
 
-  Future<List<CapabilityDto>> getSubgroupFor({
-    required int groupId,
-  }) => getCapabilities(
-    CapabilitiesRequest(
-      queryType: queryTypeSubgroup,
-      id: groupId,
-    ),
-  );
+  Future<List<CapabilityDto>> getSubgroupFor({required int groupId}) =>
+      getCapabilities(
+        CapabilitiesRequest(queryType: queryTypeSubgroup, id: groupId),
+      );
 
   Future<List<CapabilityDto>> getSubgroupItemsFor({
     required int groupId,

@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/trainer_info_button_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/trainer_info_button_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
 
 class UserDetailsDto {
   const UserDetailsDto({
@@ -171,7 +171,9 @@ class UserDto {
     final email = normOptString(json['email']);
     final birthDate = normOptString(json['birth_date']);
     final address = normOptString(json['address']);
-    final membership = normOptString(normReqMap(json['membership_plan'])['name']);
+    final membership = normOptString(
+      normReqMap(json['membership_plan'])['name'],
+    );
     // The RUT is the member's identification; carry it into `memberId` so it
     // survives the details round-trip. `UserDto.rut` resolves from
     // `details.memberId` first, so leaving this empty would blank out the RUT

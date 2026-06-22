@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_mobile_app/app/core/auth/application/auth_api/auth_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/application/auth_service.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_dependencies.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/application/auth_api/auth_api.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/application/auth_service.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_dependencies.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_session_cache.dart';
 
 void main() {
   group('AuthService.init', () {

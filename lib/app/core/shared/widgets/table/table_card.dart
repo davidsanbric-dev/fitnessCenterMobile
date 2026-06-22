@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card_height_scope.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_title.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/create_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card_height_scope.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_pagination.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_title.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
-export 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_pagination.dart'
+export 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_pagination.dart'
     show TableCardPaginationConfig;
 
 class TableCardCreateButtonConfig {

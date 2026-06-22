@@ -1,7 +1,7 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/types.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/types.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/disciplines/discipline_dto.dart';
 
 class DisciplinesApi extends ApiBase {
   // Lists every club's disciplines; each row carries its own offering club

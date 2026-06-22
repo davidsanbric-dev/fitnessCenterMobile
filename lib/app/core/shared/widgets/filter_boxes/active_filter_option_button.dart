@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_option.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_option.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ActiveFilterOptionButton<T> extends StatelessWidget {

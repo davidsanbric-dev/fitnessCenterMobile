@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
 
 class AvailableSlotDto {
   const AvailableSlotDto({

@@ -1,19 +1,13 @@
-import 'dart:math' as math;
-
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/pages/member_profile_page.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/brand/brand_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
 
-import 'package:portfolio_mobile_app/app/config/app_router.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/main_bottom_navbar.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/fitness_directory_page.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/pages/home_page.dart';
+import 'package:fitnesscenter_mobile/app/config/app_router.dart';
+import 'package:fitnesscenter_mobile/app/config/app_tab.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/main_bottom_navbar.dart';
 
 class HomeWrapper extends StatefulWidget {
   const HomeWrapper({super.key});
@@ -23,31 +17,33 @@ class HomeWrapper extends StatefulWidget {
 }
 
 class _HomeWrapperState extends State<HomeWrapper> {
-  static const int _homeTabIndex = 0;
-
-  final Set<int> _visitedIndexes = <int>{};
-  bool _loggedFirstInteractiveFrame = false;
+  /// Tabs the user has visited, by [AppTab.id]. Each visited tab stays mounted
+  /// (offstage) so its state survives tab switches; unvisited tabs are built
+  /// lazily on first selection.
+  final Set<int> _visitedTabIds = <int>{};
 
   // Each tab page reports what its header should show instead of rendering its
   // own, so the single hoisted PageHeader below can crossfade its title/subtitle
   // between them (its gradient bar stays static). Home's config is seeded
   // eagerly since it's the brand mark and always the first tab seen.
   final Map<int, PageHeaderConfig> _headerConfigs = {
-    _homeTabIndex: const PageHeaderConfig(child: BrandHeader(variant: 'small')),
+    AppTab.home.id: const PageHeaderConfig(
+      child: BrandHeader(variant: 'small'),
+    ),
   };
 
-  void _setHeaderConfig(int index, PageHeaderConfig config) {
+  void _setHeaderConfig(int tabId, PageHeaderConfig config) {
     if (!mounted) {
       return;
     }
     setState(() {
-      _headerConfigs[index] = config;
+      _headerConfigs[tabId] = config;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final navCtrl = Get.put(AppRouter(), permanent: true);
+    final navCtrl = Get.find<AppRouter>();
     final authService = Get.find<AuthService>();
 
     return Obx(() {
@@ -55,45 +51,17 @@ class _HomeWrapperState extends State<HomeWrapper> {
         return const SizedBox.shrink();
       }
 
-      final navItems = [
-        {'icon': LucideIcons.home, 'label': 'Home', 'index': 0},
-        {'icon': LucideIcons.calendar, 'label': 'Bookings', 'index': 1},
-        {'icon': LucideIcons.libraryBig, 'label': 'Directory', 'index': 6},
-        {'icon': LucideIcons.user, 'label': 'Profile', 'index': 5},
-      ];
+      // Resolve the selected tab to a renderable nav destination, falling back
+      // to Home if it is not a bottom-nav tab (e.g. a logical-only destination,
+      // or a tab removed after a role change).
+      final selectedTab = navCtrl.current.value;
+      final activeTab = kNavTabs.contains(selectedTab)
+          ? selectedTab
+          : AppTab.home;
 
-      final pagesByIndex = <int, Widget>{
-        0: HomePage(onHeaderChanged: (config) => _setHeaderConfig(0, config)),
-        1: BookingsPage(
-          onHeaderChanged: (config) => _setHeaderConfig(1, config),
-        ),
-        6: FitnessDirectoryPage(
-          onHeaderChanged: (config) => _setHeaderConfig(6, config),
-        ),
-        5: ProfilePage(
-          onHeaderChanged: (config) => _setHeaderConfig(5, config),
-        ),
-      };
-
-      final navIndexes = navItems
-          .map<int?>((item) => item['index'] as int?)
-          .whereType<int>()
-          .toList();
-
-      final maxIndex = navIndexes.fold<int>(0, math.max);
-
-      final defaultIndex = navIndexes.contains(0)
-          ? 0
-          : (navIndexes.isNotEmpty ? navIndexes.first : 0);
-
-      final currentIndex = navCtrl.currentIndex.value;
-      final hasAccessToTab = navIndexes.contains(currentIndex);
-      final displayIndex = hasAccessToTab ? currentIndex : defaultIndex;
-      final safeIndex = displayIndex.clamp(0, maxIndex).toInt();
-      // If the previously selected tab is no longer available (e.g. role change),
-      // ensure we fall back to a valid tab.
-
-      if (_visitedIndexes.add(safeIndex)) {
+      // First visit to a tab: build it, then schedule a rebuild so the newly
+      // mounted page joins the offstage stack.
+      if (_visitedTabIds.add(activeTab.id)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             setState(() {});
@@ -101,26 +69,19 @@ class _HomeWrapperState extends State<HomeWrapper> {
         });
       }
 
-      if (!_loggedFirstInteractiveFrame) {
-        _loggedFirstInteractiveFrame = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) {
-            return;
-          }
-        });
-      }
-
-      final visitedChildren = _visitedIndexes
-          .map(
-            (index) => Offstage(
-              offstage: index != safeIndex,
-              child: pagesByIndex[index] ?? const SizedBox.shrink(),
+      final visitedChildren = [
+        for (final tab in kNavTabs)
+          if (_visitedTabIds.contains(tab.id))
+            Offstage(
+              offstage: tab.id != activeTab.id,
+              child: tab.buildPage(
+                onHeaderChanged: (config) => _setHeaderConfig(tab.id, config),
+              ),
             ),
-          )
-          .toList();
+      ];
 
       final activeHeaderConfig =
-          _headerConfigs[safeIndex] ?? const PageHeaderConfig(title: '');
+          _headerConfigs[activeTab.id] ?? const PageHeaderConfig(title: '');
 
       return Scaffold(
         body: Column(
@@ -141,9 +102,12 @@ class _HomeWrapperState extends State<HomeWrapper> {
           ],
         ),
         bottomNavigationBar: MainBottomNavBar(
-          currentIndex: displayIndex,
+          currentIndex: activeTab.id,
           onTap: navCtrl.changeTab,
-          items: navItems,
+          items: [
+            for (final tab in kNavTabs)
+              NavBarItem(icon: tab.icon, label: tab.label, index: tab.id),
+          ],
         ),
       );
     });

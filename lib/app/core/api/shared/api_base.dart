@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:portfolio_mobile_app/app/core/api/shared/api_envelope.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/api_shared.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/types.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_exception_messages.dart';
-import 'package:portfolio_mobile_app/app/core/constants/route_paths.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_envelope.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_shared.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/types.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_exception_messages.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/route_paths.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 

@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InlineErrorText extends StatelessWidget {

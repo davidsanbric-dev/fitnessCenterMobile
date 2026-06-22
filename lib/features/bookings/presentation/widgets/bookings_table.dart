@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_status_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/create_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_status_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

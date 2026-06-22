@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/app_strings.dart';
 
 class BrandSloganBar extends StatelessWidget {
   final double widthFactor;

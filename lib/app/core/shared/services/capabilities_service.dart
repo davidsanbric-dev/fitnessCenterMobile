@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/api/capabilities_api.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/api/capabilities_api.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
 
 class CapabilitiesService {
   CapabilitiesService({CapabilitiesApi? capabilitiesApi})
@@ -12,18 +12,12 @@ class CapabilitiesService {
   }
 
   Future<List<CapabilityDto>> fetchGroups() async {
-    return _sortCapabilities(
-      await _capabilitiesApi.getGroups(),
-    );
+    return _sortCapabilities(await _capabilitiesApi.getGroups());
   }
 
-  Future<List<CapabilityDto>> fetchSubgroup({
-    required int groupId,
-  }) async {
+  Future<List<CapabilityDto>> fetchSubgroup({required int groupId}) async {
     return _sortCapabilities(
-      await _capabilitiesApi.getSubgroupFor(
-        groupId: groupId,
-      ),
+      await _capabilitiesApi.getSubgroupFor(groupId: groupId),
     );
   }
 

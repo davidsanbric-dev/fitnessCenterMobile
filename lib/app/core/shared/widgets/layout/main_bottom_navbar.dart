@@ -2,10 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
+/// A single bottom-nav entry. A leaf entry selects [index] (and optionally
+/// navigates to a named [route]); an entry with [menuItems] is a dropup parent
+/// whose children are themselves [NavBarItem]s.
+class NavBarItem {
+  const NavBarItem({
+    required this.icon,
+    required this.label,
+    required this.index,
+    this.route,
+    this.menuItems,
+    this.padding,
+  });
+
+  /// Either an [IconData] or an asset-path [String].
+  final Object icon;
+  final String label;
+  final int index;
+
+  /// Optional named route pushed via `Get.offNamed` on tap.
+  final String? route;
+
+  /// When non-null, this entry renders as a dropup menu of sub-entries instead
+  /// of a leaf tab.
+  final List<NavBarItem>? menuItems;
+  final EdgeInsets? padding;
+}
+
 class MainBottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final Function(int)? onTap;
-  final List<Map<String, dynamic>> items;
+  final void Function(int)? onTap;
+  final List<NavBarItem> items;
 
   const MainBottomNavBar({
     super.key,
@@ -16,7 +43,7 @@ class MainBottomNavBar extends StatelessWidget {
 
   Widget _buildIconWidget(
     BuildContext context,
-    dynamic icon, {
+    Object icon, {
     required bool isSelected,
     double size = 24,
   }) {
@@ -42,7 +69,7 @@ class MainBottomNavBar extends StatelessWidget {
 
   Future<void> _showDropupMenu(
     BuildContext context,
-    List<Map<String, dynamic>> menuItems,
+    List<NavBarItem> menuItems,
     int currentIndex,
   ) async {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -62,23 +89,22 @@ class MainBottomNavBar extends StatelessWidget {
       context: context,
       position: position,
       items: menuItems.map((menuItem) {
-        final menuIndex = menuItem['index'] as int;
-        final isSelected = menuIndex == currentIndex;
+        final isSelected = menuItem.index == currentIndex;
 
         final colorScheme = Theme.of(context).colorScheme;
         return PopupMenuItem<int>(
-          value: menuIndex,
+          value: menuItem.index,
           child: Row(
             children: [
               _buildIconWidget(
                 context,
-                menuItem['icon'],
+                menuItem.icon,
                 isSelected: isSelected,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
-                menuItem['label'] as String,
+                menuItem.label,
                 style: TextStyle(
                   color: isSelected
                       ? colorScheme.primary
@@ -95,14 +121,12 @@ class MainBottomNavBar extends StatelessWidget {
       return;
     }
 
-    if (onTap != null) {
-      onTap!(selectedIndex);
-    }
+    onTap?.call(selectedIndex);
 
     final selectedItem = menuItems.firstWhere(
-      (item) => item['index'] == selectedIndex,
+      (item) => item.index == selectedIndex,
     );
-    final route = selectedItem['route'] as String?;
+    final route = selectedItem.route;
     if (route != null) {
       await Get.offNamed(route);
     }
@@ -124,18 +148,18 @@ class MainBottomNavBar extends StatelessWidget {
       child: Row(
         children: List.generate(items.length, (index) {
           final item = items[index];
-          final menuItems = item['menuItems'] as List<Map<String, dynamic>>?;
+          final menuItems = item.menuItems;
           if (menuItems != null) {
-            Map<String, dynamic>? activeMenuItem;
+            NavBarItem? activeMenuItem;
             for (final menuItem in menuItems) {
-              if (menuItem['index'] == currentIndex) {
+              if (menuItem.index == currentIndex) {
                 activeMenuItem = menuItem;
                 break;
               }
             }
             final isMenuSelected = activeMenuItem != null;
-            final baseLabel = item['label'] as String? ?? 'Menu';
-            final activeLabel = activeMenuItem?['label'] as String?;
+            final baseLabel = item.label;
+            final activeLabel = activeMenuItem?.label;
             final label = activeLabel == null
                 ? baseLabel
                 : '$baseLabel/$activeLabel';
@@ -164,7 +188,7 @@ class MainBottomNavBar extends StatelessWidget {
                           child: Center(
                             child: _buildIconWidget(
                               context,
-                              activeMenuItem['icon'],
+                              activeMenuItem.icon,
                               isSelected: true,
                               size: 16,
                             ),
@@ -182,7 +206,7 @@ class MainBottomNavBar extends StatelessWidget {
                     onTap: () =>
                         _showDropupMenu(buttonContext, menuItems, currentIndex),
                     child: Container(
-                      padding: item['padding'] ?? const EdgeInsets.all(8),
+                      padding: item.padding ?? const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: accent, width: 2),
@@ -207,29 +231,26 @@ class MainBottomNavBar extends StatelessWidget {
             return Expanded(child: menuItemWidget);
           }
 
-          final dynamic override = item['index'];
-          final int targetIndex = override is int ? override : index;
+          final targetIndex = item.index;
           final isSelected = targetIndex == currentIndex;
 
-          final icon = item['icon'];
-          final route = item['route'] as String?;
+          final route = item.route;
           final iconWidget = _buildIconWidget(
             context,
-            icon,
+            item.icon,
             isSelected: isSelected,
           );
 
           final navItemWidget = GestureDetector(
             onTap: () {
-              // Allow items to override the logical tab index so display order can differ.
-              if (onTap != null) onTap!(targetIndex);
+              onTap?.call(targetIndex);
               if (route != null) Get.offNamed(route); // Navigation with GetX
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: item['padding'] ?? const EdgeInsets.all(8),
+                  padding: item.padding ?? const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: accent, width: 2),
@@ -238,7 +259,7 @@ class MainBottomNavBar extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  item['label'] as String,
+                  item.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,

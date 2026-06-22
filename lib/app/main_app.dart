@@ -1,8 +1,8 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:portfolio_mobile_app/app/config/config.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/config/config.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

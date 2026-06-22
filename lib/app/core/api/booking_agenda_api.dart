@@ -1,10 +1,10 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_by_class_type_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/schedule_booking_by_class_type_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/schedule_booking_request.dart';
 
 class BookingAgendaApi extends ApiBase {
   BookingAgendaApi() : super();
@@ -41,14 +41,15 @@ class BookingAgendaApi extends ApiBase {
       return null;
     }
 
-    final upcoming = agendas
-        .where((agenda) {
-          final state = agenda.state.trim().toUpperCase();
-          return !_inactiveStates.contains(state) &&
-              !agenda.schedulingDate.toLocal().isBefore(now);
-        })
-        .toList(growable: false)
-      ..sort((a, b) => a.schedulingDate.compareTo(b.schedulingDate));
+    final upcoming =
+        agendas
+            .where((agenda) {
+              final state = agenda.state.trim().toUpperCase();
+              return !_inactiveStates.contains(state) &&
+                  !agenda.schedulingDate.toLocal().isBefore(now);
+            })
+            .toList(growable: false)
+          ..sort((a, b) => a.schedulingDate.compareTo(b.schedulingDate));
 
     if (upcoming.isEmpty) {
       return null;
@@ -144,7 +145,6 @@ class BookingAgendaApi extends ApiBase {
       requestErrorMessage: 'Error al agendar clase',
     );
   }
-
 
   String _toApiDate(String rawDate) {
     final normalized = rawDate.trim();

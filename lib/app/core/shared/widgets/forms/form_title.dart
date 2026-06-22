@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart'; // ajusta la ruta según tu estructura
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart'; // ajusta la ruta según tu estructura
 
 class SectionTitle extends StatelessWidget {
   final String text;

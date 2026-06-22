@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

@@ -1,7 +1,7 @@
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/api/user_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_dependencies.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/api/user_api.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_dependencies.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 

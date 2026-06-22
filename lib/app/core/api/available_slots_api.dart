@@ -1,10 +1,10 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/api/shared/types.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_by_capability_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/types.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slots_by_capability_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slots_request.dart';
 
 class AvailableSlotsApi extends ApiBase {
   AvailableSlotsApi() : super();

@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/available_slots_service.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
-import 'package:portfolio_mobile_app/features/class_booking/domain/class_booking_repository.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/services/available_slots_service.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
+import 'package:fitnesscenter_mobile/features/class_booking/domain/class_booking_repository.dart';
 
 class ClassBookingRepositoryImpl implements ClassBookingRepository {
   ClassBookingRepositoryImpl({AvailableSlotsService? service})
@@ -15,10 +15,7 @@ class ClassBookingRepositoryImpl implements ClassBookingRepository {
     required AvailableSlotDto slot,
     MemberAvailabilityFilters? listingContext,
   }) {
-    return _service.reserveBooking(
-      slot: slot,
-      lastFilters: listingContext,
-    );
+    return _service.reserveBooking(slot: slot, lastFilters: listingContext);
   }
 
   @override

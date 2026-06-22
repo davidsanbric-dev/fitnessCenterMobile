@@ -41,18 +41,20 @@ mixin AppTheme {
   static const Color textColorSecondary = brandTextSecondary;
   static const Color textColorMuted = brandTextMuted;
 
-  static Color _tintBrandBlue(double amount) {
-    return Color.alphaBlend(Colors.white.withValues(alpha: amount), brandBlue);
-  }
-
-  static Color _shadeBrandBlue(double amount) {
-    return Color.alphaBlend(Colors.black.withValues(alpha: amount), brandBlue);
-  }
-
   static const TextStyle errorMessage = TextStyle(color: Colors.red);
   static const TextStyle errorMessageEmphasis = TextStyle(
     color: Colors.red,
     fontWeight: FontWeight.w600,
+  );
+
+  // Startup failure screen — `StartupFailureApp` renders on a bare MaterialApp
+  // (before AppTheme.light/dark is applied), so these are plain const styles.
+  static const TextStyle startupFailureTitle = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+  );
+  static const TextStyle startupFailureDetail = TextStyle(
+    color: textColorMuted,
   );
 
   // Text styles
@@ -114,11 +116,7 @@ mixin AppTheme {
     final Color color = isDestructive
         ? (_isDark(context) ? const Color(0xFFE57373) : Colors.red.shade600)
         : primaryTextColor(context);
-    return TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
+    return TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: color);
   }
 
   static bool _isDark(BuildContext context) =>
@@ -127,9 +125,8 @@ mixin AppTheme {
   static Color primaryTextColor(BuildContext context) =>
       _isDark(context) ? darkText : textColorPrimary;
 
-  static Color secondaryTextColor(BuildContext context) => _isDark(context)
-      ? darkText.withValues(alpha: 0.85)
-      : textColorSecondary;
+  static Color secondaryTextColor(BuildContext context) =>
+      _isDark(context) ? darkText.withValues(alpha: 0.85) : textColorSecondary;
 
   static Color mutedTextColor(BuildContext context) =>
       _isDark(context) ? darkTextMuted : textColorMuted;

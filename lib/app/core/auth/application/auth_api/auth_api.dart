@@ -1,11 +1,11 @@
-import 'package:portfolio_mobile_app/app/core/api/user_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/application/auth_session_claims_mapper.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_dependencies.dart';
-import 'package:portfolio_mobile_app/app/core/auth/domain/types.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/user_api.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/application/auth_session_claims_mapper.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_exceptions/firebase_auth_exception_mapper.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_dependencies.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/domain/types.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_session_cache.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/domain/auth_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 part 'auth_api_extensions/auth_api_password_api.dart';

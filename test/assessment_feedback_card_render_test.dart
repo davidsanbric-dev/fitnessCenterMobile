@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/widgets/assessment_feedback_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/features/profile/presentation/widgets/assessment_feedback_card.dart';
 
 void main() {
   testWidgets('AssessmentFeedbackCard paints its content', (tester) async {
@@ -24,7 +24,10 @@ void main() {
       MaterialApp(
         theme: ThemeData(brightness: Brightness.dark),
         home: Scaffold(
-          body: AssessmentFeedbackCard(booking: booking, initiallyExpanded: true),
+          body: AssessmentFeedbackCard(
+            booking: booking,
+            initiallyExpanded: true,
+          ),
         ),
       ),
     );

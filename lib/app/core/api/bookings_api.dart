@@ -1,9 +1,9 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_state_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/booking_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/update_booking_status_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/booking_state_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/booking_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/update_booking_status_request.dart';
 
 class BookingsApi extends ApiBase {
   BookingsApi() : super();

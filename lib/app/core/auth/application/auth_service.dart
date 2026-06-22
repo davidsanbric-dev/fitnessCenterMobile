@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import 'package:portfolio_mobile_app/app/core/auth/application/auth_api/auth_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/infrastructure/auth_session_cache.dart';
-import 'package:portfolio_mobile_app/app/core/auth/domain/auth_request.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/services/push_notification_service.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/application/auth_api/auth_api.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/infrastructure/auth_session_cache.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/domain/auth_request.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/services/push_notification_service.dart';
 
 class AuthService extends GetxService {
   AuthService({

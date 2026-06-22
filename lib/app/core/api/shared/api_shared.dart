@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_exception_messages.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_exception_messages.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
 import 'package:http/http.dart' as http;
 
 /// Collection of utilities shared across API clients to keep networking code DRY.

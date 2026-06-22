@@ -1,4 +1,4 @@
-# portfolio_mobile_app
+# fitnesscenter_mobile
 
 Flutter app configured for **Android-only** mobile support.
 

@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
 
 class AvailableSlotByCapabilityDto {
   const AvailableSlotByCapabilityDto({
@@ -48,7 +48,8 @@ class AvailableSlotByCapabilityDto {
     final capabilityDescription =
         defaultCapabilityDescription ?? 'Class option';
     final classTypeId = defaultCapabilityId ?? 0;
-    final slotAssignmentCode = normOptString(json['slot_assignment_code']) ?? '';
+    final slotAssignmentCode =
+        normOptString(json['slot_assignment_code']) ?? '';
 
     return AvailableSlotByCapabilityDto(
       schedulingDate: schedulingDate,

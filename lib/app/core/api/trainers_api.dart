@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainer_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainers_by_membership_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainers_request.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainer_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainers_by_membership_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainers_request.dart';
 
 class TrainersApi extends ApiBase {
   Future<List<TrainerDto>> getTrainers(TrainersRequest request) async {

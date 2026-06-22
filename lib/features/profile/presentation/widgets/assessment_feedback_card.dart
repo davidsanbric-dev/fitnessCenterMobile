@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -81,7 +81,10 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
                 border: Border(left: BorderSide(color: accent, width: 3)),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -92,7 +95,11 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
                           ? CrossFadeState.showSecond
                           : CrossFadeState.showFirst,
                       firstChild: const SizedBox.shrink(),
-                      secondChild: _buildNoteBody(context, noteText, mutedColor),
+                      secondChild: _buildNoteBody(
+                        context,
+                        noteText,
+                        mutedColor,
+                      ),
                     ),
                   ],
                 ),
@@ -104,11 +111,7 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
     );
   }
 
-  Widget _buildHeader(
-    BuildContext context,
-    Color mutedColor,
-    Color accent,
-  ) {
+  Widget _buildHeader(BuildContext context, Color mutedColor, Color accent) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -122,18 +125,18 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
                   const SizedBox(width: 5),
                   Text(
                     formatDateLabel(widget.booking.schedulingDate),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: mutedColor,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: mutedColor),
                   ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
                       '· $_sessionLabel',
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: mutedColor,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: mutedColor),
                     ),
                   ),
                 ],

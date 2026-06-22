@@ -1,9 +1,9 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/features/profile/logic/assessment_results_controller.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/widgets/assessment_feedback_card.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/profile/feature.dart';
+import 'package:fitnesscenter_mobile/features/profile/presentation/widgets/assessment_feedback_card.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Read-only list of the member's completed sessions that carry a trainer
@@ -23,27 +23,29 @@ class AssessmentResultsView extends StatefulWidget {
   State<AssessmentResultsView> createState() => _AssessmentResultsViewState();
 }
 
-class _AssessmentResultsViewState extends State<AssessmentResultsView> {
-  late final AssessmentResultsController _controller;
-  late final bool _ownsController;
+class _AssessmentResultsViewState extends State<AssessmentResultsView>
+    with SharedViewModelHost<AssessmentResultsView, AssessmentResultsViewModel> {
+  @override
+  AssessmentResultsViewModel createViewModel() =>
+      ProfileInjector.getAssessmentResultsViewModel();
 
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<AssessmentResultsController>()) {
-      _controller = Get.find<AssessmentResultsController>();
-      _ownsController = false;
-    } else {
-      _controller = Get.put(AssessmentResultsController());
-      _ownsController = true;
-    }
+    acquireViewModel();
+    // The controller used to load on GetX `onReady`; the ChangeNotifier model
+    // has no such hook, so kick off the initial load once mounted.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      viewModel.load();
+    });
   }
 
   @override
   void dispose() {
-    if (_ownsController) {
-      Get.delete<AssessmentResultsController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
@@ -124,20 +126,22 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView> {
         children: [
           _buildHeader(),
           Expanded(
-            child: Obx(() {
-              if (_controller.isLoading.value) {
+            child: ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, _) {
+              if (viewModel.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final errorMsg = _controller.error.value;
+              final errorMsg = viewModel.error;
               if (errorMsg != null) {
                 return _buildError(context, errorMsg);
               }
 
-              final items = _controller.assessments;
+              final items = viewModel.assessments;
 
               return RefreshIndicator(
-                onRefresh: _controller.reload,
+                onRefresh: viewModel.reload,
                 child: items.isEmpty
                     ? ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -158,7 +162,8 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView> {
                         ),
                       ),
               );
-            }),
+              },
+            ),
           ),
         ],
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/header_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/header_cell.dart';
 
 class TableHeader extends StatelessWidget {
   final List<String> headers;

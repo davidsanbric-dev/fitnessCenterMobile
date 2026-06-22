@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 // import '../../config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/double_text_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/triple_text_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/single_text_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_dropdown.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/double_text_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/triple_text_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/single_text_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_dropdown.dart';
 
 typedef TableCellBuilder = Widget Function(Map<String, dynamic> row);
 

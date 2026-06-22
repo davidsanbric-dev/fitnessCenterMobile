@@ -1,16 +1,16 @@
-import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
-import 'package:portfolio_mobile_app/app/core/api/available_slots_api.dart';
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/booking/schedule_booking_by_class_type_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_by_capability_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slots_request.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:fitnesscenter_mobile/app/core/api/booking_agenda_api.dart';
+import 'package:fitnesscenter_mobile/app/core/api/available_slots_api.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/schedule_booking_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/booking/schedule_booking_by_class_type_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slots_by_capability_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slots_request.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 
 class AvailableSlotsService {
   AvailableSlotsService({
@@ -40,9 +40,7 @@ class AvailableSlotsService {
   }
 
   Future<List<AvailableSlotByCapabilityDto>>
-  fetchAvailableBookingsByCapability({
-    required CapabilityDto capability,
-  }) {
+  fetchAvailableBookingsByCapability({required CapabilityDto capability}) {
     return _availableSlotsApi.getAvailableBookingsByCapability(
       request: AvailableSlotsByCapabilityRequest(
         capabilityId: capability.id,
@@ -69,9 +67,7 @@ class AvailableSlotsService {
     final classTypeId = slot.classTypeId;
     final slotAssignmentCode = slot.slotAssignmentCode.trim();
 
-    if (trainerCode <= 0 ||
-        classTypeId <= 0 ||
-        slotAssignmentCode.isEmpty) {
+    if (trainerCode <= 0 || classTypeId <= 0 || slotAssignmentCode.isEmpty) {
       throw const ApiException(
         'Could not resolve booking payload for this class slot.',
       );

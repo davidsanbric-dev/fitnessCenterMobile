@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
 import 'package:flutter/material.dart';
 
 class FilterBox extends StatelessWidget {

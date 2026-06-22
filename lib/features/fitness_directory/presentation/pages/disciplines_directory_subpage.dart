@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
-import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/disciplines_table.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/disciplines/discipline_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_filters_summary.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/class_booking/feature.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/feature.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/available_bookings_by_discipline_table.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/disciplines_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -19,7 +20,7 @@ class DisciplinesDirectoryPage extends StatefulWidget {
     required this.onShowAvailability,
   });
 
-  final DisciplinesDirectoryController controller;
+  final DisciplinesDirectoryViewModel controller;
   final VoidCallback onShowAvailability;
 
   @override
@@ -35,8 +36,7 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
   }
 
   void _ensureDisciplinesLoaded() {
-    if (widget.controller.disciplines.isEmpty &&
-        !widget.controller.isLoading.value) {
+    if (widget.controller.disciplines.isEmpty && !widget.controller.isLoading) {
       unawaited(
         widget.controller.loadDisciplines(
           forceRefresh: true,
@@ -64,30 +64,33 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final isLoading = widget.controller.isLoading.value;
+    return ListenableBuilder(
+      listenable: widget.controller,
+      builder: (context, _) {
+        final isLoading = widget.controller.isLoading;
 
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DisciplinesTable(
-              disciplines: widget.controller.disciplinesRows,
-              isLoading: isLoading,
-              errorMessage: widget.controller.error.value,
-              pageNumber: widget.controller.pageNumber.value,
-              pageSize: widget.controller.pageSize.value,
-              totalItems: widget.controller.totalItems.value,
-              onPageChanged: widget.controller.setPageNumber,
-              showPagination: true,
-              onDisciplineSelected: (row) =>
-                  _handleDisciplineSelected(context, row),
-            ),
-          ],
-        ),
-      );
-    });
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DisciplinesTable(
+                disciplines: widget.controller.disciplinesRows,
+                isLoading: isLoading,
+                errorMessage: widget.controller.error,
+                pageNumber: widget.controller.pageNumber,
+                pageSize: widget.controller.pageSize,
+                totalItems: widget.controller.totalItems,
+                onPageChanged: widget.controller.setPageNumber,
+                showPagination: true,
+                onDisciplineSelected: (row) =>
+                    _handleDisciplineSelected(context, row),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -100,29 +103,27 @@ class DisciplinesDirectoryStandalonePage extends StatefulWidget {
 }
 
 class _DisciplinesDirectoryStandalonePageState
-    extends State<DisciplinesDirectoryStandalonePage> {
-  late final DisciplinesDirectoryController _controller;
-  late final bool _ownsController;
+    extends State<DisciplinesDirectoryStandalonePage>
+    with
+        SharedViewModelHost<
+          DisciplinesDirectoryStandalonePage,
+          DisciplinesDirectoryViewModel
+        > {
   bool _showAvailability = false;
+
+  @override
+  DisciplinesDirectoryViewModel createViewModel() =>
+      FitnessDirectoryInjector.getDisciplinesDirectoryViewModel();
 
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<DisciplinesDirectoryController>()) {
-      _controller = Get.find<DisciplinesDirectoryController>();
-      _ownsController = false;
-    } else {
-      _controller =
-          FitnessDirectoryInjector.getDisciplinesDirectoryController();
-      _ownsController = true;
-    }
+    acquireViewModel();
   }
 
   @override
   void dispose() {
-    if (_ownsController) {
-      Get.delete<DisciplinesDirectoryController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
@@ -137,7 +138,7 @@ class _DisciplinesDirectoryStandalonePageState
 
   void _handleBack() {
     if (_showAvailability) {
-      _controller.backToResults();
+      viewModel.backToResults();
       setState(() {
         _showAvailability = false;
       });
@@ -147,14 +148,14 @@ class _DisciplinesDirectoryStandalonePageState
   }
 
   Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
-    await ClassBookingFlow.bookStandard(
-      context: context,
-      controller: ClassBookingInjector.getSharedClassBookingController(),
-      slot: slot,
-      onBooked: () async {
-        _controller.removeBookedAvailabilitySlot(slot);
-      },
-    );
+    await ClassBookingInjector.getSharedClassBookingViewModel()
+        .bookStandardAndNotify(
+          context: context,
+          slot: slot,
+          onBooked: () async {
+            viewModel.removeBookedAvailabilitySlot(slot);
+          },
+        );
   }
 
   List<TableFiltersSummaryItemData>? _buildDisciplineAvailabilitySummary(
@@ -181,25 +182,28 @@ class _DisciplinesDirectoryStandalonePageState
   }
 
   Widget _buildAvailabilityView() {
-    return Obx(() {
-      final selectedDiscipline = _controller.selectedDiscipline.value;
-      final summary = _buildDisciplineAvailabilitySummary(selectedDiscipline);
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-        child: AvailableBookingsByDisciplineTable(
-          bookings: _controller.disciplineAvailabilityRows,
-          isLoading: _controller.isDisciplineAvailabilityLoading.value,
-          errorMessage: _controller.disciplineAvailabilityError.value,
-          filterSummary: summary,
-          onReserveBooking: _handleReserveBooking,
-          pageNumber: _controller.disciplineAvailabilityPageNumber.value,
-          pageSize: _controller.disciplineAvailabilityPageSize.value,
-          totalItems: _controller.disciplineAvailabilityTotalItems.value,
-          onPageChanged: _controller.setDisciplineAvailabilityPageNumber,
-          showPagination: true,
-        ),
-      );
-    });
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, _) {
+        final selectedDiscipline = viewModel.selectedDiscipline;
+        final summary = _buildDisciplineAvailabilitySummary(selectedDiscipline);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+          child: AvailableBookingsByDisciplineTable(
+            bookings: viewModel.disciplineAvailabilityRows,
+            isLoading: viewModel.isDisciplineAvailabilityLoading,
+            errorMessage: viewModel.disciplineAvailabilityError,
+            filterSummary: summary,
+            onReserveBooking: _handleReserveBooking,
+            pageNumber: viewModel.disciplineAvailabilityPageNumber,
+            pageSize: viewModel.disciplineAvailabilityPageSize,
+            totalItems: viewModel.disciplineAvailabilityTotalItems,
+            onPageChanged: viewModel.setDisciplineAvailabilityPageNumber,
+            showPagination: true,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -220,7 +224,7 @@ class _DisciplinesDirectoryStandalonePageState
               child: _showAvailability
                   ? _buildAvailabilityView()
                   : DisciplinesDirectoryPage(
-                      controller: _controller,
+                      controller: viewModel,
                       onShowAvailability: _handleShowAvailability,
                     ),
             ),

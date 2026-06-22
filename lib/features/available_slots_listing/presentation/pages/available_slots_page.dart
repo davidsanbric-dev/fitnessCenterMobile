@@ -1,5 +1,6 @@
-import 'package:portfolio_mobile_app/app/config/app_router.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
+import 'package:fitnesscenter_mobile/app/config/app_router.dart';
+import 'package:fitnesscenter_mobile/app/config/app_tab.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,8 +12,6 @@ class AvailableSlotsPage extends StatefulWidget {
 }
 
 class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
-  static const int _navIndex = 4;
-
   final GlobalKey<BookSessionFlowState> _flowKey =
       GlobalKey<BookSessionFlowState>();
   AppRouter? _appRouter;
@@ -35,8 +34,8 @@ class _AvailableSlotsPageState extends State<AvailableSlotsPage> {
       return;
     }
     _appRouter = Get.find<AppRouter>();
-    _navWorker = ever<int>(_appRouter!.currentIndex, (index) {
-      if (index == _navIndex) {
+    _navWorker = ever<AppTab>(_appRouter!.current, (tab) {
+      if (tab == AppTab.availableSlots) {
         return;
       }
       _flowKey.currentState?.resetToInitial();

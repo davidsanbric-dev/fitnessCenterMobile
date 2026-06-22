@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/form_search_field.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/forms/form_search_field.dart';
 import 'package:flutter/material.dart';
 
 class AvailableSlotsFilterFields extends StatelessWidget {

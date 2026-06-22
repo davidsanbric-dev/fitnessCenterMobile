@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -69,10 +69,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
-            child: Text(
-              title,
-              style: AppTheme.titleMediumEmphasis(context),
-            ),
+            child: Text(title, style: AppTheme.titleMediumEmphasis(context)),
           ),
           Container(
             height: 1,

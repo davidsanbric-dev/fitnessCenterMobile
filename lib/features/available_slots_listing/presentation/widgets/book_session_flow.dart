@@ -1,11 +1,11 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/scheduling_mode_filter_box.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/pages/subpages/available_slots_by_capability_subpage.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/pages/subpages/available_slots_by_discipline_trainer_subpage.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/scheduling_mode_filter_box.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -55,11 +55,11 @@ class BookSessionFlowState extends State<BookSessionFlow> {
   bool _hasSelectedSchedulingMode = false;
   SchedulingMode _schedulingMode = SchedulingMode.byService;
 
-  AvailableSlotsController? _findFiltersController() {
-    if (!Get.isRegistered<AvailableSlotsController>()) {
+  AvailableSlotsViewModel? _findFiltersController() {
+    if (!Get.isRegistered<AvailableSlotsViewModel>()) {
       return null;
     }
-    return Get.find<AvailableSlotsController>();
+    return Get.find<AvailableSlotsViewModel>();
   }
 
   void _resetFiltersState() {

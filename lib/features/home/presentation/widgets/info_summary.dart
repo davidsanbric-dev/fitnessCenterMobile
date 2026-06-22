@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 
 class InfoSummaryTab {
   const InfoSummaryTab({
@@ -71,10 +71,8 @@ class _InfoSummaryState extends State<InfoSummary> {
       fontSize: 13,
     );
 
-    final resolvedActionLabel =
-        tab.actionLabel ?? widget.actionLabel;
-    final resolvedActionPressed =
-        tab.onActionPressed ?? widget.onActionPressed;
+    final resolvedActionLabel = tab.actionLabel ?? widget.actionLabel;
+    final resolvedActionPressed = tab.onActionPressed ?? widget.onActionPressed;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/api/shared/api_base.dart';
-import 'package:portfolio_mobile_app/app/core/constants/api_urls.dart';
+import 'package:fitnesscenter_mobile/app/core/api/shared/api_base.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/api_urls.dart';
 
 /// Registers this device's FCM token with the backend so the API can push
 /// company-scoped notifications (e.g. new blog posts) to it. Idempotent on the

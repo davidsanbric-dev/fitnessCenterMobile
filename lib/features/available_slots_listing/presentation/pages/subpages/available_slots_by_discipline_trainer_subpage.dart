@@ -1,28 +1,28 @@
 import 'dart:async';
 
-import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/inline_error_text.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/loading_spinner.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/ui/snackbar_messenger.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/feature.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_actions.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_notifier.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_provider.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/riverpod/available_slots_by_discipline_trainer_ui_state.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/types.dart';
-import 'package:portfolio_mobile_app/features/class_booking/class_booking.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_consult_button.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_dropdown_layout.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_dropdown_overlay.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_filter_fields.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/available_slots_table.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/discipline_trainer_filter_box.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/forms/inline_error_text.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/loading_spinner.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/snackbar_messenger.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/state/available_slots_by_discipline_trainer_ui_actions.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/state/available_slots_by_discipline_trainer_ui_notifier.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/state/available_slots_by_discipline_trainer_ui_provider.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/state/available_slots_by_discipline_trainer_ui_state.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
+import 'package:fitnesscenter_mobile/features/class_booking/feature.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/available_slots_consult_button.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/available_slots_dropdown_layout.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/available_slots_dropdown_overlay.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/available_slots_filter_fields.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/available_slots_table.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_header_reporter.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/discipline_trainer_filter_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 
 class AvailableSlotsByDisciplineTrainerPage extends ConsumerStatefulWidget {
   const AvailableSlotsByDisciplineTrainerPage({
@@ -51,20 +51,27 @@ class AvailableSlotsByDisciplineTrainerPage extends ConsumerStatefulWidget {
 }
 
 class _AvailableSlotsByDisciplineTrainerPageState
-    extends ConsumerState<AvailableSlotsByDisciplineTrainerPage> {
-  late final AvailableSlotsController _filtersController;
-  late final bool _ownsFiltersController;
+    extends ConsumerState<AvailableSlotsByDisciplineTrainerPage>
+    with
+        SharedViewModelHost<
+          AvailableSlotsByDisciplineTrainerPage,
+          AvailableSlotsViewModel
+        > {
   late final String _uiScopeId;
   late final TextEditingController _primarySearchController;
   late final FocusNode _primaryFocusNode;
   final GlobalKey _primaryFieldKey = GlobalKey();
-  Worker? _filtersErrorWorker;
+  String? _lastObservedFiltersError;
 
   // Set once a back/exit is underway. While true this (now outgoing) page stops
   // reporting its header state, so the slide-out rebuild can't clobber the
   // destination stage's back handler with this page's stale one — which would
   // otherwise point at controllers this State is about to dispose.
   bool _isHandlingBack = false;
+
+  @override
+  AvailableSlotsViewModel createViewModel() =>
+      AvailableSlotsListingInjector.getAvailableSlotsViewModel();
 
   @override
   void initState() {
@@ -74,9 +81,14 @@ class _AvailableSlotsByDisciplineTrainerPageState
     _primaryFocusNode = FocusNode();
     _primarySearchController.addListener(_handleSearchInputChanged);
     _primaryFocusNode.addListener(_handlePrimaryFocusChange);
-    _initFiltersController();
+    acquireViewModel();
+    // Surface filter-load failures as a snackbar. Mirrors the previous GetX
+    // `ever` worker: fire only when the error transitions to a new value, and
+    // show it when that value is non-null.
+    _lastObservedFiltersError = viewModel.filtersError;
+    viewModel.addListener(_handleFiltersControllerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_filtersController.ensureFiltersLoaded());
+      unawaited(viewModel.ensureFiltersLoaded());
     });
   }
 
@@ -84,40 +96,29 @@ class _AvailableSlotsByDisciplineTrainerPageState
   void dispose() {
     // Tear down subscriptions before the resources they reference so a late
     // worker/listener callback can never touch a disposed controller.
-    _filtersErrorWorker?.dispose();
+    viewModel.removeListener(_handleFiltersControllerChanged);
     _primarySearchController.removeListener(_handleSearchInputChanged);
     _primaryFocusNode.removeListener(_handlePrimaryFocusChange);
     _primarySearchController.dispose();
     _primaryFocusNode.dispose();
-    if (_ownsFiltersController) {
-      Get.delete<AvailableSlotsController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
-  void _initFiltersController() {
-    if (Get.isRegistered<AvailableSlotsController>()) {
-      _filtersController = Get.find<AvailableSlotsController>();
-      _ownsFiltersController = false;
-    } else {
-      _filtersController =
-          AvailableSlotsListingInjector.createAvailableSlotsController();
-      Get.put(_filtersController);
-      _ownsFiltersController = true;
+  void _handleFiltersControllerChanged() {
+    final message = viewModel.filtersError;
+    if (message == _lastObservedFiltersError) {
+      return;
     }
-
-    _filtersErrorWorker = ever<String?>(_filtersController.filtersError, (
-      message,
-    ) {
-      if (message == null || !mounted) {
+    _lastObservedFiltersError = message;
+    if (message == null || !mounted) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
         return;
       }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) {
-          return;
-        }
-        showAppSnackBar(context, message);
-      });
+      showAppSnackBar(context, message);
     });
   }
 
@@ -148,15 +149,15 @@ class _AvailableSlotsByDisciplineTrainerPageState
   }
 
   Future<void> _handleReserveBooking(AvailableSlotDto slot) async {
-    await ClassBookingFlow.bookStandard(
-      context: context,
-      controller: ClassBookingInjector.getSharedClassBookingController(),
-      slot: slot,
-      listingContext: _filtersController.lastSubmittedFilters.value,
-      onBooked: () async {
-        _filtersController.removeBookedAvailabilitySlot(slot);
-      },
-    );
+    await ClassBookingInjector.getSharedClassBookingViewModel()
+        .bookStandardAndNotify(
+          context: context,
+          slot: slot,
+          listingContext: viewModel.lastSubmittedFilters,
+          onBooked: () async {
+            viewModel.removeBookedAvailabilitySlot(slot);
+          },
+        );
   }
 
   void _scheduleHeaderReport(String stageKey, VoidCallback? backHandler) {
@@ -218,241 +219,244 @@ class _AvailableSlotsByDisciplineTrainerPageState
     final uiState = ref.watch(_uiProvider);
     final uiController = ref.read(_uiProvider.notifier);
 
-    final body = Obx(() {
-      final disciplineOptions = _filtersController.disciplines.toList(
-        growable: false,
-      );
-      final trainerOptions = uiState.trainers;
-      final primaryOptions =
-          uiState.searchMode == DisciplineSearchMode.discipline
-          ? disciplineOptions
-          : trainerOptions;
-      final isLoadingFilters =
-          _filtersController.isFiltersLoading.value ||
-          (uiState.searchMode == DisciplineSearchMode.trainer &&
-              uiState.isLoadingTrainers);
-      final hasLoadedFilters = _filtersController.hasLoadedFilters.value;
-      final filtersError =
-          _filtersController.filtersError.value ??
-          (uiState.searchMode == DisciplineSearchMode.trainer
-              ? uiState.trainersErrorMessage
-              : null);
-      final showAvailabilityTable =
-          _filtersController.hasSubmittedAvailabilityRequest.value;
-      final headerBackHandler = showAvailabilityTable
-          ? _handleEditFilters
-          : _handleBack;
-      _scheduleHeaderReport(
-        showAvailabilityTable ? 'disc:availability' : 'disc:filters',
-        headerBackHandler,
-      );
+    final body = ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, _) {
+        final disciplineOptions = viewModel.disciplines.toList(growable: false);
+        final trainerOptions = uiState.trainers;
+        final primaryOptions =
+            uiState.searchMode == DisciplineSearchMode.discipline
+            ? disciplineOptions
+            : trainerOptions;
+        final isLoadingFilters =
+            viewModel.isFiltersLoading ||
+            (uiState.searchMode == DisciplineSearchMode.trainer &&
+                uiState.isLoadingTrainers);
+        final hasLoadedFilters = viewModel.hasLoadedFilters;
+        final filtersError =
+            viewModel.filtersError ??
+            (uiState.searchMode == DisciplineSearchMode.trainer
+                ? uiState.trainersErrorMessage
+                : null);
+        final showAvailabilityTable = viewModel.hasSubmittedAvailabilityRequest;
+        final headerBackHandler = showAvailabilityTable
+            ? _handleEditFilters
+            : _handleBack;
+        _scheduleHeaderReport(
+          showAvailabilityTable ? 'disc:availability' : 'disc:filters',
+          headerBackHandler,
+        );
 
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final horizontalPadding =
-              widget.horizontalPadding ??
-              _horizontalPaddingForWidth(constraints.maxWidth);
-          final shouldShowSheet = uiState.shouldShowSheet(
-            showAvailabilityTable: showAvailabilityTable,
-          );
-          final shouldLiftInputs = shouldShowSheet;
-          final showSearchModeFilter = !shouldLiftInputs;
-          final showConsultButton = _shouldShowConsultButton(
-            showAvailabilityTable,
-            primaryOptions,
-            '',
-          );
-          final shouldShowFiltersError =
-              !showAvailabilityTable &&
-              filtersError != null &&
-              !isLoadingFilters;
-          final sheetOptions = uiState.optionsForActiveField(
-            primaryOptions: primaryOptions,
-          );
-          final sheetTitle = uiState.sheetTitle;
-          final sheetFilterText = uiState.filterTextForActiveField(
-            primaryFilterText: _primarySearchController.text,
-          );
-          final activeFieldKey = _primaryFieldKey;
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final horizontalPadding =
+                widget.horizontalPadding ??
+                _horizontalPaddingForWidth(constraints.maxWidth);
+            final shouldShowSheet = uiState.shouldShowSheet(
+              showAvailabilityTable: showAvailabilityTable,
+            );
+            final shouldLiftInputs = shouldShowSheet;
+            final showSearchModeFilter = !shouldLiftInputs;
+            final showConsultButton = _shouldShowConsultButton(
+              showAvailabilityTable,
+              primaryOptions,
+              '',
+            );
+            final shouldShowFiltersError =
+                !showAvailabilityTable &&
+                filtersError != null &&
+                !isLoadingFilters;
+            final sheetOptions = uiState.optionsForActiveField(
+              primaryOptions: primaryOptions,
+            );
+            final sheetTitle = uiState.sheetTitle;
+            final sheetFilterText = uiState.filterTextForActiveField(
+              primaryFilterText: _primarySearchController.text,
+            );
+            final activeFieldKey = _primaryFieldKey;
 
-          // The filters stage (search-mode box + fields) and the availability
-          // stage (results table) are the two cards the SlidePageSwitcher
-          // slides between, matching the earlier flow transitions.
-          final Widget filtersStage = SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 120),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                horizontalPadding,
-                12,
-                horizontalPadding,
-                0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 12),
-                  const SizedBox(height: 20),
-                  if (showSearchModeFilter)
-                    DisciplineTrainerFilterBox(
-                      selectedMode: uiState.searchMode,
-                      onChanged: _uiActions.handleSearchModeChanged,
-                    ),
-                  if (isLoadingFilters && !hasLoadedFilters)
-                    const LoadingSpinner()
-                  else
-                    AvailableSlotsFilterFields(
-                      primaryController: _primarySearchController,
-                      primaryFocusNode: _primaryFocusNode,
-                      primaryPlaceholder: uiState.primaryPlaceholder,
-                      liftToTop: shouldLiftInputs,
-                      showOnlyActiveField: shouldShowSheet,
-                      activeFocusNode: _focusNodeForField(uiState.activeField),
-                      primaryFieldKey: _primaryFieldKey,
-                      suppressActiveUnderline: shouldShowSheet,
-                      onPrimaryTap: () => _uiActions.showSheetForField(
-                        ActiveFilterField.primary,
+            // The filters stage (search-mode box + fields) and the availability
+            // stage (results table) are the two cards the SlidePageSwitcher
+            // slides between, matching the earlier flow transitions.
+            final Widget filtersStage = SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 120),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  12,
+                  horizontalPadding,
+                  0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
+                    if (showSearchModeFilter)
+                      DisciplineTrainerFilterBox(
+                        selectedMode: uiState.searchMode,
+                        onChanged: _uiActions.handleSearchModeChanged,
                       ),
+                    if (isLoadingFilters && !hasLoadedFilters)
+                      const LoadingSpinner()
+                    else
+                      AvailableSlotsFilterFields(
+                        primaryController: _primarySearchController,
+                        primaryFocusNode: _primaryFocusNode,
+                        primaryPlaceholder: uiState.primaryPlaceholder,
+                        liftToTop: shouldLiftInputs,
+                        showOnlyActiveField: shouldShowSheet,
+                        activeFocusNode: _focusNodeForField(
+                          uiState.activeField,
+                        ),
+                        primaryFieldKey: _primaryFieldKey,
+                        suppressActiveUnderline: shouldShowSheet,
+                        onPrimaryTap: () => _uiActions.showSheetForField(
+                          ActiveFilterField.primary,
+                        ),
+                      ),
+                    if (shouldShowFiltersError)
+                      InlineErrorText(message: filtersError),
+                  ],
+                ),
+              ),
+            );
+
+            final Widget availabilityStage = SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 120),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  6,
+                  horizontalPadding,
+                  0,
+                ),
+                child: AvailableSlotsTable(
+                  controller: viewModel,
+                  onEditFilters: _uiActions.handleEditFiltersPressed,
+                  onReserveBooking: _handleReserveBooking,
+                  showEditFiltersButton: false,
+                  showPagination: true,
+                ),
+              ),
+            );
+
+            // Resolve the dropdown geometry against this inner region (not the
+            // outer builder) so the overlay stays aligned to the fields even when
+            // an inline header sits above the sliding body in standalone hosting.
+            final Widget slidingBody = LayoutBuilder(
+              builder: (innerContext, innerConstraints) {
+                final dropdownLayout = resolveAvailableBookingsDropdownLayout(
+                  context: innerContext,
+                  constraints: innerConstraints,
+                  horizontalPadding: horizontalPadding,
+                  shouldShowSheet: shouldShowSheet,
+                  activeFieldKey: activeFieldKey,
+                );
+
+                return Stack(
+                  fit: StackFit.expand,
+                  clipBehavior: Clip.none,
+                  children: [
+                    SlidePageSwitcher(
+                      depth: showAvailabilityTable ? 1 : 0,
+                      stageKey: showAvailabilityTable
+                          ? 'availability'
+                          : 'filters',
+                      child: showAvailabilityTable
+                          ? availabilityStage
+                          : filtersStage,
                     ),
-                  if (shouldShowFiltersError)
-                    InlineErrorText(message: filtersError),
-                ],
-              ),
-            ),
-          );
-
-          final Widget availabilityStage = SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 120),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                horizontalPadding,
-                6,
-                horizontalPadding,
-                0,
-              ),
-              child: AvailableSlotsTable(
-                controller: _filtersController,
-                onEditFilters: _uiActions.handleEditFiltersPressed,
-                onReserveBooking: _handleReserveBooking,
-                showEditFiltersButton: false,
-                showPagination: true,
-              ),
-            ),
-          );
-
-          // Resolve the dropdown geometry against this inner region (not the
-          // outer builder) so the overlay stays aligned to the fields even when
-          // an inline header sits above the sliding body in standalone hosting.
-          final Widget slidingBody = LayoutBuilder(
-            builder: (innerContext, innerConstraints) {
-              final dropdownLayout = resolveAvailableBookingsDropdownLayout(
-                context: innerContext,
-                constraints: innerConstraints,
-                horizontalPadding: horizontalPadding,
-                shouldShowSheet: shouldShowSheet,
-                activeFieldKey: activeFieldKey,
-              );
-
-              return Stack(
-                fit: StackFit.expand,
-                clipBehavior: Clip.none,
-                children: [
-                  SlidePageSwitcher(
-                    depth: showAvailabilityTable ? 1 : 0,
-                    stageKey: showAvailabilityTable
-                        ? 'availability'
-                        : 'filters',
-                    child: showAvailabilityTable
-                        ? availabilityStage
-                        : filtersStage,
-                  ),
-                  if (showConsultButton)
-                    AvailableSlotsConsultButton(
-                      horizontalPadding: horizontalPadding,
-                      selectedService: '',
-                      primaryController: _primarySearchController,
-                      searchMode: uiState.searchMode,
-                      filtersController: _filtersController,
-                      onHideSheet: _uiActions.hideSheet,
-                      buildParams: () {
-                        final primaryValue = _primarySearchController.text
-                            .trim();
-                        if (primaryValue.isEmpty) {
-                          return null;
-                        }
-                        final trainerId =
-                            uiState.searchMode == DisciplineSearchMode.trainer
-                            ? uiController.resolveTrainerId(primaryValue)
-                            : null;
-                        final trainerDisciplineId =
-                            uiState.searchMode == DisciplineSearchMode.trainer
-                            ? uiController.resolveTrainerDisciplineId(
-                                primaryValue,
-                              )
-                            : null;
-                        if (uiState.searchMode ==
-                                DisciplineSearchMode.trainer &&
-                            trainerId == null) {
-                          return null;
-                        }
-
-                        return MemberAvailabilityParams(
-                          serviceLabel: '',
-                          primarySelectionLabel: primaryValue,
-                          searchMode: uiState.searchMode,
-                          trainerId: trainerId,
-                          trainerDisciplineId: trainerDisciplineId,
-                          trainerDisciplineLabel:
+                    if (showConsultButton)
+                      AvailableSlotsConsultButton(
+                        horizontalPadding: horizontalPadding,
+                        selectedService: '',
+                        primaryController: _primarySearchController,
+                        searchMode: uiState.searchMode,
+                        filtersController: viewModel,
+                        onHideSheet: _uiActions.hideSheet,
+                        buildParams: () {
+                          final primaryValue = _primarySearchController.text
+                              .trim();
+                          if (primaryValue.isEmpty) {
+                            return null;
+                          }
+                          final trainerId =
                               uiState.searchMode == DisciplineSearchMode.trainer
-                              ? uiController.resolveTrainerDisciplineLabel(
+                              ? uiController.resolveTrainerId(primaryValue)
+                              : null;
+                          final trainerDisciplineId =
+                              uiState.searchMode == DisciplineSearchMode.trainer
+                              ? uiController.resolveTrainerDisciplineId(
                                   primaryValue,
                                 )
-                              : null,
-                        );
-                      },
+                              : null;
+                          if (uiState.searchMode ==
+                                  DisciplineSearchMode.trainer &&
+                              trainerId == null) {
+                            return null;
+                          }
+
+                          return MemberAvailabilityParams(
+                            serviceLabel: '',
+                            primarySelectionLabel: primaryValue,
+                            searchMode: uiState.searchMode,
+                            trainerId: trainerId,
+                            trainerDisciplineId: trainerDisciplineId,
+                            trainerDisciplineLabel:
+                                uiState.searchMode ==
+                                    DisciplineSearchMode.trainer
+                                ? uiController.resolveTrainerDisciplineLabel(
+                                    primaryValue,
+                                  )
+                                : null,
+                          );
+                        },
+                      ),
+                    Positioned.fill(
+                      child: AvailableSlotsDropdownOverlay(
+                        isVisible: shouldShowSheet,
+                        dropdownOffset: dropdownLayout.offset,
+                        dropdownWidth: dropdownLayout.width,
+                        maxDropdownHeight: dropdownLayout.maxHeight,
+                        title: sheetTitle,
+                        options: sheetOptions,
+                        filterText: sheetFilterText,
+                        onOptionSelected: (value) =>
+                            _uiActions.handleOptionSelected(
+                              activeField: uiState.activeField,
+                              value: value,
+                            ),
+                        onHide: _uiActions.hideSheet,
+                      ),
                     ),
-                  Positioned.fill(
-                    child: AvailableSlotsDropdownOverlay(
-                      isVisible: shouldShowSheet,
-                      dropdownOffset: dropdownLayout.offset,
-                      dropdownWidth: dropdownLayout.width,
-                      maxDropdownHeight: dropdownLayout.maxHeight,
-                      title: sheetTitle,
-                      options: sheetOptions,
-                      filterText: sheetFilterText,
-                      onOptionSelected: (value) =>
-                          _uiActions.handleOptionSelected(
-                            activeField: uiState.activeField,
-                            value: value,
-                          ),
-                      onHide: _uiActions.hideSheet,
-                    ),
+                  ],
+                );
+              },
+            );
+
+            // Standalone/dialog hosting renders its own header; keep it fixed
+            // above the sliding body so only the stage cards slide, never the
+            // header. Chromeless hosting reports its header up and shows none here.
+            if (widget.onHeaderStateChanged == null) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  PageHeader(
+                    title: 'Book a Session',
+                    subtitle: widget.headerSubtitle,
+                    subtitleIcon: widget.headerSubtitleIcon,
+                    onBackButtonPressed: headerBackHandler,
                   ),
+                  Expanded(child: slidingBody),
                 ],
               );
-            },
-          );
-
-          // Standalone/dialog hosting renders its own header; keep it fixed
-          // above the sliding body so only the stage cards slide, never the
-          // header. Chromeless hosting reports its header up and shows none here.
-          if (widget.onHeaderStateChanged == null) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                PageHeader(
-                  title: 'Book a Session',
-                  subtitle: widget.headerSubtitle,
-                  subtitleIcon: widget.headerSubtitleIcon,
-                  onBackButtonPressed: headerBackHandler,
-                ),
-                Expanded(child: slidingBody),
-              ],
-            );
-          }
-          return slidingBody;
-        },
-      );
-    });
+            }
+            return slidingBody;
+          },
+        );
+      },
+    );
 
     if (widget.isEmbedded) {
       return body;
@@ -470,7 +474,7 @@ class _AvailableSlotsByDisciplineTrainerPageState
       AvailableSlotsByDisciplineTrainerUiActions(
         ref: ref,
         uiScopeId: _uiScopeId,
-        filtersController: _filtersController,
+        filtersController: viewModel,
         primarySearchController: _primarySearchController,
         primaryFocusNode: _primaryFocusNode,
       );

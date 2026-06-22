@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:portfolio_mobile_app/app/config/app_routes.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/api/members_api.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/member/member_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_scope.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/app/config/app_routes.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/api/members_api.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/member/member_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_scope.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
-import 'package:portfolio_mobile_app/features/profile/presentation/pages/personal_member_data_page.dart';
-import 'package:portfolio_mobile_app/app/core/services/profile_navigation_service.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/pages/assessment_results_page.dart';
-import 'package:portfolio_mobile_app/features/profile/presentation/pages/training_history_page.dart';
+import 'package:fitnesscenter_mobile/features/profile/presentation/pages/personal_member_data_page.dart';
+import 'package:fitnesscenter_mobile/app/core/services/profile_navigation_service.dart';
+import 'package:fitnesscenter_mobile/features/profile/presentation/pages/assessment_results_page.dart';
+import 'package:fitnesscenter_mobile/features/profile/presentation/pages/training_history_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, this.onHeaderChanged});
@@ -244,9 +244,9 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.only(top: 10),
               child: Text(
                 name,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -355,10 +355,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildAvatarHeader(context),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 35,
-                vertical: 25,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
               itemBuilder: (context, index) {
                 final option = options[index];
                 final titleStyle = AppTheme.listTileTitleStyle(
@@ -382,11 +379,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   minVerticalPadding: 10,
                 );
               },
-              separatorBuilder: (context, _) => Divider(
-                height: 1,
-                thickness: 1,
-                color: Colors.grey.shade300,
-              ),
+              separatorBuilder: (context, _) =>
+                  Divider(height: 1, thickness: 1, color: Colors.grey.shade300),
               itemCount: options.length,
             ),
           ),

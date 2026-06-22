@@ -1,12 +1,10 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/input.dart';
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/features/profile/bloc/profile_bloc.dart';
-import 'package:portfolio_mobile_app/features/profile/bloc/profile_event.dart';
-import 'package:portfolio_mobile_app/features/profile/bloc/profile_state.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/input.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/profile/feature.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class PersonalDataPage extends StatelessWidget {
@@ -32,8 +30,8 @@ class PersonalDataView extends StatefulWidget {
   State<PersonalDataView> createState() => _PersonalDataViewState();
 }
 
-class _PersonalDataViewState extends State<PersonalDataView> {
-  late final ProfileBloc _profileBloc;
+class _PersonalDataViewState extends State<PersonalDataView>
+    with SharedViewModelHost<PersonalDataView, ProfileViewModel> {
   late final TextEditingController _fullNameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _emailController;
@@ -41,39 +39,56 @@ class _PersonalDataViewState extends State<PersonalDataView> {
   late final TextEditingController _membershipController;
 
   @override
+  ProfileViewModel createViewModel() => ProfileInjector.getProfileViewModel();
+
+  @override
   void initState() {
     super.initState();
-    _profileBloc = ProfileBloc();
+    acquireViewModel();
     _fullNameController = TextEditingController();
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
     _rutController = TextEditingController();
     _membershipController = TextEditingController();
+    // Prefill from whatever the model already holds, then keep the read-only
+    // fields in sync as the cached/refreshed claims resolve. The model used to
+    // load on GetX-style startup; the ChangeNotifier model has no such hook, so
+    // kick off the initial load once mounted.
+    _applyPrefill();
+    viewModel.addListener(_handleViewModelChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
       }
-      _profileBloc.add(const ProfileStarted());
+      viewModel.start();
     });
   }
 
   @override
   void dispose() {
+    viewModel.removeListener(_handleViewModelChanged);
     _fullNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
     _rutController.dispose();
     _membershipController.dispose();
-    _profileBloc.close();
+    releaseViewModel();
     super.dispose();
   }
 
-  void _applyPrefill(ProfileState state) {
-    _assignIfEmpty(_fullNameController, state.fullName);
-    _assignIfEmpty(_emailController, state.email);
-    _assignIfEmpty(_phoneController, state.phone);
-    _assignIfEmpty(_rutController, _formatRutValue(state.rut));
-    _assignIfEmpty(_membershipController, state.selectedMembership);
+  void _handleViewModelChanged() {
+    if (!mounted) {
+      return;
+    }
+    _applyPrefill();
+  }
+
+  void _applyPrefill() {
+    _assignIfEmpty(_fullNameController, viewModel.fullName);
+    _assignIfEmpty(_emailController, viewModel.email);
+    _assignIfEmpty(_phoneController, viewModel.phone);
+    _assignIfEmpty(_rutController, _formatRutValue(viewModel.rut));
+    _assignIfEmpty(_membershipController, viewModel.selectedMembership);
   }
 
   void _assignIfEmpty(TextEditingController controller, String? value) {
@@ -172,38 +187,24 @@ class _PersonalDataViewState extends State<PersonalDataView> {
         ? 40.0
         : 28.0;
 
-    return BlocProvider.value(
-      value: _profileBloc,
-      child: SafeArea(
-        top: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: BlocConsumer<ProfileBloc, ProfileState>(
-                listenWhen: (previous, current) =>
-                    previous.fullName != current.fullName ||
-                    previous.email != current.email ||
-                    previous.phone != current.phone ||
-                    previous.rut != current.rut ||
-                    previous.selectedMembership != current.selectedMembership,
-                listener: (context, state) => _applyPrefill(state),
-                builder: (context, _) {
-                  return SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontalPadding,
-                      24,
-                      horizontalPadding,
-                      24,
-                    ),
-                    child: _buildFormFields(),
-                  );
-                },
+    return SafeArea(
+      top: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                24,
+                horizontalPadding,
+                24,
               ),
+              child: _buildFormFields(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

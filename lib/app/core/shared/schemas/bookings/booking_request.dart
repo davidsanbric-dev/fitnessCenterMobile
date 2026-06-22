@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/core/exceptions/api_exception.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 
 /// Filters for the bookings agenda list. Emits a camelCase intermediate that
 /// `BookingAgendaApi.getAgenda` remaps to the backend's snake_case query params

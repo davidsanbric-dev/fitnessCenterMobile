@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
 
 /// Describes what a [PageHeader] should currently display. Pages hosted by
 /// the bottom-nav shell report their config up instead of rendering their own

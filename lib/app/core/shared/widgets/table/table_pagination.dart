@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
 class ResolvedTablePagination {
@@ -93,6 +93,66 @@ ResolvedTablePagination syncTablePaginationState({
   }
   if (pagination.pageSize != pageSize.value) {
     pageSize.value = pagination.pageSize;
+  }
+  return pagination;
+}
+
+// ChangeNotifier-friendly variants of the helpers above: they operate on plain
+// `int` state via setter callbacks instead of `RxInt`, for view-models that
+// drive rebuilds with `notifyListeners()` rather than GetX reactivity.
+bool applyTablePageNumber({
+  required int currentPageNumber,
+  required int value,
+  required ValueChanged<int> setPageNumber,
+  required VoidCallback syncPagination,
+}) {
+  if (value < 1 || value == currentPageNumber) {
+    return false;
+  }
+
+  setPageNumber(value);
+  syncPagination();
+  return true;
+}
+
+bool applyTablePageSize({
+  required int currentPageSize,
+  required int value,
+  required ValueChanged<int> setPageNumber,
+  required ValueChanged<int> setPageSize,
+  required VoidCallback syncPagination,
+}) {
+  if (value < 1 || value == currentPageSize) {
+    return false;
+  }
+
+  setPageSize(value);
+  setPageNumber(1);
+  syncPagination();
+  return true;
+}
+
+ResolvedTablePagination syncTablePaginationValues({
+  required int totalItems,
+  required int pageNumber,
+  required int pageSize,
+  required int defaultPageSize,
+  required ValueChanged<int> setPageNumber,
+  required ValueChanged<int> setPageSize,
+  ValueChanged<int>? onTotalItemsResolved,
+}) {
+  final pagination = resolveTablePagination(
+    totalItems: totalItems,
+    pageNumber: pageNumber,
+    pageSize: pageSize,
+    defaultPageSize: defaultPageSize,
+  );
+  onTotalItemsResolved?.call(pagination.totalItems);
+  if (pagination.pageNumber != pageNumber) {
+    setPageNumber(pagination.pageNumber);
+  }
+  if (pagination.pageSize != pageSize) {
+    setPageSize(pagination.pageSize);
   }
   return pagination;
 }

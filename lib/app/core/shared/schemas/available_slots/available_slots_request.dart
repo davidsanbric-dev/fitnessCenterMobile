@@ -1,11 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 
 class AvailableSlotsRequest {
-  const AvailableSlotsRequest({
-    required this.disciplineId,
-    this.trainerId,
-  });
+  const AvailableSlotsRequest({required this.disciplineId, this.trainerId});
 
   final int disciplineId;
   final String? trainerId;
@@ -30,10 +27,7 @@ class AvailableSlotsRequest {
     return query;
   }
 
-  AvailableSlotsRequest copyWith({
-    int? disciplineId,
-    String? trainerId,
-  }) {
+  AvailableSlotsRequest copyWith({int? disciplineId, String? trainerId}) {
     return AvailableSlotsRequest(
       disciplineId: disciplineId ?? this.disciplineId,
       trainerId: trainerId ?? this.trainerId,

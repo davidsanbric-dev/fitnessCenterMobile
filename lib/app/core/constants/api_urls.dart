@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/constants/app_strings.dart';
+import 'package:fitnesscenter_mobile/app/core/constants/app_strings.dart';
 
 mixin ApiUrls {
   static String get _apiV1BaseUrl => AppStrings.baseUrl;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/active_filter_option_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_option.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/active_filter_option_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_option.dart';
 
-export 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/filter_option.dart';
+export 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_option.dart';
 
 typedef FilterOptionButtonBuilder<T> =
     Widget Function(

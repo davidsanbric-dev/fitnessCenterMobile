@@ -3,7 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
-import 'package:portfolio_mobile_app/app/core/shared/schemas/blog/blog_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/blog/blog_dto.dart';
 
 /// Home info-slider variant backed by company-scoped blog entries. Each slide
 /// shows the blog hero image and title; tapping opens a dialog with the full
@@ -214,9 +214,7 @@ class _BlogHeroImage extends StatelessWidget {
 
     Widget placeholder() => DecoratedBox(
       decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest),
-      child: Center(
-        child: Icon(LucideIcons.imageOff, color: accent, size: 36),
-      ),
+      child: Center(child: Icon(LucideIcons.imageOff, color: accent, size: 36)),
     );
 
     final imageUrl = url;

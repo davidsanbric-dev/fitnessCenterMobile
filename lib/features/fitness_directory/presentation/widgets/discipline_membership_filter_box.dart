@@ -1,5 +1,5 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

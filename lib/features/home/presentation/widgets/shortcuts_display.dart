@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 
 class ShortcutCardData {
   const ShortcutCardData({
@@ -87,7 +87,9 @@ class _ShortcutCard extends StatelessWidget {
             height: 12,
             decoration: BoxDecoration(
               color: accent,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
+              ),
             ),
           ),
         ),
@@ -102,9 +104,7 @@ class _ShortcutCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppTheme.borderColor(context),
-                  ),
+                  border: Border.all(color: AppTheme.borderColor(context)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),

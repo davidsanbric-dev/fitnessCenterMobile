@@ -1,9 +1,9 @@
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/date_time.dart';
-import 'package:portfolio_mobile_app/app/core/utils/format/info_card.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/dialogs/row_details_card_dialog.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/format/info_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/dialogs/row_details_card_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -86,7 +86,9 @@ mixin BookingDetailsCardDialog {
     // not in every booking projection, so fall back to them when the response's
     // member node omits them. All booking-detail entry points in this member app
     // show the member's own bookings, so the session identity matches.
-    final auth = Get.isRegistered<AuthService>() ? Get.find<AuthService>() : null;
+    final auth = Get.isRegistered<AuthService>()
+        ? Get.find<AuthService>()
+        : null;
     final rut = detail.memberRut.isNotEmpty
         ? detail.memberRut
         : (auth?.userRut?.trim() ?? '');
@@ -212,5 +214,4 @@ mixin BookingDetailsCardDialog {
       ),
     );
   }
-
 }

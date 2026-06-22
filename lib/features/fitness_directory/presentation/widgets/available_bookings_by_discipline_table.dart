@@ -1,9 +1,9 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/reserve_cell_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_filters_summary.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/reserve_cell_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 

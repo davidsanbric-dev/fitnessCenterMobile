@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/memberships/membership_dto.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/domain/domain.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/logic/services/memberships_service.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/memberships/membership_dto.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/domain/domain.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/data/services/memberships_service.dart';
 
 class MembershipsDirectoryRepositoryImpl
     implements MembershipsDirectoryRepository {

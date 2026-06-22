@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/forms/inline_options_dropdown.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/forms/inline_options_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class AvailableSlotsDropdownOverlay extends StatelessWidget {

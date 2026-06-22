@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:portfolio_mobile_app/app/config/app_routes.dart';
+import 'package:fitnesscenter_mobile/app/config/app_routes.dart';
 
 class PostLoginTransitionPage extends StatefulWidget {
   const PostLoginTransitionPage({super.key});

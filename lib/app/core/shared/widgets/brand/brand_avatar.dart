@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_mobile_app/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 
 class BrandAvatar extends StatelessWidget {
   const BrandAvatar({

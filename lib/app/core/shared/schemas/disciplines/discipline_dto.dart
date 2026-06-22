@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/utils/normalize.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 
 class DisciplineDto {
   const DisciplineDto({
@@ -18,10 +18,6 @@ class DisciplineDto {
   }
 
   Map<String, dynamic> toTableRow() {
-    return {
-      'discipline': this,
-      'id': disciplineId,
-      'name': disciplineName,
-    };
+    return {'discipline': this, 'id': disciplineId, 'name': disciplineName};
   }
 }

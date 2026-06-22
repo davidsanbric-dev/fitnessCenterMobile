@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_body.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
 
 class DisciplinesTable extends StatelessWidget {

@@ -1,9 +1,10 @@
-import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/slide_page_switcher.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
-import 'package:portfolio_mobile_app/features/bookings/logic/bookings_controller.dart';
-import 'package:portfolio_mobile_app/features/bookings/presentation/widgets/bookings_table.dart';
+import 'package:fitnesscenter_mobile/app/core/services/bookings_navigation_service.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
+import 'package:fitnesscenter_mobile/features/bookings/feature.dart';
+import 'package:fitnesscenter_mobile/features/bookings/presentation/widgets/bookings_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,9 +20,8 @@ class BookingsPage extends StatefulWidget {
   State<BookingsPage> createState() => _BookingsPageState();
 }
 
-class _BookingsPageState extends State<BookingsPage> {
-  late final BookingsController _controller;
-  late final bool _ownsController;
+class _BookingsPageState extends State<BookingsPage>
+    with SharedViewModelHost<BookingsPage, BookingsViewModel> {
   Worker? _bookFlowWorker;
 
   // While true, the page swaps the bookings table for the in-page "Book a
@@ -36,15 +36,21 @@ class _BookingsPageState extends State<BookingsPage> {
   VoidCallback? _flowBackHandler;
 
   @override
+  BookingsViewModel createViewModel() =>
+      BookingsInjector.getBookingsViewModel();
+
+  @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<BookingsController>()) {
-      _controller = Get.find<BookingsController>();
-      _ownsController = false;
-    } else {
-      _controller = Get.put(BookingsController());
-      _ownsController = true;
-    }
+    acquireViewModel();
+    // The controller used to load on GetX `onReady`; the ChangeNotifier model
+    // has no such hook, so kick off the initial load once mounted.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      viewModel.loadBookings();
+    });
     // The Bookings tab is lazily mounted (Offstage + _visitedIndexes in
     // HomeWrapper), so it may not exist yet when Home calls requestBookFlow().
     // Two paths, mirroring ProfilePage:
@@ -64,9 +70,7 @@ class _BookingsPageState extends State<BookingsPage> {
   @override
   void dispose() {
     _bookFlowWorker?.dispose();
-    if (_ownsController) {
-      Get.delete<BookingsController>();
-    }
+    releaseViewModel();
     super.dispose();
   }
 
@@ -81,7 +85,7 @@ class _BookingsPageState extends State<BookingsPage> {
     }
   }
 
-  Future<void> _refresh() => _controller.reload();
+  Future<void> _refresh() => viewModel.reload();
 
   void _openBookFlow() {
     setState(() {
@@ -96,7 +100,7 @@ class _BookingsPageState extends State<BookingsPage> {
       _resetFlowHeaderState();
     });
     // Refresh so any session booked within the flow appears in the list.
-    _controller.reload();
+    viewModel.reload();
   }
 
   void _resetFlowHeaderState() {
@@ -152,9 +156,7 @@ class _BookingsPageState extends State<BookingsPage> {
               child: SlidePageSwitcher(
                 depth: _showBookFlow ? 1 : 0,
                 stageKey: _showBookFlow ? 'book-flow' : 'bookings-list',
-                child: _showBookFlow
-                    ? _buildBookFlow()
-                    : _buildBookingsList(),
+                child: _showBookFlow ? _buildBookFlow() : _buildBookingsList(),
               ),
             ),
           ],
@@ -194,35 +196,34 @@ class _BookingsPageState extends State<BookingsPage> {
   Widget _buildBookingsList() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-      child: Obx(() {
-        final items = _controller.bookingsPageRows;
-        final bookingsPageNumber = _controller.bookingsPageNumber.value;
-        final bookingsPageSize = _controller.bookingsPageSize.value;
-        final bookingsTotalItems = _controller.bookingsTotalItems.value;
-        return RefreshIndicator(
-          onRefresh: _refresh,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              BookingsTable(
-                bookings: items,
-                isLoading: _controller.isLoading.value,
-                errorMessage: _controller.error.value,
-                onViewDetails: _controller.showBookingDetails,
-                onConfirmReservation: _controller.confirmReservation,
-                onCancelReservation: _controller.cancelReservation,
-                onUpdateBookingStatus: _controller.updateBookingStatus,
-                onBookSession: _openBookFlow,
-                pageNumber: bookingsPageNumber,
-                pageSize: bookingsPageSize,
-                totalItems: bookingsTotalItems,
-                onPageChanged: _controller.setBookingsPageNumber,
-                showPagination: true,
-              ),
-            ],
-          ),
-        );
-      }),
+      child: ListenableBuilder(
+        listenable: viewModel,
+        builder: (context, _) {
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                BookingsTable(
+                  bookings: viewModel.bookingsPageRows,
+                  isLoading: viewModel.isLoading,
+                  errorMessage: viewModel.error,
+                  onViewDetails: viewModel.showBookingDetails,
+                  onConfirmReservation: viewModel.confirmReservationAndNotify,
+                  onCancelReservation: viewModel.cancelReservationAndNotify,
+                  onUpdateBookingStatus: viewModel.updateBookingStatusAndNotify,
+                  onBookSession: _openBookFlow,
+                  pageNumber: viewModel.bookingsPageNumber,
+                  pageSize: viewModel.bookingsPageSize,
+                  totalItems: viewModel.bookingsTotalItems,
+                  onPageChanged: viewModel.setBookingsPageNumber,
+                  showPagination: true,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

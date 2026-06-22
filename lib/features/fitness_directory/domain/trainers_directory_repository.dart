@@ -1,8 +1,8 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/disciplines/discipline_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/memberships/membership_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/types.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/disciplines/discipline_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/memberships/membership_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
 
 class TrainersDirectoryFilterData {
   const TrainersDirectoryFilterData({

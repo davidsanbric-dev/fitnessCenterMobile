@@ -1,6 +1,6 @@
-import 'package:portfolio_mobile_app/app/core/shared/schemas/capabilities/capability_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/services/capabilities_service.dart';
-import 'package:portfolio_mobile_app/features/available_slots_listing/domain/domain.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/services/capabilities_service.dart';
+import 'package:fitnesscenter_mobile/features/available_slots_listing/domain/domain.dart';
 
 class CapabilitiesCatalogRepositoryImpl
     implements CapabilitiesCatalogRepository {
@@ -15,9 +15,7 @@ class CapabilitiesCatalogRepositoryImpl
   }
 
   @override
-  Future<List<CapabilityDto>> fetchSubgroup({
-    required int groupId,
-  }) {
+  Future<List<CapabilityDto>> fetchSubgroup({required int groupId}) {
     return _service.fetchSubgroup(groupId: groupId);
   }
 

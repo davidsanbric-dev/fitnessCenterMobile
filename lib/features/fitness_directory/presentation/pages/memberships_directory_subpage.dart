@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/widgets/memberships_table.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/widgets/memberships_table.dart';
 import 'package:flutter/material.dart';
 
 class MembershipsDirectoryPage extends StatelessWidget {

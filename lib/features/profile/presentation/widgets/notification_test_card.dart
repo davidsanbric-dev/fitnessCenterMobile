@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
+import 'package:fitnesscenter_mobile/app/core/services/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';

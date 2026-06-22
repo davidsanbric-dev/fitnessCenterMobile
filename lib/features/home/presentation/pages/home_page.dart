@@ -1,24 +1,25 @@
-import 'package:portfolio_mobile_app/app/config/app_router.dart';
-import 'package:portfolio_mobile_app/app/core/api/booking_agenda_api.dart';
-import 'package:portfolio_mobile_app/app/core/services/bookings_navigation_service.dart';
-import 'package:portfolio_mobile_app/app/core/services/profile_navigation_service.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/available_slots/available_slot_dto.dart';
-import 'package:portfolio_mobile_app/app/core/shared/schemas/bookings/booking_dto.dart';
-import 'package:portfolio_mobile_app/features/home/logic/blog_controller.dart';
-import 'package:portfolio_mobile_app/app/core/auth/auth.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/brand/brand_header.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/login_submit_button.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/layout/page_header_config.dart';
-import 'package:portfolio_mobile_app/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
-import 'package:portfolio_mobile_app/features/bookings/presentation/pages/bookings_page.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/feature.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
-import 'package:portfolio_mobile_app/features/fitness_directory/presentation/pages/disciplines_directory_subpage.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/blog_slider.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_slider.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/info_summary.dart';
-import 'package:portfolio_mobile_app/features/home/presentation/widgets/shortcuts_display.dart';
-import 'package:portfolio_mobile_app/app/core/services/local_notification_service.dart';
+import 'package:fitnesscenter_mobile/app/config/app_router.dart';
+import 'package:fitnesscenter_mobile/app/config/app_tab.dart';
+import 'package:fitnesscenter_mobile/app/core/api/booking_agenda_api.dart';
+import 'package:fitnesscenter_mobile/app/core/services/bookings_navigation_service.dart';
+import 'package:fitnesscenter_mobile/app/core/services/profile_navigation_service.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
+import 'package:fitnesscenter_mobile/features/home/feature.dart';
+import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/brand/brand_header.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/login_submit_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
+import 'package:fitnesscenter_mobile/features/bookings/presentation/pages/bookings_page.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/feature.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/pages/trainers_directory_subpage.dart';
+import 'package:fitnesscenter_mobile/features/fitness_directory/presentation/pages/disciplines_directory_subpage.dart';
+import 'package:fitnesscenter_mobile/features/home/presentation/widgets/blog_slider.dart';
+import 'package:fitnesscenter_mobile/features/home/presentation/widgets/info_slider.dart';
+import 'package:fitnesscenter_mobile/features/home/presentation/widgets/info_summary.dart';
+import 'package:fitnesscenter_mobile/features/home/presentation/widgets/shortcuts_display.dart';
+import 'package:fitnesscenter_mobile/app/core/services/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -36,14 +37,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  static const int _homeTabIndex = 0;
-  static const int _bookingsTabIndex = 1;
-  static const int _fitnessDirectoryTabIndex = 6;
-
-  static const int _profileTabIndex = 5;
-
   late final BookingAgendaApi _bookingsApi;
-  late final BlogController _blogController;
+  late final BlogViewModel _blogViewModel;
   late Future<AvailableSlotDto?> _upcomingBooking;
   late Future<BookingDto?> _lastCompletedBooking;
   bool _hasNotified = false;
@@ -53,17 +48,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _bookingsApi = BookingAgendaApi();
-    // Shared controller: loads blogs and re-fetches when a "new blog" push
-    // arrives (wired in BlogController.onInit), so the slider updates on-time.
-    _blogController = Get.isRegistered<BlogController>()
-        ? Get.find<BlogController>()
-        : Get.put(BlogController(), permanent: true);
+    // Shared view-model: loads blogs and re-fetches when a "new blog" push
+    // arrives (wired in HomeInjector), so the slider updates on-time.
+    _blogViewModel = HomeInjector.getBlogViewModel();
     _upcomingBooking = _loadUpcomingBooking();
     _lastCompletedBooking = _loadLastCompletedBooking();
     // Safety net for the "user already on home" case: keep the slider current
     // even if a foreground push is delayed/dropped, and re-sync on resume.
     WidgetsBinding.instance.addObserver(this);
-    _blogController.startAutoRefresh();
+    _blogViewModel.startAutoRefresh();
     _attachNavListener();
   }
 
@@ -71,22 +64,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _navWorker?.dispose();
-    _blogController.stopAutoRefresh();
+    _blogViewModel.stopAutoRefresh();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _blogController.loadBlogs();
-      _blogController.startAutoRefresh();
+      _blogViewModel.loadBlogs();
+      _blogViewModel.startAutoRefresh();
       // A booking may have been cancelled/changed (web, push, another device)
       // while backgrounded; re-sync the upcoming summary on resume.
       _refreshUpcomingBooking();
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive ||
         state == AppLifecycleState.hidden) {
-      _blogController.stopAutoRefresh();
+      _blogViewModel.stopAutoRefresh();
     }
   }
 
@@ -99,8 +92,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return;
     }
     final appRouter = Get.find<AppRouter>();
-    _navWorker = ever<int>(appRouter.currentIndex, (index) {
-      if (index == _homeTabIndex) {
+    _navWorker = ever<AppTab>(appRouter.current, (tab) {
+      if (tab == AppTab.home) {
         _refreshUpcomingBooking();
       }
     });
@@ -137,7 +130,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void _handleProfileHistoryNavigation() {
     ProfileNavigationService.instance.requestTrainingHistory();
     if (Get.isRegistered<AppRouter>()) {
-      Get.find<AppRouter>().changeTab(_profileTabIndex);
+      Get.find<AppRouter>().goTo(AppTab.profile);
       return;
     }
   }
@@ -145,7 +138,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void _handleAssessmentResultsNavigation() {
     ProfileNavigationService.instance.requestAssessmentResults();
     if (Get.isRegistered<AppRouter>()) {
-      Get.find<AppRouter>().changeTab(_profileTabIndex);
+      Get.find<AppRouter>().goTo(AppTab.profile);
       return;
     }
   }
@@ -171,18 +164,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void _handleBookingsNavigation() {
     if (Get.isRegistered<AppRouter>()) {
-      Get.find<AppRouter>().changeTab(_bookingsTabIndex);
+      Get.find<AppRouter>().goTo(AppTab.bookings);
       return;
     }
     Get.to(() => const BookingsPage());
   }
 
-  FitnessDirectoryController _ensureFitnessDirectoryController() {
-    return FitnessDirectoryInjector.getFitnessDirectoryController();
+  FitnessDirectoryViewModel _ensureFitnessDirectoryController() {
+    return FitnessDirectoryInjector.getFitnessDirectoryViewModel();
   }
 
-  DisciplinesDirectoryController _ensureDisciplinesController() {
-    return FitnessDirectoryInjector.getDisciplinesDirectoryController();
+  DisciplinesDirectoryViewModel _ensureDisciplinesController() {
+    return FitnessDirectoryInjector.getDisciplinesDirectoryViewModel();
   }
 
   void _handleDisciplinesNavigation() {
@@ -191,7 +184,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       final disciplinesController = _ensureDisciplinesController();
       directoryController.showDisciplines();
       disciplinesController.loadDisciplines(forceRefresh: true);
-      Get.find<AppRouter>().changeTab(_fitnessDirectoryTabIndex);
+      Get.find<AppRouter>().goTo(AppTab.fitnessDirectory);
       return;
     }
     Get.to(() => const DisciplinesDirectoryStandalonePage());
@@ -201,7 +194,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (Get.isRegistered<AppRouter>()) {
       final controller = _ensureFitnessDirectoryController();
       controller.showTrainers();
-      Get.find<AppRouter>().changeTab(_fitnessDirectoryTabIndex);
+      Get.find<AppRouter>().goTo(AppTab.fitnessDirectory);
       return;
     }
     Get.to(() => const TrainersDirectoryStandalonePage());
@@ -340,17 +333,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     const SizedBox(height: 28),
                     ShortcutsDisplay(shortcuts: shortcuts, spacing: 8),
                     const SizedBox(height: 32),
-                    Obx(() {
-                      final blogs = _blogController.blogs;
-                      if (blogs.isNotEmpty) {
-                        // Reactive: refreshes on-time when a "new blog" push
-                        // arrives via BlogController.
-                        return BlogSlider(blogs: blogs.toList());
-                      }
-                      // No blogs (or still loading / failed): keep the original
-                      // promotional slider so home is never empty.
-                      return InfoSlider(slides: sliderSlides);
-                    }),
+                    ListenableBuilder(
+                      listenable: _blogViewModel,
+                      builder: (context, _) {
+                        final blogs = _blogViewModel.blogs;
+                        if (blogs.isNotEmpty) {
+                          // Reactive: refreshes on-time when a "new blog" push
+                          // arrives via BlogViewModel.
+                          return BlogSlider(blogs: blogs.toList());
+                        }
+                        // No blogs (or still loading / failed): keep the
+                        // original promotional slider so home is never empty.
+                        return InfoSlider(slides: sliderSlides);
+                      },
+                    ),
                   ],
                 ),
               ),

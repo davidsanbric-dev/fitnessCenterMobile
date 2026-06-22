@@ -1,7 +1,7 @@
 /// Validation helpers for domain-specific input checks.
 library;
 
-import 'package:portfolio_mobile_app/app/core/utils/parse.dart';
+import 'package:fitnesscenter_mobile/app/core/utils/parse.dart';
 
 /// Validates a RUT string (normalized internally to digits plus optional `K`).
 bool isNormalizedRutValid(String rut) {

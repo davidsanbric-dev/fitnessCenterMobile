@@ -1,4 +1,4 @@
-import 'package:portfolio_mobile_app/app/core/shared/widgets/buttons/create_button.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/create_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
