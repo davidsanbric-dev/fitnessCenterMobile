@@ -217,6 +217,7 @@ class _BookingsPageState extends State<BookingsPage>
                   pageSize: viewModel.bookingsPageSize,
                   totalItems: viewModel.bookingsTotalItems,
                   onPageChanged: viewModel.setBookingsPageNumber,
+                  onRetry: _refresh,
                   showPagination: true,
                 ),
               ],

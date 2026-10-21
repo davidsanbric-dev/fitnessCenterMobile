@@ -22,7 +22,8 @@ class BookingsTable extends StatelessWidget {
     this.totalItems,
     this.onPageChanged,
     this.showPagination = false,
-    this.emptyLabel = 'You have no assigned bookings.',
+    this.onRetry,
+    this.emptyLabel = 'You have no bookings yet.',
   });
 
   final List<BookingDto> bookings;
@@ -42,6 +43,7 @@ class BookingsTable extends StatelessWidget {
   final int? totalItems;
   final ValueChanged<int>? onPageChanged;
   final bool showPagination;
+  final VoidCallback? onRetry;
   final String emptyLabel;
 
   List<Map<String, dynamic>> get _rows => bookings
@@ -119,6 +121,10 @@ class BookingsTable extends StatelessWidget {
           return handlers.isEmpty ? null : handlers;
         }(),
         emptyLabel: emptyLabel,
+        onRetry: onRetry,
+        // An empty bookings list is the first thing a new member sees, so point
+        // at the one action that resolves it instead of a dead end.
+        emptyAction: onBookSession != null ? _buildBookSessionButton() : null,
       ),
       heightFactor: 0.72,
       margin: const EdgeInsets.fromLTRB(2, 0, 2, 16),
