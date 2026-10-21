@@ -4,7 +4,7 @@ Flutter (**Android-only**) member client of the **FitnessCenter Suite**, alongsi
 
 ## Architecture
 
-**MVVM on top of a feature-driven, clean architecture.** Each feature lives in `lib/features/<feature>` and is split into `data / domain / presentation`, with its own `di` (dependency injection) module wired through `get_it`:
+**MVVM on top of a feature-driven, clean architecture.** Each feature lives in `lib/features/<feature>` and is split into `data / domain / presentation`, with its own `di` (dependency injection) module wired through the GetX service locator:
 
 - `auth`, `home`, `profile`
 - `fitness_directory` — browsing entry point (disciplines, trainers, class types, memberships); owns directory flow state and delegates availability/booking.
@@ -21,6 +21,42 @@ The **presentation layer is built on ViewModels** (`ChangeNotifier`-based, see `
 ## Tech stack
 
 **Flutter · Dart · Firebase (Auth + Cloud Messaging)**
+
+### State management
+
+Three tools, each with one job:
+
+| Concern | Tool |
+| --- | --- |
+| Routing, service location, navigation | GetX (`package:get`) |
+| Feature state (MVVM) | `ChangeNotifier` view-models over `ViewModelBase` |
+| Scoped, auto-disposing UI filter state | Riverpod |
+
+Most feature state is a plain `ChangeNotifier` view-model read by a
+`ListenableBuilder`, which keeps the logic testable without a framework and is
+why the booking and cancel flows can be unit tested with simple fakes. GetX
+covers routing and the service locator that wires each feature's `di` module.
+
+Riverpod is used in exactly one place, the availability listing filters, where
+`StateNotifierProvider.autoDispose.family` keyed by a scope id gives each
+screen instance its own state that disposes with it. A single shared
+`ChangeNotifier` in the locator would have to hand-roll that lifecycle.
+
+Mixing three is a trade-off rather than a rule: the alternative was either
+hand-rolling scoped disposal or pulling the whole app onto Riverpod for one
+screen's benefit.
+
+## Tests
+
+```bash
+flutter test
+```
+
+Unit tests cover the view-model logic behind the member booking flow: the
+re-entrancy guard that prevents a double tap creating two reservations, the
+cancel/confirm state machine and its guards, the local-status fallback when a
+post-update refresh fails, and the rule that hides admin-only statuses from the
+member picker. DTO tests cover the snake_case API contract mapping.
 
 ## Run on Android
 

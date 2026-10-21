@@ -8,13 +8,30 @@ push. See `README.md` for the full narrative.
 ## Stack
 
 Flutter · Dart (SDK ^3.9) · Firebase (Auth + Cloud Messaging) ·
-`flutter_riverpod` + `get_it` (DI) · `get` · `http` ·
+`get` (GetX) · `flutter_riverpod` · `http` ·
 `flutter_local_notifications` · `flutter_secure_storage`.
+
+### State management — three layers, on purpose
+
+There is no `get_it` in this project; the service locator is GetX's.
+
+| Concern | Tool | Where |
+| --- | --- | --- |
+| Routing, service location, navigation, snackbars | **GetX** (`package:get`) | `app/config/app_routes.dart`, every `di/*_injector.dart` |
+| Feature state (MVVM) | **`ChangeNotifier`** via `ViewModelBase` | `features/*/presentation/viewmodels/` |
+| Scoped, auto-disposing UI filter state | **Riverpod** | `features/available_slots_listing/presentation/state/` |
+
+The Riverpod slice is deliberately narrow: `StateNotifierProvider.autoDispose
+.family` keyed by a scope id, so each listing screen instance gets its own
+filter state that disposes with it. That is awkward to express with a shared
+`ChangeNotifier` in the GetX locator, which is why it is the one place Riverpod
+is used. Don't spread it further, and don't replace it with a locator-held
+view-model.
 
 ## Architecture — MVVM over feature-driven clean architecture
 
 - Each feature: `lib/features/<feature>/` split into `data / domain / presentation`,
-  with its own `di` module wired through `get_it`.
+  with its own `di` module wired through the GetX locator (`Get.put`/`find`).
   Features: `auth`, `home`, `bookings`, `profile`, `fitness_directory`,
   `available_slots_listing`, `class_booking`.
 - **Presentation = ViewModels** (`ChangeNotifier`-based, see
