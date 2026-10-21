@@ -15,9 +15,12 @@ class MainApp extends StatelessWidget {
       // Spanish is the product language: the gyms and members this serves are
       // Spanish-speaking. English stays available as a fallback rather than as
       // the default.
-      locale: kEnableDevicePreview
-          ? DevicePreview.locale(context)
-          : const Locale('es'),
+      //
+      // Deliberately not deferring to DevicePreview.locale here. That flag
+      // defaults to kDebugMode, so routing the locale through it meant every
+      // debug build - including the demo recording - silently ran in English.
+      // The product language should not depend on a dev-tooling toggle.
+      locale: const Locale('es'),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
@@ -52,6 +53,7 @@ class _LoginFormState extends State<LoginForm>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxWidth = constraints.maxWidth * 0.9;
@@ -73,7 +75,7 @@ class _LoginFormState extends State<LoginForm>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SectionTitle(text: 'Access your account'),
+                        SectionTitle(text: l10n.authAccessAccount),
                         if (isVerifyEmail) ...[
                           const SizedBox(height: 8),
                           Text(
@@ -85,19 +87,19 @@ class _LoginFormState extends State<LoginForm>
                           isLoading
                               ? const Center(child: CircularProgressIndicator())
                               : AppButton(
-                                  text: 'I have verified',
+                                  text: l10n.authIHaveVerified,
                                   onPressed: viewModel.confirmEmailVerified,
                                 ),
                           if (!isLoading) ...[
                             TextButton(
                               onPressed: viewModel.resendVerificationEmail,
                               style: AppTheme.brandTextButtonStyle(),
-                              child: const Text('Resend verification email'),
+                              child: Text(l10n.authResendVerification),
                             ),
                             TextButton(
                               onPressed: viewModel.cancelEmailVerification,
                               style: AppTheme.brandTextButtonStyle(),
-                              child: const Text('Back'),
+                              child: Text(l10n.commonBack),
                             ),
                           ],
                           const SizedBox(height: 8),
@@ -109,22 +111,25 @@ class _LoginFormState extends State<LoginForm>
                             ),
                         ] else ...[
                           CustomTextField(
-                            labelText: 'Email',
+                            labelText: l10n.authEmail,
                             controller: mailController,
-                            validatorText: 'Enter your email',
+                            validatorText: l10n.authEmailHint,
                             enabled: !isLoading,
                           ),
                           CustomTextField(
-                            labelText: 'Password',
+                            labelText: l10n.authPassword,
                             controller: passwordController,
-                            validatorText: 'Enter your password',
+                            validatorText: l10n.authPasswordHint,
                             isPassword: true,
                             enabled: !isLoading,
                           ),
                           const SizedBox(height: 10),
                           isLoading
                               ? const Center(child: CircularProgressIndicator())
-                              : AppButton(text: 'Sign in', onPressed: _submit),
+                              : AppButton(
+                                  text: l10n.authSignIn,
+                                  onPressed: _submit,
+                                ),
                           const SizedBox(height: 16),
                           if (viewModel.error.isNotEmpty)
                             Text(

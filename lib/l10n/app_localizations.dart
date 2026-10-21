@@ -349,6 +349,138 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudieron cargar tus reservas'**
   String get bookingsLoadFailed;
+
+  /// No description provided for @navHome.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get navHome;
+
+  /// No description provided for @navBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas'**
+  String get navBookings;
+
+  /// No description provided for @navDirectory.
+  ///
+  /// In es, this message translates to:
+  /// **'Directorio'**
+  String get navDirectory;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get navProfile;
+
+  /// No description provided for @navSlots.
+  ///
+  /// In es, this message translates to:
+  /// **'Horarios'**
+  String get navSlots;
+
+  /// No description provided for @brandSlogan.
+  ///
+  /// In es, this message translates to:
+  /// **'ahora aún más cerca de ti'**
+  String get brandSlogan;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Hola, {name}!'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingNoName.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Hola!'**
+  String get homeGreetingNoName;
+
+  /// No description provided for @homeExploreDisciplines.
+  ///
+  /// In es, this message translates to:
+  /// **'Explorar\ndisciplinas'**
+  String get homeExploreDisciplines;
+
+  /// No description provided for @homeUpcomingBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximas reservas'**
+  String get homeUpcomingBookings;
+
+  /// No description provided for @homeHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'Historial'**
+  String get homeHistory;
+
+  /// No description provided for @homeViewHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver historial'**
+  String get homeViewHistory;
+
+  /// No description provided for @homeViewBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver reservas'**
+  String get homeViewBookings;
+
+  /// No description provided for @homeNoUpcoming.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes reservas próximas en FitnessCenter.'**
+  String get homeNoUpcoming;
+
+  /// No description provided for @homeUpcomingLoadFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tus próximas reservas.'**
+  String get homeUpcomingLoadFailed;
+
+  /// No description provided for @commonClass.
+  ///
+  /// In es, this message translates to:
+  /// **'Clase'**
+  String get commonClass;
+
+  /// No description provided for @paginationPrevious.
+  ///
+  /// In es, this message translates to:
+  /// **'Página anterior'**
+  String get paginationPrevious;
+
+  /// No description provided for @paginationNext.
+  ///
+  /// In es, this message translates to:
+  /// **'Página siguiente'**
+  String get paginationNext;
+
+  /// No description provided for @paginationZeroResults.
+  ///
+  /// In es, this message translates to:
+  /// **'0 resultados'**
+  String get paginationZeroResults;
+
+  /// No description provided for @paginationPage.
+  ///
+  /// In es, this message translates to:
+  /// **'Página {page}'**
+  String paginationPage(int page);
+
+  /// No description provided for @paginationPageOf.
+  ///
+  /// In es, this message translates to:
+  /// **'Página {page} de {total}'**
+  String paginationPageOf(int page, int total);
+
+  /// No description provided for @paginationShowing.
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrando {start}-{end} de {total}'**
+  String paginationShowing(int start, int end, int total);
 }
 
 class _AppLocalizationsDelegate

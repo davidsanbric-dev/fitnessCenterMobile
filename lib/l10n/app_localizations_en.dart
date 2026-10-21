@@ -137,4 +137,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsLoadFailed => 'Could not load your bookings';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navBookings => 'Bookings';
+
+  @override
+  String get navDirectory => 'Directory';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get navSlots => 'Slots';
+
+  @override
+  String get brandSlogan => 'now even closer to you';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hi, $name!';
+  }
+
+  @override
+  String get homeGreetingNoName => 'Hi!';
+
+  @override
+  String get homeExploreDisciplines => 'Explore\nDisciplines';
+
+  @override
+  String get homeUpcomingBookings => 'Upcoming Bookings';
+
+  @override
+  String get homeHistory => 'History';
+
+  @override
+  String get homeViewHistory => 'View history';
+
+  @override
+  String get homeViewBookings => 'View bookings';
+
+  @override
+  String get homeNoUpcoming =>
+      'You have no upcoming bookings at FitnessCenter.';
+
+  @override
+  String get homeUpcomingLoadFailed =>
+      'We could not load your upcoming bookings.';
+
+  @override
+  String get commonClass => 'Class';
+
+  @override
+  String get paginationPrevious => 'Previous page';
+
+  @override
+  String get paginationNext => 'Next page';
+
+  @override
+  String get paginationZeroResults => '0 results';
+
+  @override
+  String paginationPage(int page) {
+    return 'Page $page';
+  }
+
+  @override
+  String paginationPageOf(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String paginationShowing(int start, int end, int total) {
+    return 'Showing $start-$end of $total';
+  }
 }

@@ -20,6 +20,7 @@ import 'package:fitnesscenter_mobile/features/home/presentation/widgets/info_sli
 import 'package:fitnesscenter_mobile/features/home/presentation/widgets/info_summary.dart';
 import 'package:fitnesscenter_mobile/features/home/presentation/widgets/shortcuts_display.dart';
 import 'package:fitnesscenter_mobile/app/core/services/local_notification_service.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
@@ -146,10 +147,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String _greetingFor(AuthService authService) {
     final name = authService.userName?.trim();
     if (name == null || name.isEmpty) {
-      return 'Hi!';
+      return AppLocalizations.of(context).homeGreetingNoName;
     }
     final firstName = name.split(' ').first;
-    return 'Hi, $firstName!';
+    return AppLocalizations.of(context).homeGreeting(firstName);
   }
 
   void _openBookSessionFlow() {
@@ -219,7 +220,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     final shortcuts = [
       ShortcutCardData(
-        title: 'Explore\nDisciplines',
+        title: AppLocalizations.of(context).homeExploreDisciplines,
         iconData: LucideIcons.dumbbell,
         onTap: _handleDisciplinesNavigation,
       ),
@@ -270,7 +271,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 10),
                     AppButton(
-                      text: 'Book a Session',
+                      text: AppLocalizations.of(context).bookingsBookSession,
                       height: 58,
                       fontSize: 18,
                       onPressed: _openBookSessionFlow,
@@ -307,15 +308,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             );
                             final tabs = [
                               InfoSummaryTab(
-                                label: 'Upcoming Bookings',
+                                label: AppLocalizations.of(
+                                  context,
+                                ).homeUpcomingBookings,
                                 description: upcomingDescription,
                                 iconData: LucideIcons.calendarClock,
                               ),
                               InfoSummaryTab(
-                                label: 'History',
+                                label: AppLocalizations.of(context).homeHistory,
                                 description: historyDescription,
                                 iconData: LucideIcons.history,
-                                actionLabel: 'View history',
+                                actionLabel: AppLocalizations.of(
+                                  context,
+                                ).homeViewHistory,
                                 onActionPressed:
                                     _handleProfileHistoryNavigation,
                               ),
@@ -324,7 +329,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               tabs: tabs,
                               iconData: LucideIcons.activity,
                               onActionPressed: _handleBookingsNavigation,
-                              actionLabel: 'View bookings',
+                              actionLabel: AppLocalizations.of(
+                                context,
+                              ).homeViewBookings,
                             );
                           },
                         );
@@ -384,13 +391,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return 'Loading your next booking...';
     }
     if (error != null) {
-      return 'We could not load your upcoming bookings.';
+      return AppLocalizations.of(context).homeUpcomingLoadFailed;
     }
     if (slot == null) {
-      return 'You have no upcoming bookings at FitnessCenter.';
+      return AppLocalizations.of(context).homeNoUpcoming;
     }
     final timeText = DateTimeCell.formatTime(slot.schedulingDate);
-    final service = slot.serviceName.isEmpty ? 'Class' : slot.serviceName;
+    final service = slot.serviceName.isEmpty
+        ? AppLocalizations.of(context).commonClass
+        : slot.serviceName;
     final trainer = slot.trainerName.isEmpty ? '' : ' with ${slot.trainerName}';
     if (_isToday(slot.schedulingDate)) {
       return 'Today: $service$trainer, $timeText.';

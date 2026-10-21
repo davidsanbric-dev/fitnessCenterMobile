@@ -1,19 +1,23 @@
 {
   "@@locale": "es",
-
   "commonBack": "Atrás",
-  "@commonBack": { "description": "Tooltip del botón para volver al paso anterior" },
+  "@commonBack": {
+    "description": "Tooltip del botón para volver al paso anterior"
+  },
   "commonClose": "Cerrar",
   "commonClear": "Limpiar",
   "commonMenu": "Menú",
   "commonRetry": "Reintentar",
-  "@commonRetry": { "description": "Botón que reintenta una carga fallida" },
+  "@commonRetry": {
+    "description": "Botón que reintenta una carga fallida"
+  },
   "commonRowActions": "Acciones de la fila",
-  "@commonRowActions": { "description": "Tooltip del menú de acciones de cada fila" },
+  "@commonRowActions": {
+    "description": "Tooltip del menú de acciones de cada fila"
+  },
   "commonNoRecords": "No hay registros disponibles.",
   "commonNotSpecified": "Sin especificar",
   "commonViewProfile": "Ver perfil",
-
   "authAccessAccount": "Accede a tu cuenta",
   "authEmail": "Correo electrónico",
   "authEmailHint": "Ingresa tu correo",
@@ -24,11 +28,12 @@
   "authIHaveVerified": "Ya verifiqué",
   "authWelcomeTitle": "¡Bienvenido!",
   "authWelcomeSubtitle": "Ingresa tu correo para continuar",
-
   "bookingsTitle": "Mis reservas",
   "bookingsBookSession": "Reservar una clase",
   "bookingsEmpty": "Aún no tienes reservas.",
-  "@bookingsEmpty": { "description": "Estado vacío de la lista de reservas del socio" },
+  "@bookingsEmpty": {
+    "description": "Estado vacío de la lista de reservas del socio"
+  },
   "bookingsColumnTime": "Horario",
   "bookingsColumnClassTrainer": "Clase / Entrenador",
   "bookingsColumnActions": "Acciones",
@@ -37,7 +42,6 @@
   "bookingsConfirmBooking": "CONFIRMAR RESERVA",
   "bookingsCancelBooking": "ANULAR RESERVA",
   "bookingsUpdateStatus": "Actualizar estado",
-
   "bookingActionUnavailableTitle": "Acción no disponible",
   "bookingCancelUnavailable": "Solo se pueden anular reservas en estado reservada o confirmada.",
   "bookingConfirmUnavailable": "Solo se pueden confirmar reservas en estado reservada o anulada.",
@@ -48,10 +52,72 @@
   "bookingUnexpectedErrorTitle": "Error inesperado",
   "bookingUnexpectedErrorDetail": "No se pudo actualizar el estado de la reserva: {error}",
   "@bookingUnexpectedErrorDetail": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
-
   "bookingCouldNotBookSession": "No se pudo reservar la sesión",
   "bookingCouldNotBookClassSlot": "No se pudo reservar este horario",
-  "bookingsLoadFailed": "No se pudieron cargar tus reservas"
+  "bookingsLoadFailed": "No se pudieron cargar tus reservas",
+  "navHome": "Inicio",
+  "navBookings": "Reservas",
+  "navDirectory": "Directorio",
+  "navProfile": "Perfil",
+  "navSlots": "Horarios",
+  "brandSlogan": "ahora aún más cerca de ti",
+  "homeGreeting": "¡Hola, {name}!",
+  "homeGreetingNoName": "¡Hola!",
+  "homeExploreDisciplines": "Explorar\ndisciplinas",
+  "homeUpcomingBookings": "Próximas reservas",
+  "homeHistory": "Historial",
+  "homeViewHistory": "Ver historial",
+  "homeViewBookings": "Ver reservas",
+  "homeNoUpcoming": "No tienes reservas próximas en FitnessCenter.",
+  "homeUpcomingLoadFailed": "No pudimos cargar tus próximas reservas.",
+  "commonClass": "Clase",
+  "paginationPrevious": "Página anterior",
+  "paginationNext": "Página siguiente",
+  "paginationZeroResults": "0 resultados",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paginationPage": "Página {page}",
+  "paginationPageOf": "Página {page} de {total}",
+  "paginationShowing": "Mostrando {start}-{end} de {total}",
+  "@paginationPage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "@paginationPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@paginationShowing": {
+    "placeholders": {
+      "start": {
+        "type": "int"
+      },
+      "end": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -137,4 +137,79 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bookingsLoadFailed => 'No se pudieron cargar tus reservas';
+
+  @override
+  String get navHome => 'Inicio';
+
+  @override
+  String get navBookings => 'Reservas';
+
+  @override
+  String get navDirectory => 'Directorio';
+
+  @override
+  String get navProfile => 'Perfil';
+
+  @override
+  String get navSlots => 'Horarios';
+
+  @override
+  String get brandSlogan => 'ahora aún más cerca de ti';
+
+  @override
+  String homeGreeting(String name) {
+    return '¡Hola, $name!';
+  }
+
+  @override
+  String get homeGreetingNoName => '¡Hola!';
+
+  @override
+  String get homeExploreDisciplines => 'Explorar\ndisciplinas';
+
+  @override
+  String get homeUpcomingBookings => 'Próximas reservas';
+
+  @override
+  String get homeHistory => 'Historial';
+
+  @override
+  String get homeViewHistory => 'Ver historial';
+
+  @override
+  String get homeViewBookings => 'Ver reservas';
+
+  @override
+  String get homeNoUpcoming => 'No tienes reservas próximas en FitnessCenter.';
+
+  @override
+  String get homeUpcomingLoadFailed =>
+      'No pudimos cargar tus próximas reservas.';
+
+  @override
+  String get commonClass => 'Clase';
+
+  @override
+  String get paginationPrevious => 'Página anterior';
+
+  @override
+  String get paginationNext => 'Página siguiente';
+
+  @override
+  String get paginationZeroResults => '0 resultados';
+
+  @override
+  String paginationPage(int page) {
+    return 'Página $page';
+  }
+
+  @override
+  String paginationPageOf(int page, int total) {
+    return 'Página $page de $total';
+  }
+
+  @override
+  String paginationShowing(int start, int end, int total) {
+    return 'Mostrando $start-$end de $total';
+  }
 }

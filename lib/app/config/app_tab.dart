@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
@@ -36,6 +37,25 @@ enum AppTab {
   final int id;
   final IconData icon;
   final String label;
+
+  /// Display label for the bottom nav, resolved against the active locale.
+  /// [label] is kept as a stable, locale-independent identifier for logs and
+  /// debugging; it is not what the user sees.
+  String labelFor(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (this) {
+      case AppTab.home:
+        return l10n.navHome;
+      case AppTab.bookings:
+        return l10n.navBookings;
+      case AppTab.fitnessDirectory:
+        return l10n.navDirectory;
+      case AppTab.profile:
+        return l10n.navProfile;
+      case AppTab.availableSlots:
+        return l10n.navSlots;
+    }
+  }
 
   /// Resolves the [AppTab] for a logical [id], falling back to [home] for any
   /// unknown/stale value (e.g. a tab that disappeared after a role change).
