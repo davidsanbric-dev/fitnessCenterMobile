@@ -5,16 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/fakes.dart';
+import '../support/test_app.dart';
 
 /// Accessibility guardrails for the screens in the member demo flow.
 ///
 /// These use Flutter's own guideline matchers, so they fail the build when a
 /// tap target shrinks below the platform minimum or an interactive control
 /// loses its label, rather than relying on anyone remembering to check.
-
-Widget _app(Widget child) => MaterialApp(
-  home: Scaffold(body: Column(children: [child])),
-);
 
 void main() {
   testWidgets('bookings list meets tap target and label guidelines', (
@@ -23,7 +20,7 @@ void main() {
     final handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
-      _app(
+      testApp(
         Expanded(
           child: BookingsTable(
             bookings: [
@@ -54,7 +51,7 @@ void main() {
     final handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
-      _app(
+      testApp(
         Expanded(
           child: BookingsTable(
             bookings: const [],
@@ -79,7 +76,7 @@ void main() {
     final handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
-      _app(
+      testApp(
         Expanded(
           child: StatePlaceholder.error(
             message: 'Sin conexion',
@@ -103,11 +100,7 @@ void main() {
 
     for (final brightness in Brightness.values) {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(brightness: brightness),
-          themeAnimationDuration: Duration.zero,
-          home: Scaffold(body: ErrorBanner(message: 'No hay cupos')),
-        ),
+        testApp(ErrorBanner(message: 'No hay cupos'), brightness: brightness),
       );
       await tester.pumpAndSettle();
 

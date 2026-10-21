@@ -5,6 +5,7 @@ import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/tri
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/single_text_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_dropdown.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/state_placeholder.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 
 typedef TableCellBuilder = Widget Function(Map<String, dynamic> row);
 
@@ -222,7 +223,7 @@ class TableBodySection extends StatelessWidget {
     this.errorMessage,
     this.loadingBuilder,
     this.errorBuilder,
-    this.emptyLabel = 'No records available.',
+    this.emptyLabel,
     this.emptyAction,
     this.onRetry,
     this.tableWrapperBuilder,
@@ -242,7 +243,9 @@ class TableBodySection extends StatelessWidget {
 
   final WidgetBuilder? loadingBuilder;
   final Widget Function(BuildContext context, String message)? errorBuilder;
-  final String emptyLabel;
+
+  /// Defaults to a generic 'no records' message when omitted.
+  final String? emptyLabel;
 
   /// Optional next step offered on the empty state, e.g. a "book a session"
   /// button when a member has no bookings yet.
@@ -282,7 +285,10 @@ class TableBodySection extends StatelessWidget {
 
     if (data.isEmpty) {
       return Expanded(
-        child: StatePlaceholder.empty(message: emptyLabel, action: emptyAction),
+        child: StatePlaceholder.empty(
+          message: emptyLabel ?? AppLocalizations.of(context).commonNoRecords,
+          action: emptyAction,
+        ),
       );
     }
 

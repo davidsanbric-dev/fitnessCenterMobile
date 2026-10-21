@@ -1,4 +1,5 @@
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -40,7 +41,7 @@ class StatePlaceholder extends StatelessWidget {
     Key? key,
     required String message,
     VoidCallback? onRetry,
-    String retryLabel = 'Retry',
+    String? retryLabel,
   }) : this._(
          key: key,
          icon: LucideIcons.alertCircle,
@@ -87,7 +88,9 @@ class StatePlaceholder extends StatelessWidget {
                 TextButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(LucideIcons.refreshCw, size: 16),
-                  label: Text(retryLabel ?? 'Retry'),
+                  label: Text(
+                    retryLabel ?? AppLocalizations.of(context).commonRetry,
+                  ),
                 ),
               ],
               if (action != null) ...[const SizedBox(height: 16), action!],

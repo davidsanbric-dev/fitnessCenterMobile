@@ -2,15 +2,15 @@ import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/state_placeholde
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget _host(Widget child) => MaterialApp(
-  home: Scaffold(body: Column(children: [child])),
-);
+import '../../support/test_app.dart';
 
 void main() {
   group('empty', () {
     testWidgets('shows the message and no retry', (tester) async {
       await tester.pumpWidget(
-        _host(const StatePlaceholder.empty(message: 'Aun no tienes reservas')),
+        testApp(
+          const StatePlaceholder.empty(message: 'Aun no tienes reservas'),
+        ),
       );
 
       expect(find.text('Aun no tienes reservas'), findsOneWidget);
@@ -19,7 +19,7 @@ void main() {
 
     testWidgets('renders the offered next step', (tester) async {
       await tester.pumpWidget(
-        _host(
+        testApp(
           StatePlaceholder.empty(
             message: 'Aun no tienes reservas',
             action: FilledButton(
@@ -40,7 +40,7 @@ void main() {
     ) async {
       var retries = 0;
       await tester.pumpWidget(
-        _host(
+        testApp(
           StatePlaceholder.error(
             message: 'Sin conexion',
             onRetry: () => retries++,
@@ -48,7 +48,8 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Retry'));
+      // The host renders in es, the app's default locale.
+      await tester.tap(find.text('Reintentar'));
       await tester.pump();
 
       expect(retries, 1);
@@ -58,11 +59,11 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        _host(const StatePlaceholder.error(message: 'Sin conexion')),
+        testApp(const StatePlaceholder.error(message: 'Sin conexion')),
       );
 
       expect(find.text('Sin conexion'), findsOneWidget);
-      expect(find.text('Retry'), findsNothing);
+      expect(find.text('Reintentar'), findsNothing);
     });
 
     testWidgets('is announced as a live region, unlike the empty state', (
@@ -71,7 +72,7 @@ void main() {
       final handle = tester.ensureSemantics();
 
       await tester.pumpWidget(
-        _host(const StatePlaceholder.error(message: 'Sin conexion')),
+        testApp(const StatePlaceholder.error(message: 'Sin conexion')),
       );
       final error = tester.widget<Semantics>(
         find
@@ -84,7 +85,7 @@ void main() {
       expect(error.properties.liveRegion, isTrue);
 
       await tester.pumpWidget(
-        _host(const StatePlaceholder.empty(message: 'Nada por aqui')),
+        testApp(const StatePlaceholder.empty(message: 'Nada por aqui')),
       );
       final empty = tester.widget<Semantics>(
         find

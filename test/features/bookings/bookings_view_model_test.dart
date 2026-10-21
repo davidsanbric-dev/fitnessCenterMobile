@@ -60,8 +60,8 @@ void main() {
       );
 
       expect(repository.statusUpdates, [(bookingId: 'bk-1', state: '2')]);
-      expect(result.title, 'Status updated');
-      expect(result.message, contains('canceled'));
+      expect(result.outcome, BookingActionOutcome.updated);
+      expect(result.action, BookingAction.cancel);
     });
 
     test('cancels a confirmed booking too', () async {
@@ -77,8 +77,8 @@ void main() {
 
       // The guard has to hold before any network call is made.
       expect(repository.statusUpdates, isEmpty);
-      expect(result.title, 'Action unavailable');
-      expect(result.message, contains('reserved or confirmed'));
+      expect(result.outcome, BookingActionOutcome.unavailable);
+      expect(result.action, BookingAction.cancel);
     });
 
     test('refuses to act on a row with no status', () async {
@@ -87,7 +87,7 @@ void main() {
       });
 
       expect(repository.statusUpdates, isEmpty);
-      expect(result.title, 'Action unavailable');
+      expect(result.outcome, BookingActionOutcome.unavailable);
     });
 
     test('accepts a lowercase status from the table row', () async {
@@ -97,7 +97,7 @@ void main() {
       );
 
       expect(repository.statusUpdates, hasLength(1));
-      expect(result.title, 'Status updated');
+      expect(result.outcome, BookingActionOutcome.updated);
     });
 
     test('reports the API message when the update is rejected', () async {
@@ -109,8 +109,9 @@ void main() {
         buildRow(bookingStatus: 'RESERVADA'),
       );
 
-      expect(result.title, 'Could not update booking');
-      expect(result.message, 'Fuera del plazo de anulacion');
+      expect(result.outcome, BookingActionOutcome.apiFailure);
+      // The server-authored message is passed through untranslated.
+      expect(result.detail, 'Fuera del plazo de anulacion');
     });
 
     test(
@@ -130,7 +131,7 @@ void main() {
         // The member still sees the booking as canceled rather than a stale
         // "reserved" row, and the action is still reported as successful.
         expect(viewModel.bookings.single.state, 'ANULADA');
-        expect(result.title, 'Status updated');
+        expect(result.outcome, BookingActionOutcome.updated);
       },
     );
   });
@@ -142,7 +143,8 @@ void main() {
       );
 
       expect(repository.statusUpdates, [(bookingId: 'bk-1', state: '1')]);
-      expect(result.message, contains('confirmed'));
+      expect(result.outcome, BookingActionOutcome.updated);
+      expect(result.action, BookingAction.confirm);
     });
 
     test('re-confirms a canceled booking', () async {
@@ -157,7 +159,7 @@ void main() {
       );
 
       expect(repository.statusUpdates, isEmpty);
-      expect(result.title, 'Action unavailable');
+      expect(result.outcome, BookingActionOutcome.unavailable);
     });
   });
 

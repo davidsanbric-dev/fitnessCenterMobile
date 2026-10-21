@@ -1,4 +1,5 @@
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -33,6 +34,7 @@ class ActionsDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final items = <PopupMenuEntry<String>>[];
     final brand = AppTheme.brandAccentColor(context);
 
@@ -74,7 +76,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.eye, color: brand, size: 18),
               const SizedBox(width: 8),
-              const Text('View details'),
+              Text(l10n.bookingsViewDetails),
             ],
           ),
         ),
@@ -89,7 +91,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.checkCircle, color: brand, size: 18),
               const SizedBox(width: 8),
-              const Text('CONFIRM BOOKING'),
+              Text(l10n.bookingsConfirmBooking),
             ],
           ),
         ),
@@ -104,7 +106,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.xCircle, color: brand, size: 18),
               const SizedBox(width: 8),
-              const Text('CANCEL BOOKING'),
+              Text(l10n.bookingsCancelBooking),
             ],
           ),
         ),
@@ -119,7 +121,7 @@ class ActionsDropdown extends StatelessWidget {
             children: [
               Icon(LucideIcons.refreshCw, color: brand, size: 18),
               const SizedBox(width: 8),
-              const Text('Update Status'),
+              Text(l10n.bookingsUpdateStatus),
             ],
           ),
         ),

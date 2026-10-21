@@ -7,13 +7,41 @@ import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 import 'package:fitnesscenter_mobile/app/core/viewmodel/view_model_base.dart';
 import 'package:fitnesscenter_mobile/features/bookings/domain/domain.dart';
 
-/// Outcome of a booking-status intent, carrying the snackbar title/message the
-/// widget-facing layer surfaces. Keeps the view-model free of UI dependencies.
-class BookingActionResult {
-  const BookingActionResult({required this.title, required this.message});
+/// Which member-driven transition was attempted.
+enum BookingAction { confirm, cancel }
 
-  final String title;
-  final String message;
+/// How a booking-status intent ended.
+enum BookingActionOutcome {
+  /// The booking's current state does not allow this transition.
+  unavailable,
+
+  /// The backend accepted the change.
+  updated,
+
+  /// The backend rejected it and supplied a message.
+  apiFailure,
+
+  /// Anything else went wrong.
+  unexpectedFailure,
+}
+
+/// Outcome of a booking-status intent.
+///
+/// Deliberately carries no display text: the view-model has no locale, so it
+/// reports *what happened* and the widget-facing layer turns that into
+/// localized copy. [detail] passes through a server-authored message (already
+/// in the user's language) or an error string, and is only set for the two
+/// failure outcomes.
+class BookingActionResult {
+  const BookingActionResult({
+    required this.action,
+    required this.outcome,
+    this.detail,
+  });
+
+  final BookingAction action;
+  final BookingActionOutcome outcome;
+  final String? detail;
 }
 
 class BookingsViewModel extends ViewModelBase {
@@ -102,24 +130,20 @@ class BookingsViewModel extends ViewModelBase {
   Future<BookingActionResult> confirmReservation(Map<String, dynamic> row) {
     return _updateBookingStatusAction(
       row: row,
+      action: BookingAction.confirm,
       actionCode: _confirmReservationAction,
       expectedStates: const <String>{_reservedState, _canceledState},
       fallbackState: _confirmedState,
-      successStateLabel: 'confirmed',
-      unavailableMessage:
-          'Only reserved or canceled bookings can be confirmed.',
     );
   }
 
   Future<BookingActionResult> cancelReservation(Map<String, dynamic> row) {
     return _updateBookingStatusAction(
       row: row,
+      action: BookingAction.cancel,
       actionCode: _cancelReservationAction,
       expectedStates: const <String>{_reservedState, _confirmedState},
       fallbackState: _canceledState,
-      successStateLabel: 'canceled',
-      unavailableMessage:
-          'Only reserved or confirmed bookings can be canceled.',
     );
   }
 
@@ -219,17 +243,16 @@ class BookingsViewModel extends ViewModelBase {
 
   Future<BookingActionResult> _updateBookingStatusAction({
     required Map<String, dynamic> row,
+    required BookingAction action,
     required String actionCode,
     required Set<String> expectedStates,
     required String fallbackState,
-    required String successStateLabel,
-    required String unavailableMessage,
   }) async {
     final currentState = _normalizeState(row['bookingStatus'] ?? row['state']);
     if (currentState.isEmpty || !expectedStates.contains(currentState)) {
       return BookingActionResult(
-        title: 'Action unavailable',
-        message: unavailableMessage,
+        action: action,
+        outcome: BookingActionOutcome.unavailable,
       );
     }
 
@@ -246,18 +269,20 @@ class BookingsViewModel extends ViewModelBase {
         fallbackState: fallbackState,
       );
       return BookingActionResult(
-        title: 'Status updated',
-        message: 'Booking changed to $successStateLabel.',
+        action: action,
+        outcome: BookingActionOutcome.updated,
       );
     } on ApiException catch (error) {
       return BookingActionResult(
-        title: 'Could not update booking',
-        message: error.message,
+        action: action,
+        outcome: BookingActionOutcome.apiFailure,
+        detail: error.message,
       );
     } catch (error) {
       return BookingActionResult(
-        title: 'Unexpected error',
-        message: 'Could not update booking status: $error',
+        action: action,
+        outcome: BookingActionOutcome.unexpectedFailure,
+        detail: '$error',
       );
     }
   }
