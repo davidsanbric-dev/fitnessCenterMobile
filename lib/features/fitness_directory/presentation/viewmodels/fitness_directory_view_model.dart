@@ -5,8 +5,9 @@ import 'package:fitnesscenter_mobile/features/fitness_directory/domain/domain.da
 import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
 
 class FitnessDirectoryViewModel extends ViewModelBase {
-  FitnessDirectoryViewModel({MembershipsDirectoryRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  FitnessDirectoryViewModel({
+    required MembershipsDirectoryRepository repository,
+  }) : _repository = repository;
 
   final MembershipsDirectoryRepository _repository;
   static const int _defaultMembershipsPageSize = 6;

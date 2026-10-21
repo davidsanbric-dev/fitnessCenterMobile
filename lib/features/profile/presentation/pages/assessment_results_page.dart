@@ -24,7 +24,8 @@ class AssessmentResultsView extends StatefulWidget {
 }
 
 class _AssessmentResultsViewState extends State<AssessmentResultsView>
-    with SharedViewModelHost<AssessmentResultsView, AssessmentResultsViewModel> {
+    with
+        SharedViewModelHost<AssessmentResultsView, AssessmentResultsViewModel> {
   @override
   AssessmentResultsViewModel createViewModel() =>
       ProfileInjector.getAssessmentResultsViewModel();
@@ -129,39 +130,40 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView>
             child: ListenableBuilder(
               listenable: viewModel,
               builder: (context, _) {
-              if (viewModel.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                if (viewModel.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              final errorMsg = viewModel.error;
-              if (errorMsg != null) {
-                return _buildError(context, errorMsg);
-              }
+                final errorMsg = viewModel.error;
+                if (errorMsg != null) {
+                  return _buildError(context, errorMsg);
+                }
 
-              final items = viewModel.assessments;
+                final items = viewModel.assessments;
 
-              return RefreshIndicator(
-                onRefresh: viewModel.reload,
-                child: items.isEmpty
-                    ? ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            child: _buildEmpty(context),
-                          ),
-                        ],
-                      )
-                    : ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) => AssessmentFeedbackCard(
-                          booking: items[index],
-                          initiallyExpanded: index == 0,
+                return RefreshIndicator(
+                  onRefresh: viewModel.reload,
+                  child: items.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.45,
+                              child: _buildEmpty(context),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                          itemCount: items.length,
+                          itemBuilder: (context, index) =>
+                              AssessmentFeedbackCard(
+                                booking: items[index],
+                                initiallyExpanded: index == 0,
+                              ),
                         ),
-                      ),
-              );
+                );
               },
             ),
           ),

@@ -3,7 +3,5 @@ class BookingRequest {
 
   final String bookingId;
 
-  Map<String, String> toQueryParameters() => {
-    'bookingId': bookingId.trim(),
-  };
+  Map<String, String> toQueryParameters() => {'bookingId': bookingId.trim()};
 }

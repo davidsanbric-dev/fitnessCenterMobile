@@ -10,14 +10,9 @@ import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart
 
 class AvailableSlotsFiltersViewModel extends ViewModelBase {
   AvailableSlotsFiltersViewModel({
-    CapabilitiesViewModel? capabilitiesViewModel,
-    MemberFiltersRepository? memberFiltersRepository,
-  }) : capabilitiesViewModel =
-           capabilitiesViewModel ??
-           (throw ArgumentError.notNull('capabilitiesViewModel')),
-       _memberFiltersRepository =
-           memberFiltersRepository ??
-           (throw ArgumentError.notNull('memberFiltersRepository'));
+    required this.capabilitiesViewModel,
+    required MemberFiltersRepository memberFiltersRepository,
+  }) : _memberFiltersRepository = memberFiltersRepository;
 
   final CapabilitiesViewModel capabilitiesViewModel;
   final MemberFiltersRepository _memberFiltersRepository;

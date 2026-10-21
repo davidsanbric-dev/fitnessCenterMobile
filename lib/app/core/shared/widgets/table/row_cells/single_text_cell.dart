@@ -18,7 +18,9 @@ class CustomDataCell extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.85),
           fontSize: 13,
         ),
         maxLines: allowWrap ? null : 1,

@@ -17,8 +17,8 @@ class BookingActionResult {
 }
 
 class BookingsViewModel extends ViewModelBase {
-  BookingsViewModel({BookingsRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  BookingsViewModel({required BookingsRepository repository})
+    : _repository = repository;
 
   static const String _confirmReservationAction = '1';
   static const String _cancelReservationAction = '2';

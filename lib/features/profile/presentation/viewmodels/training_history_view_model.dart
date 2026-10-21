@@ -8,8 +8,8 @@ import 'package:fitnesscenter_mobile/features/profile/domain/domain.dart';
 /// marked completed (in the web panel) surfaces here. The full list is held in
 /// memory and paginated client-side.
 class TrainingHistoryViewModel extends ViewModelBase {
-  TrainingHistoryViewModel({MemberBookingsRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  TrainingHistoryViewModel({required MemberBookingsRepository repository})
+    : _repository = repository;
 
   static const int _defaultPageSize = 6;
 

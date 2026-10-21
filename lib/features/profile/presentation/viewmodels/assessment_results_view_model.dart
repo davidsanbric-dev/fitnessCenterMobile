@@ -6,8 +6,8 @@ import 'package:fitnesscenter_mobile/features/profile/domain/domain.dart';
 /// trainer feedback note. The full list is held in memory so the view can
 /// filter/display without extra fetches.
 class AssessmentResultsViewModel extends ViewModelBase {
-  AssessmentResultsViewModel({MemberBookingsRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  AssessmentResultsViewModel({required MemberBookingsRepository repository})
+    : _repository = repository;
 
   final MemberBookingsRepository _repository;
 

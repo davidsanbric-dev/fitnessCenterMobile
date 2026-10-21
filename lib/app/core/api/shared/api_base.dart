@@ -487,7 +487,10 @@ abstract class ApiBase {
 
   /// Builds the error message for a non-success [response], preferring the
   /// backend's message and falling back to [requestErrorMessage] + status code.
-  String _statusErrorMessage(http.Response response, String requestErrorMessage) =>
+  String _statusErrorMessage(
+    http.Response response,
+    String requestErrorMessage,
+  ) =>
       ApiShared.extractErrorMessage(response.body) ??
       '$requestErrorMessage (${response.statusCode}).';
 

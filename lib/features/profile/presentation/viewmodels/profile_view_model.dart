@@ -4,8 +4,8 @@ import 'package:fitnesscenter_mobile/features/profile/domain/domain.dart';
 /// Drives the Personal Information sub-page: prefills the read-only member
 /// fields from the cached / refreshed auth-session claims.
 class ProfileViewModel extends ViewModelBase {
-  ProfileViewModel({ProfileRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  ProfileViewModel({required ProfileRepository repository})
+    : _repository = repository;
 
   final ProfileRepository _repository;
 

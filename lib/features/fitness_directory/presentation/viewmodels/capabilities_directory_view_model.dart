@@ -10,8 +10,8 @@ class CapabilitiesViewModel extends ViewModelBase {
   static const int _defaultSubgroupItemsPageSize = 6;
   static const int _defaultCapabilityAvailabilityPageSize = 6;
 
-  CapabilitiesViewModel({CapabilitiesDirectoryRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  CapabilitiesViewModel({required CapabilitiesDirectoryRepository repository})
+    : _repository = repository;
 
   final CapabilitiesDirectoryRepository _repository;
 
