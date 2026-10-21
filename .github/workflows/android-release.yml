@@ -47,7 +47,11 @@ jobs:
       RELEASE_NAME_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_name || '' }}
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
       RELEASE_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.release_name || github.ref_name }}
-      FIREBASE_APP_ID: 1:291079672843:android:1702ad3c9d6c074ed4630e
+      # Must match the Firebase Android app registered for the current
+      # applicationId (com.davieldev.fitnesscenter). The previous value pointed
+      # at the retired com.example.portfolio_mobile_app registration, so after
+      # the rename CI would have distributed builds under the wrong app.
+      FIREBASE_APP_ID: 1:291079672843:android:96b2517bbbd30474d4630e
       FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
       FIREBASE_APP_DISTRIBUTION_GROUPS: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GROUPS }}
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
