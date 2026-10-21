@@ -142,7 +142,10 @@ class BookingsTable extends StatelessWidget {
       icon: const Icon(LucideIcons.calendarPlus, size: 18),
       alignment: Alignment.centerRight,
       spacing: 0,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      // No shrinkWrap here: this is the list's primary action, and dropping the
+      // framework's padding left it a 40px tap target, under the 48px minimum.
+      // `padded` keeps the button looking identical and grows only the
+      // invisible touch area.
     );
   }
 }

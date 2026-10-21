@@ -158,6 +158,7 @@ class _SlideCard extends StatelessWidget {
                 height: imageHeight,
                 child: ClipRRect(
                   child: Image.asset(
+                    excludeFromSemantics: true,
                     slide.imageAsset!,
                     fit: BoxFit.fitWidth,
                     errorBuilder: (context, error, stackTrace) {

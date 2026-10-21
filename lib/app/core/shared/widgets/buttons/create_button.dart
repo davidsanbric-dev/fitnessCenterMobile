@@ -31,6 +31,10 @@ class CreateButton extends StatelessWidget {
   /// `padded` behavior; pass [MaterialTapTargetSize.shrinkWrap] to drop the
   /// extra invisible padding the framework adds to reach a 48px touch target
   /// (useful when a caller wants the button to sit flush against neighbours).
+  ///
+  /// Prefer leaving this null. `shrinkWrap` takes the button below the 48px
+  /// minimum tap target and fails `androidTapTargetGuideline`; only reach for
+  /// it on dense inline controls where that trade-off is deliberate.
   final MaterialTapTargetSize? tapTargetSize;
 
   @override

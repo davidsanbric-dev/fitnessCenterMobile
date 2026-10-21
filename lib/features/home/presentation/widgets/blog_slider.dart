@@ -223,6 +223,7 @@ class _BlogHeroImage extends StatelessWidget {
     }
 
     return Image.network(
+      excludeFromSemantics: true,
       imageUrl,
       fit: BoxFit.cover,
       width: double.infinity,

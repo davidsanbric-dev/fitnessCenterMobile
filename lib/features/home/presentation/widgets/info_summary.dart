@@ -183,6 +183,7 @@ class _InfoSummaryState extends State<InfoSummary> {
                               size: 28,
                             )
                           : Image.asset(
+                              excludeFromSemantics: true,
                               widget.iconAsset!,
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) {

@@ -12,6 +12,7 @@ class LoginImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget image = Image.asset(
+      excludeFromSemantics: true,
       AppAssets.loginImage,
       fit: BoxFit.cover,
       alignment: Alignment.center,

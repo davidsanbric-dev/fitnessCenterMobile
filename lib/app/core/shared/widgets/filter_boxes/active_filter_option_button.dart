@@ -58,6 +58,7 @@ class ActiveFilterOptionButton<T> extends StatelessWidget {
                   child: option.iconData != null
                       ? Icon(option.iconData, size: 28, color: foregroundColor)
                       : Image.asset(
+                          excludeFromSemantics: true,
                           option.iconPath!,
                           height: 28,
                           width: 28,
