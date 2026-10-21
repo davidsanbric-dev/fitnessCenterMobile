@@ -1,6 +1,26 @@
 # fitnesscenter_mobile
 
-Flutter app configured for **Android-only** mobile support.
+Flutter (**Android-only**) member client of the **FitnessCenter Suite**, alongside the FastAPI backend and the Nuxt.js admin web. Members browse the catalog, check live slot availability, book/cancel classes, manage their profile, and receive real-time push.
+
+## Architecture
+
+**MVVM on top of a feature-driven, clean architecture.** Each feature lives in `lib/features/<feature>` and is split into `data / domain / presentation`, with its own `di` (dependency injection) module wired through `get_it`:
+
+- `auth`, `home`, `profile`
+- `fitness_directory` — browsing entry point (disciplines, trainers, class types, memberships); owns directory flow state and delegates availability/booking.
+- `available_slots_listing` — availability consultation (filters + slots by discipline/trainer or class type); owns listing/filter state and local availability sync.
+- `class_booking` — reservation execution for standard and class-type bookings; centralizes booking requests, loading/error state, and post-booking agenda refresh.
+
+The **presentation layer is built on ViewModels** (`ChangeNotifier`-based, see `lib/app/core/viewmodel`) that expose UI state and orchestrate domain use cases, keeping widgets thin and logic testable in isolation. Cross-feature rule: directory/listing screens never shape booking payloads directly — they call `class_booking` helpers and only do local UI updates.
+
+### Backend & push integration
+
+- REST over an authenticated client; the Firebase ID token is attached transparently to all requests.
+- **Firebase Cloud Messaging**: the app registers its device token with the backend on sign-in, then receives push triggered by API events (blog publish, trainer announcements, booking status changes) with foreground/local notification handling.
+
+## Tech stack
+
+**Flutter · Dart · Firebase (Auth + Cloud Messaging)**
 
 ## Run on Android
 
@@ -9,59 +29,17 @@ flutter pub get
 flutter run -d android
 ```
 
-## Cleanup generated files (optional)
-
-To reduce local project size, you can remove generated artifacts:
-
-```bash
-flutter clean
-```
+Optional cleanup of generated artifacts: `flutter clean`.
 
 ## Release workflow
 
-The repository includes a GitHub Actions workflow at [.github/workflows/android-release.yml](.github/workflows/android-release.yml).
-
-It can:
+CI lives at [.github/workflows/android-release.yml](.github/workflows/android-release.yml). It can:
 
 - build the Android release APK once
-- publish the APK to GitHub Releases on tag pushes that match `v*`
-- upload the same APK to Firebase App Distribution when the Firebase secrets are present
+- publish to GitHub Releases on tag pushes matching `v*`
+- upload the same APK to Firebase App Distribution when Firebase secrets are present
 - fall back to debug signing when no release keystore secrets are provided
 
-Required secrets for full release signing and Firebase distribution:
+Required secrets (full signing + distribution): `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, `FIREBASE_SERVICE_ACCOUNT_JSON`, `FIREBASE_APP_DISTRIBUTION_GROUPS`.
 
-- `ANDROID_KEYSTORE_BASE64`
-- `ANDROID_KEYSTORE_PASSWORD`
-- `ANDROID_KEY_ALIAS`
-- `ANDROID_KEY_PASSWORD`
-- `FIREBASE_SERVICE_ACCOUNT_JSON`
-- `FIREBASE_APP_DISTRIBUTION_GROUPS`
-
-For manual runs, choose `firebase` to publish only to App Distribution, or `both` to publish to Firebase and GitHub Releases. When `github` is included, provide `release_tag`.
-
-## Appointment/Class Booking Architecture (Fitness scope)
-
-Current fitness booking-related features are separated by responsibility:
-
-- `lib/features/fitness_directory`
-	- Browsing entry point (disciplines, trainers, class types, memberships).
-	- Handles directory flow state and delegates availability/booking behavior.
-
-- `lib/features/available_slots_listing`
-	- Availability consultation feature (filters + slots by discipline/trainer, class type, online).
-	- Owns listing/filter state and local availability table synchronization.
-
-- `lib/features/class_booking`
-	- Reservation execution feature for both standard and class-type bookings.
-	- Centralizes booking requests, booking error/loading state, and post-booking agenda refresh.
-
-Integration rule used by the app:
-
-- Directory/listing screens do not shape booking API payloads directly.
-- Screens call booking flow helpers from `class_booking` and only perform local UI updates (for example, removing the booked slot from current in-memory results).
-
-Notes about scope:
-
-- This architecture keeps the current fitness center behavior unchanged.
-- No incremental date-window pagination or extra availability expansion logic was added.
-
+For manual runs: choose `firebase` to publish only to App Distribution, or `both` for Firebase + GitHub Releases (provide `release_tag` when `github` is included).

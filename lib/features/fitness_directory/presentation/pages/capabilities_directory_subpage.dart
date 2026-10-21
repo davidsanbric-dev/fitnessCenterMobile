@@ -1,6 +1,6 @@
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
-import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/error_banner.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_filters_summary.dart';
 import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/widgets.dart';
@@ -71,7 +71,7 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage>
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (error != null) _buildErrorBanner(error),
+                  if (error != null) ErrorBanner(message: error),
                   Expanded(
                     // Slide horizontally between the class-types stages (group →
                     // subgroup → class type → availability), using the stage's
@@ -98,27 +98,6 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage>
           ),
         );
       },
-    );
-  }
-
-  Widget _buildErrorBanner(String error) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.red.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.red.shade200),
-        ),
-        child: Row(
-          children: [
-            const Icon(LucideIcons.alertCircle, color: Colors.red),
-            const SizedBox(width: 8),
-            Expanded(child: Text(error, style: AppTheme.errorMessageEmphasis)),
-          ],
-        ),
-      ),
     );
   }
 
