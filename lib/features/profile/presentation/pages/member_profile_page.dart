@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -91,7 +92,9 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!mounted) return;
       setState(() => _member = updated);
       messenger.showSnackBar(
-        const SnackBar(content: Text('Profile photo updated.')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).profilePhotoUpdated),
+        ),
       );
     } catch (error) {
       messenger.showSnackBar(
@@ -318,22 +321,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildMenu(BuildContext context) {
     final options = [
       _ProfileOption(
-        title: 'Personal Information',
+        title: AppLocalizations.of(context).profilePersonalInfo,
         icon: LucideIcons.idCard,
         onTap: _openPersonalData,
       ),
       _ProfileOption(
-        title: 'Training History',
+        title: AppLocalizations.of(context).profileTrainingHistory,
         icon: LucideIcons.history,
         onTap: _openTrainingHistory,
       ),
       _ProfileOption(
-        title: 'Assessment Results',
+        title: AppLocalizations.of(context).profileAssessmentResults,
         icon: LucideIcons.clipboardList,
         onTap: _openAssessmentResults,
       ),
       _ProfileOption(
-        title: 'Sign Out',
+        title: AppLocalizations.of(context).profileSignOut,
         icon: LucideIcons.logOut,
         onTap: () => _handleLogout(context),
         isDestructive: true,
@@ -348,7 +351,9 @@ class _ProfilePageState extends State<ProfilePage> {
           PageHeaderScope(
             showLogout: false,
             child: PageHeaderSlot(
-              config: const PageHeaderConfig(title: 'My Profile'),
+              config: PageHeaderConfig(
+                title: AppLocalizations.of(context).profileTitle,
+              ),
               reporter: widget.onHeaderChanged,
             ),
           ),

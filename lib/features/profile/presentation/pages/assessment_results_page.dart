@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
@@ -52,11 +53,13 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView>
 
   PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeaderConfig(title: 'Assessment Results');
+      return PageHeaderConfig(
+        title: AppLocalizations.of(context).profileAssessmentResults,
+      );
     }
     return PageHeaderConfig(
-      title: 'My Profile',
-      subtitle: 'Assessment Results',
+      title: AppLocalizations.of(context).profileTitle,
+      subtitle: AppLocalizations.of(context).profileAssessmentResults,
       subtitleIcon: LucideIcons.clipboardList,
       onBackButtonPressed: widget.onBack,
     );
@@ -83,7 +86,7 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView>
             ),
             const SizedBox(height: 16),
             Text(
-              'No assessment notes yet.',
+              AppLocalizations.of(context).profileNoAssessments,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppTheme.secondaryTextColor(context),
@@ -91,7 +94,7 @@ class _AssessmentResultsViewState extends State<AssessmentResultsView>
             ),
             const SizedBox(height: 6),
             Text(
-              'Your trainer\'s feedback will appear here after a completed session.',
+              AppLocalizations.of(context).assessmentEmpty,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppTheme.mutedTextColor(context),

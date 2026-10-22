@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/utils/format/date_time.dart';
@@ -34,12 +35,12 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
     final discipline = widget.booking.disciplineName?.trim() ?? '';
     if (service.isNotEmpty) return service;
     if (discipline.isNotEmpty) return discipline;
-    return 'Session';
+    return AppLocalizations.of(context).commonSession;
   }
 
   String get _trainerLabel {
     final name = widget.booking.trainerName?.trim() ?? '';
-    return name.isNotEmpty ? name : 'Trainer';
+    return name.isNotEmpty ? name : AppLocalizations.of(context).commonTrainer;
   }
 
   @override
@@ -183,7 +184,7 @@ class _AssessmentFeedbackCardState extends State<AssessmentFeedbackCard> {
               Icon(LucideIcons.messageSquare, size: 13, color: mutedColor),
               const SizedBox(width: 5),
               Text(
-                'Trainer feedback',
+                AppLocalizations.of(context).profileTrainerFeedback,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: mutedColor,
                   letterSpacing: 0.4,

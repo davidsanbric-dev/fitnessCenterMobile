@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_config.dart';
 import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.dart';
 import 'package:fitnesscenter_mobile/features/bookings/presentation/widgets/bookings_table.dart';
@@ -51,11 +52,13 @@ class _TrainingHistoryViewState extends State<TrainingHistoryView>
 
   PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeaderConfig(title: 'Training History');
+      return PageHeaderConfig(
+        title: AppLocalizations.of(context).profileTrainingHistory,
+      );
     }
     return PageHeaderConfig(
-      title: 'My Profile',
-      subtitle: 'Training History',
+      title: AppLocalizations.of(context).profileTitle,
+      subtitle: AppLocalizations.of(context).profileTrainingHistory,
       subtitleIcon: LucideIcons.history,
       onBackButtonPressed: widget.onBack,
     );
@@ -97,7 +100,9 @@ class _TrainingHistoryViewState extends State<TrainingHistoryView>
                           totalItems: viewModel.totalItems,
                           onPageChanged: viewModel.setPageNumber,
                           showPagination: true,
-                          emptyLabel: 'No completed sessions yet.',
+                          emptyLabel: AppLocalizations.of(
+                            context,
+                          ).profileNoSessions,
                         ),
                       ],
                     ),

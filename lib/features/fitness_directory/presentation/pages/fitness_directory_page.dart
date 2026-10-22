@@ -153,7 +153,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
       case FitnessDirectoryView.memberships:
         final shell = _coordinator.shell;
         return MembershipsDirectoryPage(
-          memberships: shell.membershipsRows,
+          memberships: shell.membershipsRows(AppLocalizations.of(context)),
           isLoading: shell.isLoading,
           errorMessage: shell.error,
           pageNumber: shell.membershipsPageNumber,

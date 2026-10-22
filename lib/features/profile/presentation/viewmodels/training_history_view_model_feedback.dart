@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/exceptions/api_exception.dart';
 import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/booking_details_card_dialog.dart';
@@ -13,6 +14,7 @@ extension TrainingHistoryFeedback on TrainingHistoryViewModel {
     BuildContext context,
     Map<String, dynamic> row,
   ) async {
+    final l10n = AppLocalizations.of(context);
     try {
       final detail = await fetchBookingDetails(
         bookingId: normReqString(row['bookingId']),
@@ -21,10 +23,10 @@ extension TrainingHistoryFeedback on TrainingHistoryViewModel {
       if (!context.mounted) return;
       await BookingDetailsCardDialog.show(context, booking: detail);
     } on ApiException catch (error) {
-      Get.snackbar('Could not load details', error.message);
+      Get.snackbar(l10n.commonDetailsLoadFailed, error.message);
     } catch (error) {
       Get.snackbar(
-        'Unexpected error',
+        l10n.commonUnexpectedError,
         'Could not show booking details: $error',
       );
     }

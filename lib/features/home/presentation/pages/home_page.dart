@@ -206,15 +206,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final authService = Get.find<AuthService>();
     final greeting = _greetingFor(authService);
     final sliderSlides = [
-      const InfoSlide(
-        title: 'Discover everything you can do',
+      InfoSlide(
+        title: AppLocalizations.of(context).homeDiscover,
         description: 'with your FitnessCenter app',
-        callToAction: 'Learn more',
+        callToAction: AppLocalizations.of(context).homeLearnMore,
       ),
-      const InfoSlide(
-        title: 'Train smarter, hassle-free',
-        description: 'Book and manage your classes from anywhere',
-        callToAction: 'Start today',
+      InfoSlide(
+        title: AppLocalizations.of(context).homeTrainSmarter,
+        description: AppLocalizations.of(context).homeSubtitle,
+        callToAction: AppLocalizations.of(context).homeStartToday,
       ),
     ];
 
@@ -225,12 +225,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         onTap: _handleDisciplinesNavigation,
       ),
       ShortcutCardData(
-        title: 'Fitness\nAssessments',
+        title: AppLocalizations.of(context).homeAssessmentsCard,
         iconData: LucideIcons.heartPulse,
         onTap: _handleAssessmentResultsNavigation,
       ),
       ShortcutCardData(
-        title: 'Meet\nTrainers',
+        title: AppLocalizations.of(context).homeTrainersCard,
         iconData: LucideIcons.usersRound,
         onTap: _handleTrainersNavigation,
       ),
@@ -369,17 +369,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     required bool isLoading,
     Object? error,
   }) {
-    if (isLoading) return 'Loading your training history...';
-    if (error != null) return 'We could not load your training history.';
-    if (booking == null) return 'Your completed sessions will appear here.';
+    if (isLoading) return AppLocalizations.of(context).homeLoadingHistory;
+    if (error != null)
+      return AppLocalizations.of(context).homeHistoryLoadFailed;
+    if (booking == null) return AppLocalizations.of(context).homeHistoryEmpty;
     final service = booking.serviceName?.trim() ?? '';
     final trainer = booking.trainerName?.trim() ?? '';
     final date = booking.schedulingDate.toLocal();
     final dateText =
         '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-    final sessionLabel = service.isNotEmpty ? service : 'Session';
-    final trainerPart = trainer.isNotEmpty ? ' with $trainer' : '';
-    return 'Last: $sessionLabel$trainerPart, $dateText.';
+    final sessionLabel = service.isNotEmpty
+        ? service
+        : AppLocalizations.of(context).commonSession;
+    final trainerPart = trainer.isNotEmpty
+        ? AppLocalizations.of(context).commonWithTrainer(trainer)
+        : '';
+    return AppLocalizations.of(
+      context,
+    ).homeLastSession(sessionLabel, trainerPart, dateText);
   }
 
   String _buildUpcomingDescription(
@@ -388,7 +395,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     Object? error,
   }) {
     if (isLoading) {
-      return 'Loading your next booking...';
+      return AppLocalizations.of(context).homeLoadingNext;
     }
     if (error != null) {
       return AppLocalizations.of(context).homeUpcomingLoadFailed;
@@ -400,12 +407,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final service = slot.serviceName.isEmpty
         ? AppLocalizations.of(context).commonClass
         : slot.serviceName;
-    final trainer = slot.trainerName.isEmpty ? '' : ' with ${slot.trainerName}';
+    final trainer = slot.trainerName.isEmpty
+        ? ''
+        : AppLocalizations.of(context).commonWithTrainer(slot.trainerName);
     if (_isToday(slot.schedulingDate)) {
-      return 'Today: $service$trainer, $timeText.';
+      return AppLocalizations.of(
+        context,
+      ).homeTodaySession(service, trainer, timeText);
     }
     final dateText = DateTimeCell.formatDate(slot.schedulingDate);
-    return 'Next: $service$trainer, $dateText at $timeText.';
+    return AppLocalizations.of(
+      context,
+    ).homeNextSession(service, trainer, dateText, timeText);
   }
 
   bool _isToday(DateTime value) {
@@ -438,7 +451,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     local.setOnNotificationTap((_) => _handleBookingsNavigation());
 
     await local.showLocalNotification(
-      title: 'Booking for today',
+      title: AppLocalizations.of(context).homeBookingToday,
       body:
           '${slot.serviceName.isEmpty ? 'Class' : slot.serviceName} · ${DateTimeCell.formatTime(slot.schedulingDate)}',
       payload: const {'action': 'open_member_bookings'},

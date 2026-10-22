@@ -913,6 +913,251 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Busca un entrenador'**
   String get searchTrainerHint;
+
+  /// No description provided for @homeAssessmentsCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Evaluaciones\nfísicas'**
+  String get homeAssessmentsCard;
+
+  /// No description provided for @homeTrainersCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Conoce a los\nentrenadores'**
+  String get homeTrainersCard;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva y gestiona tus clases desde donde estés'**
+  String get homeSubtitle;
+
+  /// No description provided for @homeDiscover.
+  ///
+  /// In es, this message translates to:
+  /// **'Descubre todo lo que puedes hacer'**
+  String get homeDiscover;
+
+  /// No description provided for @homeTrainSmarter.
+  ///
+  /// In es, this message translates to:
+  /// **'Entrena mejor, sin complicaciones'**
+  String get homeTrainSmarter;
+
+  /// No description provided for @homeStartToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Empieza hoy'**
+  String get homeStartToday;
+
+  /// No description provided for @homeLearnMore.
+  ///
+  /// In es, this message translates to:
+  /// **'Saber más'**
+  String get homeLearnMore;
+
+  /// No description provided for @homeReadMore.
+  ///
+  /// In es, this message translates to:
+  /// **'Leer más'**
+  String get homeReadMore;
+
+  /// No description provided for @homeViewAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver todo'**
+  String get homeViewAll;
+
+  /// No description provided for @homeBookingToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva para hoy'**
+  String get homeBookingToday;
+
+  /// No description provided for @homeLoadingNext.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tu próxima reserva...'**
+  String get homeLoadingNext;
+
+  /// No description provided for @homeLoadingHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tu historial de entrenamiento...'**
+  String get homeLoadingHistory;
+
+  /// No description provided for @homeHistoryLoadFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu historial de entrenamiento.'**
+  String get homeHistoryLoadFailed;
+
+  /// No description provided for @homeHistoryEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus sesiones completadas aparecerán aquí.'**
+  String get homeHistoryEmpty;
+
+  /// No description provided for @commonSession.
+  ///
+  /// In es, this message translates to:
+  /// **'Sesión'**
+  String get commonSession;
+
+  /// No description provided for @planPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio: \${amount}'**
+  String planPrice(String amount);
+
+  /// No description provided for @planUpToSessions.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count} sesiones / mes'**
+  String planUpToSessions(int count);
+
+  /// No description provided for @planUpToSession.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count} sesión / mes'**
+  String planUpToSession(int count);
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mi perfil'**
+  String get profileTitle;
+
+  /// No description provided for @profilePersonalInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Información personal'**
+  String get profilePersonalInfo;
+
+  /// No description provided for @profileFullName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get profileFullName;
+
+  /// No description provided for @profileMembershipPlan.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan de membresía'**
+  String get profileMembershipPlan;
+
+  /// No description provided for @profileTrainingHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'Historial de entrenamiento'**
+  String get profileTrainingHistory;
+
+  /// No description provided for @profileAssessmentResults.
+  ///
+  /// In es, this message translates to:
+  /// **'Resultados de evaluación'**
+  String get profileAssessmentResults;
+
+  /// No description provided for @profileSignOut.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get profileSignOut;
+
+  /// No description provided for @profileDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles'**
+  String get profileDetails;
+
+  /// No description provided for @profileNoAssessments.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay notas de evaluación.'**
+  String get profileNoAssessments;
+
+  /// No description provided for @profileNoSessions.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes sesiones completadas.'**
+  String get profileNoSessions;
+
+  /// No description provided for @profileTrainerFeedback.
+  ///
+  /// In es, this message translates to:
+  /// **'Comentarios del entrenador'**
+  String get profileTrainerFeedback;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In es, this message translates to:
+  /// **'Foto de perfil actualizada.'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @profileSignOutFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cerrar sesión: {error}'**
+  String profileSignOutFailed(String error);
+
+  /// No description provided for @profilePhotoFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo actualizar la foto: {error}'**
+  String profilePhotoFailed(String error);
+
+  /// No description provided for @commonDetailsLoadFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar los detalles'**
+  String get commonDetailsLoadFailed;
+
+  /// No description provided for @commonUnexpectedError.
+  ///
+  /// In es, this message translates to:
+  /// **'Error inesperado'**
+  String get commonUnexpectedError;
+
+  /// No description provided for @homeLastSession.
+  ///
+  /// In es, this message translates to:
+  /// **'Última: {session}{trainer}, {date}.'**
+  String homeLastSession(String session, String trainer, String date);
+
+  /// No description provided for @homeTodaySession.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy: {session}{trainer}, {time}.'**
+  String homeTodaySession(String session, String trainer, String time);
+
+  /// No description provided for @homeNextSession.
+  ///
+  /// In es, this message translates to:
+  /// **'Próxima: {session}{trainer}, {date} a las {time}.'**
+  String homeNextSession(
+    String session,
+    String trainer,
+    String date,
+    String time,
+  );
+
+  /// No description provided for @commonWithTrainer.
+  ///
+  /// In es, this message translates to:
+  /// **' con {trainer}'**
+  String commonWithTrainer(String trainer);
+
+  /// No description provided for @assessmentEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Los comentarios de tu entrenador aparecerán aquí después de una sesión completada.'**
+  String get assessmentEmpty;
+
+  /// No description provided for @commonTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora'**
+  String get commonTime;
 }
 
 class _AppLocalizationsDelegate

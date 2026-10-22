@@ -440,4 +440,149 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchTrainerHint => 'Busca un entrenador';
+
+  @override
+  String get homeAssessmentsCard => 'Evaluaciones\nfísicas';
+
+  @override
+  String get homeTrainersCard => 'Conoce a los\nentrenadores';
+
+  @override
+  String get homeSubtitle => 'Reserva y gestiona tus clases desde donde estés';
+
+  @override
+  String get homeDiscover => 'Descubre todo lo que puedes hacer';
+
+  @override
+  String get homeTrainSmarter => 'Entrena mejor, sin complicaciones';
+
+  @override
+  String get homeStartToday => 'Empieza hoy';
+
+  @override
+  String get homeLearnMore => 'Saber más';
+
+  @override
+  String get homeReadMore => 'Leer más';
+
+  @override
+  String get homeViewAll => 'Ver todo';
+
+  @override
+  String get homeBookingToday => 'Reserva para hoy';
+
+  @override
+  String get homeLoadingNext => 'Cargando tu próxima reserva...';
+
+  @override
+  String get homeLoadingHistory => 'Cargando tu historial de entrenamiento...';
+
+  @override
+  String get homeHistoryLoadFailed =>
+      'No pudimos cargar tu historial de entrenamiento.';
+
+  @override
+  String get homeHistoryEmpty => 'Tus sesiones completadas aparecerán aquí.';
+
+  @override
+  String get commonSession => 'Sesión';
+
+  @override
+  String planPrice(String amount) {
+    return 'Precio: \$$amount';
+  }
+
+  @override
+  String planUpToSessions(int count) {
+    return 'Hasta $count sesiones / mes';
+  }
+
+  @override
+  String planUpToSession(int count) {
+    return 'Hasta $count sesión / mes';
+  }
+
+  @override
+  String get profileTitle => 'Mi perfil';
+
+  @override
+  String get profilePersonalInfo => 'Información personal';
+
+  @override
+  String get profileFullName => 'Nombre completo';
+
+  @override
+  String get profileMembershipPlan => 'Plan de membresía';
+
+  @override
+  String get profileTrainingHistory => 'Historial de entrenamiento';
+
+  @override
+  String get profileAssessmentResults => 'Resultados de evaluación';
+
+  @override
+  String get profileSignOut => 'Cerrar sesión';
+
+  @override
+  String get profileDetails => 'Detalles';
+
+  @override
+  String get profileNoAssessments => 'Aún no hay notas de evaluación.';
+
+  @override
+  String get profileNoSessions => 'Aún no tienes sesiones completadas.';
+
+  @override
+  String get profileTrainerFeedback => 'Comentarios del entrenador';
+
+  @override
+  String get profilePhotoUpdated => 'Foto de perfil actualizada.';
+
+  @override
+  String profileSignOutFailed(String error) {
+    return 'No se pudo cerrar sesión: $error';
+  }
+
+  @override
+  String profilePhotoFailed(String error) {
+    return 'No se pudo actualizar la foto: $error';
+  }
+
+  @override
+  String get commonDetailsLoadFailed => 'No se pudieron cargar los detalles';
+
+  @override
+  String get commonUnexpectedError => 'Error inesperado';
+
+  @override
+  String homeLastSession(String session, String trainer, String date) {
+    return 'Última: $session$trainer, $date.';
+  }
+
+  @override
+  String homeTodaySession(String session, String trainer, String time) {
+    return 'Hoy: $session$trainer, $time.';
+  }
+
+  @override
+  String homeNextSession(
+    String session,
+    String trainer,
+    String date,
+    String time,
+  ) {
+    return 'Próxima: $session$trainer, $date a las $time.';
+  }
+
+  @override
+  String commonWithTrainer(String trainer) {
+    return ' con $trainer';
+  }
+
+  @override
+  String get assessmentEmpty =>
+      'Los comentarios de tu entrenador aparecerán aquí después de una sesión completada.';
+
+  @override
+  String get commonTime => 'Hora';
 }
