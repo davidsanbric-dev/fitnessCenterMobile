@@ -22,11 +22,13 @@ class SchedulingModeFilterBox extends StatelessWidget {
 
   static List<FilterOption<SchedulingMode>> _options(BuildContext context) => [
     FilterOption<SchedulingMode>(
+      key: const Key('booking-mode-discipline-trainer'),
       value: SchedulingMode.byDisciplineTrainer,
       label: AppLocalizations.of(context).filterByDisciplineTrainer,
       iconData: LucideIcons.users,
     ),
     FilterOption<SchedulingMode>(
+      key: const Key('booking-mode-class-type'),
       value: SchedulingMode.byService,
       label: AppLocalizations.of(context).filterByClassType,
       iconData: LucideIcons.tags,
@@ -51,6 +53,7 @@ class SchedulingModeFilterBox extends StatelessWidget {
             required onPressed,
           }) {
             return SizedBox(
+              key: option.key,
               height: _optionHeight,
               child: _FixedHeightOptionButton<SchedulingMode>(
                 option: option,

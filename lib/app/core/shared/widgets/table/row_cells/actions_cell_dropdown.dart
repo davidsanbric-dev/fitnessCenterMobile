@@ -211,7 +211,7 @@ class ActionsDropdown extends StatelessWidget {
       width: 48,
       child: Align(
         child: PopupMenuButton<String>(
-          tooltip: 'Row actions',
+          tooltip: l10n.commonRowActions,
           icon: Icon(
             LucideIcons.moreHorizontal,
             size: 20,

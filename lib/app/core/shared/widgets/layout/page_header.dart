@@ -25,6 +25,7 @@ class AppBackButton extends StatelessWidget {
     final resolvedLabel = label?.trim();
     if (resolvedLabel == null || resolvedLabel.isEmpty) {
       return IconButton(
+        key: const Key('page-header-back'),
         icon: Icon(LucideIcons.chevronLeft, size: iconSize),
         color: color ?? Colors.white,
         tooltip: tooltip,

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Pill-shaped booking status badge with subtle per-status colour coding.
@@ -32,18 +33,33 @@ class BookingStatusBadge extends StatelessWidget {
     }
   }
 
-  String _labelFor(String normalized) {
+  /// Localized label for a backend BookingStatus. Unknown values fall back to
+  /// title case so a status this build does not know still reads sensibly.
+  String _labelFor(BuildContext context, String normalized) {
     if (normalized.isEmpty) {
       return placeholder ?? '—';
     }
-    return normalized[0] + normalized.substring(1).toLowerCase();
+    final l10n = AppLocalizations.of(context);
+    switch (normalized) {
+      case 'PENDING':
+        return l10n.statusPending;
+      case 'CONFIRMED':
+        return l10n.statusConfirmed;
+      case 'CANCELLED':
+      case 'CANCELED':
+        return l10n.statusCancelled;
+      case 'COMPLETED':
+        return l10n.statusCompleted;
+      default:
+        return normalized[0] + normalized.substring(1).toLowerCase();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final normalized = (status ?? '').trim().toUpperCase();
     final color = _toneFor(normalized, context);
-    final label = _labelFor(normalized);
+    final label = _labelFor(context, normalized);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),

@@ -126,6 +126,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
                 final item = subgroup[index];
 
                 return FilterBoxOptionButton(
+                  key: ValueKey('catalog-option-$index'),
                   label: item.description,
                   iconData: LucideIcons.tags,
                   iconContainerSize: 34,

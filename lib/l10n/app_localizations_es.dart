@@ -585,4 +585,96 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get commonTime => 'Hora';
+
+  @override
+  String get commonBook => 'Reservar';
+
+  @override
+  String bookingConfirmed(String capability, String when) {
+    return '$capability reservada para $when.';
+  }
+
+  @override
+  String get bookingClassSlotFailed => 'No se pudo reservar este horario.';
+
+  @override
+  String get commonCancel => 'Cancelar';
+
+  @override
+  String get commonSave => 'Guardar';
+
+  @override
+  String get commonCreate => 'Crear';
+
+  @override
+  String get commonEdit => 'Editar';
+
+  @override
+  String get commonDelete => 'Eliminar';
+
+  @override
+  String get commonAssign => 'Asignar';
+
+  @override
+  String get commonSearch => 'Buscar';
+
+  @override
+  String get commonError => 'Error';
+
+  @override
+  String get commonRange => 'Rango';
+
+  @override
+  String get deleteItemTitle => 'Eliminar elemento';
+
+  @override
+  String get deleteItemPrompt => '¿Quieres eliminar este elemento?';
+
+  @override
+  String get itemDeleted => 'Elemento eliminado.';
+
+  @override
+  String get validationRequired => 'Este campo es obligatorio';
+
+  @override
+  String get validationEmail => 'Ingresa un correo válido';
+
+  @override
+  String get validationMinLength => 'No se alcanza la longitud mínima';
+
+  @override
+  String get selectDateRange => 'Selecciona un rango de fechas';
+
+  @override
+  String get filtersAdvanced => 'Filtros\\navanzados';
+
+  @override
+  String get filtersAdvancedActive => 'Filtros avanzados\\n(activos)';
+
+  @override
+  String get filtersAdvancedActiveLabel => 'Filtros avanzados activos';
+
+  @override
+  String get filtersAdvancedOpen => 'Abrir filtros avanzados';
+
+  @override
+  String get emptyNoMatches => 'No hay coincidencias.';
+
+  @override
+  String get emptyNoOptions => 'No hay opciones disponibles.';
+
+  @override
+  String get emptyNoOptionsNow => 'No hay opciones disponibles por el momento.';
+
+  @override
+  String get statusPending => 'Pendiente';
+
+  @override
+  String get statusConfirmed => 'Confirmada';
+
+  @override
+  String get statusCancelled => 'Anulada';
+
+  @override
+  String get statusCompleted => 'Completada';
 }

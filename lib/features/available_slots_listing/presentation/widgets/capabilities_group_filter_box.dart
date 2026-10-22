@@ -96,6 +96,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
                 final group = groups[index];
 
                 return FilterBoxOptionButton(
+                  key: ValueKey('catalog-option-$index'),
                   label: group.description,
                   iconData: iconData,
                   iconContainerSize: 34,

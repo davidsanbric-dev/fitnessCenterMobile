@@ -25,7 +25,7 @@ final DateTime kTestNow = DateTime.utc(2026, 3, 10, 9);
 
 BookingDto buildBooking({
   String bookingId = 'bk-1',
-  String state = 'RESERVADA',
+  String state = 'PENDING',
   String memberName = 'Alex Miembro',
   String? serviceName = 'Yoga al Amanecer',
   DateTime? schedulingDate,
@@ -78,7 +78,7 @@ AvailableSlotByCapabilityDto buildCapabilitySlot({
 /// Row shape the bookings table hands back to the view-model.
 Map<String, dynamic> buildRow({
   String bookingId = 'bk-1',
-  String bookingStatus = 'RESERVADA',
+  String bookingStatus = 'PENDING',
 }) {
   return <String, dynamic>{
     'bookingId': bookingId,

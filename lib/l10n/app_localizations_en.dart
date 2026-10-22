@@ -582,4 +582,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonTime => 'Time';
+
+  @override
+  String get commonBook => 'Book';
+
+  @override
+  String bookingConfirmed(String capability, String when) {
+    return '$capability booked for $when.';
+  }
+
+  @override
+  String get bookingClassSlotFailed => 'Could not book this class slot.';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get commonCreate => 'Create';
+
+  @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get commonAssign => 'Assign';
+
+  @override
+  String get commonSearch => 'Search';
+
+  @override
+  String get commonError => 'Error';
+
+  @override
+  String get commonRange => 'Range';
+
+  @override
+  String get deleteItemTitle => 'Delete item';
+
+  @override
+  String get deleteItemPrompt => 'Do you want to delete this item?';
+
+  @override
+  String get itemDeleted => 'Item deleted.';
+
+  @override
+  String get validationRequired => 'This field is required';
+
+  @override
+  String get validationEmail => 'Enter a valid email';
+
+  @override
+  String get validationMinLength => 'Minimum length requirement not met';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get filtersAdvanced => 'Advanced\\nfilters';
+
+  @override
+  String get filtersAdvancedActive => 'Advanced filters\\n(active)';
+
+  @override
+  String get filtersAdvancedActiveLabel => 'Advanced filters active';
+
+  @override
+  String get filtersAdvancedOpen => 'Open advanced filters';
+
+  @override
+  String get emptyNoMatches => 'No matches.';
+
+  @override
+  String get emptyNoOptions => 'No options available.';
+
+  @override
+  String get emptyNoOptionsNow => 'No options available right now.';
+
+  @override
+  String get statusPending => 'Pending';
+
+  @override
+  String get statusConfirmed => 'Confirmed';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusCompleted => 'Completed';
 }

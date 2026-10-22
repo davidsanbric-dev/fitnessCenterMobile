@@ -66,10 +66,12 @@ class TableBody extends StatelessWidget {
         final normalizedStatus = _normalizeBookingStatus(
           row['bookingStatus'] ?? row['state'],
         );
+        // Backend BookingStatus vocabulary; see BookingsViewModel for why the
+        // old Spanish codes were wrong.
         final canConfirmReservation =
-            normalizedStatus == 'RESERVADA' || normalizedStatus == 'ANULADA';
+            normalizedStatus == 'PENDING' || normalizedStatus == 'CANCELLED';
         final canCancelReservation =
-            normalizedStatus == 'RESERVADA' || normalizedStatus == 'CONFIRMADA';
+            normalizedStatus == 'PENDING' || normalizedStatus == 'CONFIRMED';
 
         return GestureDetector(
           key: ValueKey(rowIdentity),

@@ -48,11 +48,16 @@ class BookingsViewModel extends ViewModelBase {
   BookingsViewModel({required BookingsRepository repository})
     : _repository = repository;
 
-  static const String _confirmReservationAction = '1';
-  static const String _cancelReservationAction = '2';
-  static const String _reservedState = 'RESERVADA';
-  static const String _confirmedState = 'CONFIRMADA';
-  static const String _canceledState = 'ANULADA';
+  // The backend's BookingStatus vocabulary (app/domain/enums.py). These used to
+  // be Spanish codes ('RESERVADA'/'CONFIRMADA'/'ANULADA') with numeric action
+  // codes ('1'/'2'), which matched no status the API has ever returned: the
+  // guards below never fired, so a member could not cancel a booking made in
+  // the app, and the update would have written a literal "2" as the status.
+  static const String _pendingState = 'PENDING';
+  static const String _confirmedState = 'CONFIRMED';
+  static const String _canceledState = 'CANCELLED';
+  static const String _confirmReservationAction = _confirmedState;
+  static const String _cancelReservationAction = _canceledState;
 
   // Statuses members are not allowed to set from the generic picker. "Completed"
   // is an operational/admin outcome, not a member-driven transition.
@@ -132,7 +137,7 @@ class BookingsViewModel extends ViewModelBase {
       row: row,
       action: BookingAction.confirm,
       actionCode: _confirmReservationAction,
-      expectedStates: const <String>{_reservedState, _canceledState},
+      expectedStates: const <String>{_pendingState, _canceledState},
       fallbackState: _confirmedState,
     );
   }
@@ -142,7 +147,7 @@ class BookingsViewModel extends ViewModelBase {
       row: row,
       action: BookingAction.cancel,
       actionCode: _cancelReservationAction,
-      expectedStates: const <String>{_reservedState, _confirmedState},
+      expectedStates: const <String>{_pendingState, _confirmedState},
       fallbackState: _canceledState,
     );
   }
