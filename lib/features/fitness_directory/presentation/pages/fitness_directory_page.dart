@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
@@ -84,36 +85,36 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
   }
 
   PageHeaderConfig _resolveHeaderConfig(FitnessDirectoryView view) {
-    const title = 'Fitness Directory';
+    final title = AppLocalizations.of(context).dirTitle;
     switch (view) {
       case FitnessDirectoryView.options:
-        return const PageHeaderConfig(title: title);
+        return PageHeaderConfig(title: title);
       case FitnessDirectoryView.disciplines:
       case FitnessDirectoryView.disciplineAvailability:
         return PageHeaderConfig(
           title: title,
-          subtitle: 'Disciplines',
+          subtitle: AppLocalizations.of(context).commonDisciplines,
           subtitleIcon: LucideIcons.dumbbell,
           onBackButtonPressed: _coordinator.back,
         );
       case FitnessDirectoryView.capabilities:
         return PageHeaderConfig(
           title: title,
-          subtitle: 'Class Types',
+          subtitle: AppLocalizations.of(context).classTypes,
           subtitleIcon: LucideIcons.trophy,
           onBackButtonPressed: _coordinator.back,
         );
       case FitnessDirectoryView.trainers:
         return PageHeaderConfig(
           title: title,
-          subtitle: 'Trainers',
+          subtitle: AppLocalizations.of(context).commonTrainers,
           subtitleIcon: LucideIcons.user,
           onBackButtonPressed: _coordinator.back,
         );
       case FitnessDirectoryView.memberships:
         return PageHeaderConfig(
           title: title,
-          subtitle: 'Membership Plans',
+          subtitle: AppLocalizations.of(context).commonPlans,
           subtitleIcon: LucideIcons.creditCard,
           onBackButtonPressed: _coordinator.back,
         );
@@ -171,22 +172,22 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
   Widget _buildOptionsMenu() {
     final options = <DirectoryOption>[
       DirectoryOption(
-        title: 'Disciplines',
+        title: AppLocalizations.of(context).commonDisciplines,
         icon: LucideIcons.dumbbell,
         onTap: _coordinator.openDisciplines,
       ),
       DirectoryOption(
-        title: 'Class Types',
+        title: AppLocalizations.of(context).classTypes,
         icon: LucideIcons.trophy,
         onTap: _coordinator.openCapabilities,
       ),
       DirectoryOption(
-        title: 'Trainers',
+        title: AppLocalizations.of(context).commonTrainers,
         icon: LucideIcons.user,
         onTap: _coordinator.openTrainers,
       ),
       DirectoryOption(
-        title: 'Membership Plans',
+        title: AppLocalizations.of(context).commonPlans,
         icon: LucideIcons.creditCard,
         onTap: _coordinator.openMemberships,
       ),
@@ -231,7 +232,7 @@ class _FitnessDirectoryPageState extends State<FitnessDirectoryPage> {
     if (disciplineName.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Discipline',
+          label: AppLocalizations.of(context).commonDiscipline,
           value: disciplineName,
           icon: LucideIcons.star,
         ),

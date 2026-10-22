@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/trainer/trainer_directory_dto.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,9 @@ class TrainerInfoDialog extends StatelessWidget {
             Flexible(
               child: SingleChildScrollView(
                 child: Text(
-                  bio.isNotEmpty ? bio : 'No bio available for this trainer.',
+                  bio.isNotEmpty
+                      ? bio
+                      : AppLocalizations.of(context).emptyNoBio,
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -74,7 +77,7 @@ class TrainerInfoDialog extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
+                child: Text(AppLocalizations.of(context).commonClose),
               ),
             ),
           ],

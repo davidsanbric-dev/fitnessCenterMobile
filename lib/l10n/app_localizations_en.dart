@@ -213,4 +213,228 @@ class AppLocalizationsEn extends AppLocalizations {
   String paginationShowing(int start, int end, int total) {
     return 'Showing $start-$end of $total';
   }
+
+  @override
+  String get commonAction => 'Action';
+
+  @override
+  String get dirAllDisciplines => 'All disciplines';
+
+  @override
+  String get slotAvailability => 'Availability';
+
+  @override
+  String get slotAvailableTimes => 'Available Time Slots';
+
+  @override
+  String get bookingDetailsTitle => 'Booking Details';
+
+  @override
+  String get bookingOptionsTitle => 'Booking Options';
+
+  @override
+  String get filterByClassType => 'By Class Type';
+
+  @override
+  String get filterByDiscipline => 'By Discipline';
+
+  @override
+  String get filterByDisciplineTrainer => 'By Discipline/Trainer';
+
+  @override
+  String get filterByPlan => 'By Membership Plan';
+
+  @override
+  String get filterByTrainer => 'By Trainer';
+
+  @override
+  String get filterChange => 'Change filters';
+
+  @override
+  String get classOption => 'Class option';
+
+  @override
+  String get classOptions => 'Class Options';
+
+  @override
+  String get classType => 'Class type';
+
+  @override
+  String get classTypes => 'Class Types';
+
+  @override
+  String get dirTrainerProfileFailed => 'Could not open the trainer profile.';
+
+  @override
+  String get dirSelectDisciplineFailed => 'Could not select the discipline.';
+
+  @override
+  String get dirSelectTrainerFailed => 'Could not select the trainer.';
+
+  @override
+  String get commonCreatedAt => 'Created At';
+
+  @override
+  String get commonDiscipline => 'Discipline';
+
+  @override
+  String get commonDisciplines => 'Disciplines';
+
+  @override
+  String get commonDuration => 'Duration';
+
+  @override
+  String get dirTitle => 'Fitness Directory';
+
+  @override
+  String get commonGeneralInfo => 'General Information';
+
+  @override
+  String get commonGroup => 'Group';
+
+  @override
+  String get commonSchedule => 'Schedule';
+
+  @override
+  String get filterHowToSearch => 'How do you want to search?';
+
+  @override
+  String get commonMember => 'Member';
+
+  @override
+  String get commonPlan => 'Membership plan';
+
+  @override
+  String get commonPlans => 'Membership Plans';
+
+  @override
+  String get emptyNoAvailClassOption =>
+      'No availability for this class option.';
+
+  @override
+  String get emptyNoAvailDiscipline => 'No availability for this discipline.';
+
+  @override
+  String get emptyNoAvailTrainer => 'No availability for this trainer.';
+
+  @override
+  String get emptyNoSlotsForFilters =>
+      'No available time slots for the selected filters.';
+
+  @override
+  String get emptyNoBio => 'No bio available for this trainer.';
+
+  @override
+  String get emptyNoGroups =>
+      'No class category groups are available right now.';
+
+  @override
+  String get emptyNoClassOptions =>
+      'No class options available for this subcategory.';
+
+  @override
+  String get emptyNoClassTypes =>
+      'No class types available for this subcategory.';
+
+  @override
+  String get emptyNoDisciplines => 'No disciplines available.';
+
+  @override
+  String get emptyNoPlans => 'No membership plans available.';
+
+  @override
+  String get commonNoName => 'No name';
+
+  @override
+  String get emptyNoPreparation => 'No preparation instructions available.';
+
+  @override
+  String get commonNoStatus => 'No status';
+
+  @override
+  String get emptyNoSubgroups =>
+      'No subcategories available for the selected group.';
+
+  @override
+  String get emptyNoTrainers => 'No trainers available.';
+
+  @override
+  String get commonNormal => 'Normal';
+
+  @override
+  String get commonNotAvailable => 'Not available';
+
+  @override
+  String get commonNotDefined => 'Not defined';
+
+  @override
+  String get commonPhone => 'Phone';
+
+  @override
+  String get pickClassType => 'Pick a class type';
+
+  @override
+  String get commonPreparation => 'Preparation';
+
+  @override
+  String get commonInsurance => 'Insurance';
+
+  @override
+  String get commonScheduledAt => 'Scheduled At';
+
+  @override
+  String get pickSubcategory => 'Select a subcategory';
+
+  @override
+  String get filterSelectValid => 'Select valid options before searching.';
+
+  @override
+  String get commonServiceCentre => 'Service / Centre';
+
+  @override
+  String get commonSessionFeedback => 'Session Feedback';
+
+  @override
+  String get commonStatus => 'Status';
+
+  @override
+  String get commonSubgroup => 'Subgroup';
+
+  @override
+  String get commonBranch => 'Branch';
+
+  @override
+  String get commonTimeSlots => 'Time Slots';
+
+  @override
+  String get commonTrainer => 'Trainer';
+
+  @override
+  String get commonTrainerDiscipline => 'Trainer / Discipline';
+
+  @override
+  String get commonTrainerNotes => 'Trainer Notes';
+
+  @override
+  String get commonTrainers => 'Trainers';
+
+  @override
+  String get viewPreparation => 'View Preparation';
+
+  @override
+  String get filterWhatClass => 'What type of class are you looking for?';
+
+  @override
+  String get commonGroupPrefix => 'Group: ';
+
+  @override
+  String comingSoonDetail(String label) {
+    return 'Detailed information for $label will be available soon.';
+  }
+
+  @override
+  String get searchDisciplineHint => 'Search for a discipline';
+
+  @override
+  String get searchTrainerHint => 'Search for a trainer';
 }

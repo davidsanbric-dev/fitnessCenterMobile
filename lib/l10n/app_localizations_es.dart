@@ -212,4 +212,232 @@ class AppLocalizationsEs extends AppLocalizations {
   String paginationShowing(int start, int end, int total) {
     return 'Mostrando $start-$end de $total';
   }
+
+  @override
+  String get commonAction => 'Acción';
+
+  @override
+  String get dirAllDisciplines => 'Todas las disciplinas';
+
+  @override
+  String get slotAvailability => 'Disponibilidad';
+
+  @override
+  String get slotAvailableTimes => 'Horarios disponibles';
+
+  @override
+  String get bookingDetailsTitle => 'Detalle de la reserva';
+
+  @override
+  String get bookingOptionsTitle => 'Opciones de reserva';
+
+  @override
+  String get filterByClassType => 'Por tipo de clase';
+
+  @override
+  String get filterByDiscipline => 'Por disciplina';
+
+  @override
+  String get filterByDisciplineTrainer => 'Por disciplina o entrenador';
+
+  @override
+  String get filterByPlan => 'Por plan';
+
+  @override
+  String get filterByTrainer => 'Por entrenador';
+
+  @override
+  String get filterChange => 'Cambiar filtros';
+
+  @override
+  String get classOption => 'Opción de clase';
+
+  @override
+  String get classOptions => 'Opciones de clase';
+
+  @override
+  String get classType => 'Tipo de clase';
+
+  @override
+  String get classTypes => 'Tipos de clase';
+
+  @override
+  String get dirTrainerProfileFailed =>
+      'No se pudo abrir el perfil del entrenador.';
+
+  @override
+  String get dirSelectDisciplineFailed =>
+      'No se pudo seleccionar la disciplina.';
+
+  @override
+  String get dirSelectTrainerFailed => 'No se pudo seleccionar el entrenador.';
+
+  @override
+  String get commonCreatedAt => 'Creada el';
+
+  @override
+  String get commonDiscipline => 'Disciplina';
+
+  @override
+  String get commonDisciplines => 'Disciplinas';
+
+  @override
+  String get commonDuration => 'Duración';
+
+  @override
+  String get dirTitle => 'Directorio';
+
+  @override
+  String get commonGeneralInfo => 'Información general';
+
+  @override
+  String get commonGroup => 'Grupo';
+
+  @override
+  String get commonSchedule => 'Horario';
+
+  @override
+  String get filterHowToSearch => '¿Cómo quieres buscar?';
+
+  @override
+  String get commonMember => 'Socio';
+
+  @override
+  String get commonPlan => 'Plan';
+
+  @override
+  String get commonPlans => 'Planes';
+
+  @override
+  String get emptyNoAvailClassOption =>
+      'No hay disponibilidad para esta opción de clase.';
+
+  @override
+  String get emptyNoAvailDiscipline =>
+      'No hay disponibilidad para esta disciplina.';
+
+  @override
+  String get emptyNoAvailTrainer =>
+      'No hay disponibilidad para este entrenador.';
+
+  @override
+  String get emptyNoSlotsForFilters =>
+      'No hay horarios disponibles para los filtros seleccionados.';
+
+  @override
+  String get emptyNoBio => 'Este entrenador aún no tiene reseña.';
+
+  @override
+  String get emptyNoGroups => 'No hay grupos de clases disponibles por ahora.';
+
+  @override
+  String get emptyNoClassOptions =>
+      'No hay opciones de clase para esta subcategoría.';
+
+  @override
+  String get emptyNoClassTypes =>
+      'No hay tipos de clase para esta subcategoría.';
+
+  @override
+  String get emptyNoDisciplines => 'No hay disciplinas disponibles.';
+
+  @override
+  String get emptyNoPlans => 'No hay planes disponibles.';
+
+  @override
+  String get commonNoName => 'Sin nombre';
+
+  @override
+  String get emptyNoPreparation => 'No hay indicaciones de preparación.';
+
+  @override
+  String get commonNoStatus => 'Sin estado';
+
+  @override
+  String get emptyNoSubgroups =>
+      'No hay subcategorías para el grupo seleccionado.';
+
+  @override
+  String get emptyNoTrainers => 'No hay entrenadores disponibles.';
+
+  @override
+  String get commonNormal => 'Normal';
+
+  @override
+  String get commonNotAvailable => 'No disponible';
+
+  @override
+  String get commonNotDefined => 'Sin definir';
+
+  @override
+  String get commonPhone => 'Teléfono';
+
+  @override
+  String get pickClassType => 'Elige un tipo de clase';
+
+  @override
+  String get commonPreparation => 'Preparación';
+
+  @override
+  String get commonInsurance => 'Previsión';
+
+  @override
+  String get commonScheduledAt => 'Agendada para';
+
+  @override
+  String get pickSubcategory => 'Elige una subcategoría';
+
+  @override
+  String get filterSelectValid =>
+      'Selecciona opciones válidas antes de buscar.';
+
+  @override
+  String get commonServiceCentre => 'Servicio / Centro';
+
+  @override
+  String get commonSessionFeedback => 'Comentarios de la sesión';
+
+  @override
+  String get commonStatus => 'Estado';
+
+  @override
+  String get commonSubgroup => 'Subgrupo';
+
+  @override
+  String get commonBranch => 'Sucursal';
+
+  @override
+  String get commonTimeSlots => 'Horarios';
+
+  @override
+  String get commonTrainer => 'Entrenador';
+
+  @override
+  String get commonTrainerDiscipline => 'Entrenador / Disciplina';
+
+  @override
+  String get commonTrainerNotes => 'Notas del entrenador';
+
+  @override
+  String get commonTrainers => 'Entrenadores';
+
+  @override
+  String get viewPreparation => 'Ver preparación';
+
+  @override
+  String get filterWhatClass => '¿Qué tipo de clase buscas?';
+
+  @override
+  String get commonGroupPrefix => 'Grupo: ';
+
+  @override
+  String comingSoonDetail(String label) {
+    return 'La información detallada de $label estará disponible pronto.';
+  }
+
+  @override
+  String get searchDisciplineHint => 'Busca una disciplina';
+
+  @override
+  String get searchTrainerHint => 'Busca un entrenador';
 }

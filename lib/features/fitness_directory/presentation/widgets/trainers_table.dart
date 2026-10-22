@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/trainer_info_button_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
@@ -20,7 +21,7 @@ class TrainersTable extends StatelessWidget {
     this.totalItems,
     this.onPageChanged,
     this.showPagination = false,
-    this.emptyLabel = 'No trainers available.',
+    this.emptyLabel,
   });
 
   final List<Map<String, dynamic>> trainers;
@@ -34,7 +35,7 @@ class TrainersTable extends StatelessWidget {
   final int? totalItems;
   final ValueChanged<int>? onPageChanged;
   final bool showPagination;
-  final String emptyLabel;
+  final String? emptyLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +97,7 @@ class TrainersTable extends StatelessWidget {
         fields: fields,
         isLoading: isLoading,
         errorMessage: errorMessage,
-        emptyLabel: emptyLabel,
+        emptyLabel: emptyLabel ?? AppLocalizations.of(context).emptyNoTrainers,
         wrapFields: const {'trainerName'},
       ),
       pagination: pagination,

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/reserve_cell_button.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
@@ -39,8 +40,8 @@ class AvailableBookingsByTrainerTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final showReserveAction = onReserveBooking != null;
     // final headers = <String>[
-    //   'Horario',
-    //   showReserveAction ? 'Accion' : 'Servicio / Centro',
+    //   AppLocalizations.of(context).commonSchedule,
+    //   showReserveAction ? AppLocalizations.of(context).commonAction : AppLocalizations.of(context).commonServiceCentre,
     // ];
 
     final summary = TableFiltersSummary.maybe(items: filterSummary);
@@ -68,7 +69,7 @@ class AvailableBookingsByTrainerTable extends StatelessWidget {
     return Padding(
       padding: outerPadding,
       child: TableCard(
-        title: 'Availability',
+        title: AppLocalizations.of(context).slotAvailability,
         icon: LucideIcons.calendarCheck,
         // headers: headers,
         toolbar: toolbarContent,
@@ -87,7 +88,7 @@ class AvailableBookingsByTrainerTable extends StatelessWidget {
           ],
           isLoading: isLoading,
           errorMessage: errorMessage,
-          emptyLabel: 'No availability for this trainer.',
+          emptyLabel: AppLocalizations.of(context).emptyNoAvailTrainer,
         ),
         margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/consult_button.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
@@ -59,7 +60,7 @@ class _AvailableSlotsConsultButtonState
 
     if (service == null || primaryValue.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select valid options before searching.')),
+        SnackBar(content: Text(AppLocalizations.of(context).filterSelectValid)),
       );
       return;
     }
@@ -73,7 +74,7 @@ class _AvailableSlotsConsultButtonState
           );
     if (params == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select valid options before searching.')),
+        SnackBar(content: Text(AppLocalizations.of(context).filterSelectValid)),
       );
       return;
     }

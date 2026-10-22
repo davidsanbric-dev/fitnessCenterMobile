@@ -481,6 +481,438 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Mostrando {start}-{end} de {total}'**
   String paginationShowing(int start, int end, int total);
+
+  /// No description provided for @commonAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Acción'**
+  String get commonAction;
+
+  /// No description provided for @dirAllDisciplines.
+  ///
+  /// In es, this message translates to:
+  /// **'Todas las disciplinas'**
+  String get dirAllDisciplines;
+
+  /// No description provided for @slotAvailability.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponibilidad'**
+  String get slotAvailability;
+
+  /// No description provided for @slotAvailableTimes.
+  ///
+  /// In es, this message translates to:
+  /// **'Horarios disponibles'**
+  String get slotAvailableTimes;
+
+  /// No description provided for @bookingDetailsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalle de la reserva'**
+  String get bookingDetailsTitle;
+
+  /// No description provided for @bookingOptionsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Opciones de reserva'**
+  String get bookingOptionsTitle;
+
+  /// No description provided for @filterByClassType.
+  ///
+  /// In es, this message translates to:
+  /// **'Por tipo de clase'**
+  String get filterByClassType;
+
+  /// No description provided for @filterByDiscipline.
+  ///
+  /// In es, this message translates to:
+  /// **'Por disciplina'**
+  String get filterByDiscipline;
+
+  /// No description provided for @filterByDisciplineTrainer.
+  ///
+  /// In es, this message translates to:
+  /// **'Por disciplina o entrenador'**
+  String get filterByDisciplineTrainer;
+
+  /// No description provided for @filterByPlan.
+  ///
+  /// In es, this message translates to:
+  /// **'Por plan'**
+  String get filterByPlan;
+
+  /// No description provided for @filterByTrainer.
+  ///
+  /// In es, this message translates to:
+  /// **'Por entrenador'**
+  String get filterByTrainer;
+
+  /// No description provided for @filterChange.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar filtros'**
+  String get filterChange;
+
+  /// No description provided for @classOption.
+  ///
+  /// In es, this message translates to:
+  /// **'Opción de clase'**
+  String get classOption;
+
+  /// No description provided for @classOptions.
+  ///
+  /// In es, this message translates to:
+  /// **'Opciones de clase'**
+  String get classOptions;
+
+  /// No description provided for @classType.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de clase'**
+  String get classType;
+
+  /// No description provided for @classTypes.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipos de clase'**
+  String get classTypes;
+
+  /// No description provided for @dirTrainerProfileFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir el perfil del entrenador.'**
+  String get dirTrainerProfileFailed;
+
+  /// No description provided for @dirSelectDisciplineFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo seleccionar la disciplina.'**
+  String get dirSelectDisciplineFailed;
+
+  /// No description provided for @dirSelectTrainerFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo seleccionar el entrenador.'**
+  String get dirSelectTrainerFailed;
+
+  /// No description provided for @commonCreatedAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Creada el'**
+  String get commonCreatedAt;
+
+  /// No description provided for @commonDiscipline.
+  ///
+  /// In es, this message translates to:
+  /// **'Disciplina'**
+  String get commonDiscipline;
+
+  /// No description provided for @commonDisciplines.
+  ///
+  /// In es, this message translates to:
+  /// **'Disciplinas'**
+  String get commonDisciplines;
+
+  /// No description provided for @commonDuration.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get commonDuration;
+
+  /// No description provided for @dirTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Directorio'**
+  String get dirTitle;
+
+  /// No description provided for @commonGeneralInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Información general'**
+  String get commonGeneralInfo;
+
+  /// No description provided for @commonGroup.
+  ///
+  /// In es, this message translates to:
+  /// **'Grupo'**
+  String get commonGroup;
+
+  /// No description provided for @commonSchedule.
+  ///
+  /// In es, this message translates to:
+  /// **'Horario'**
+  String get commonSchedule;
+
+  /// No description provided for @filterHowToSearch.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo quieres buscar?'**
+  String get filterHowToSearch;
+
+  /// No description provided for @commonMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Socio'**
+  String get commonMember;
+
+  /// No description provided for @commonPlan.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan'**
+  String get commonPlan;
+
+  /// No description provided for @commonPlans.
+  ///
+  /// In es, this message translates to:
+  /// **'Planes'**
+  String get commonPlans;
+
+  /// No description provided for @emptyNoAvailClassOption.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay disponibilidad para esta opción de clase.'**
+  String get emptyNoAvailClassOption;
+
+  /// No description provided for @emptyNoAvailDiscipline.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay disponibilidad para esta disciplina.'**
+  String get emptyNoAvailDiscipline;
+
+  /// No description provided for @emptyNoAvailTrainer.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay disponibilidad para este entrenador.'**
+  String get emptyNoAvailTrainer;
+
+  /// No description provided for @emptyNoSlotsForFilters.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay horarios disponibles para los filtros seleccionados.'**
+  String get emptyNoSlotsForFilters;
+
+  /// No description provided for @emptyNoBio.
+  ///
+  /// In es, this message translates to:
+  /// **'Este entrenador aún no tiene reseña.'**
+  String get emptyNoBio;
+
+  /// No description provided for @emptyNoGroups.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay grupos de clases disponibles por ahora.'**
+  String get emptyNoGroups;
+
+  /// No description provided for @emptyNoClassOptions.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay opciones de clase para esta subcategoría.'**
+  String get emptyNoClassOptions;
+
+  /// No description provided for @emptyNoClassTypes.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay tipos de clase para esta subcategoría.'**
+  String get emptyNoClassTypes;
+
+  /// No description provided for @emptyNoDisciplines.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay disciplinas disponibles.'**
+  String get emptyNoDisciplines;
+
+  /// No description provided for @emptyNoPlans.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay planes disponibles.'**
+  String get emptyNoPlans;
+
+  /// No description provided for @commonNoName.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin nombre'**
+  String get commonNoName;
+
+  /// No description provided for @emptyNoPreparation.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay indicaciones de preparación.'**
+  String get emptyNoPreparation;
+
+  /// No description provided for @commonNoStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin estado'**
+  String get commonNoStatus;
+
+  /// No description provided for @emptyNoSubgroups.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay subcategorías para el grupo seleccionado.'**
+  String get emptyNoSubgroups;
+
+  /// No description provided for @emptyNoTrainers.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay entrenadores disponibles.'**
+  String get emptyNoTrainers;
+
+  /// No description provided for @commonNormal.
+  ///
+  /// In es, this message translates to:
+  /// **'Normal'**
+  String get commonNormal;
+
+  /// No description provided for @commonNotAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No disponible'**
+  String get commonNotAvailable;
+
+  /// No description provided for @commonNotDefined.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin definir'**
+  String get commonNotDefined;
+
+  /// No description provided for @commonPhone.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get commonPhone;
+
+  /// No description provided for @pickClassType.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un tipo de clase'**
+  String get pickClassType;
+
+  /// No description provided for @commonPreparation.
+  ///
+  /// In es, this message translates to:
+  /// **'Preparación'**
+  String get commonPreparation;
+
+  /// No description provided for @commonInsurance.
+  ///
+  /// In es, this message translates to:
+  /// **'Previsión'**
+  String get commonInsurance;
+
+  /// No description provided for @commonScheduledAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Agendada para'**
+  String get commonScheduledAt;
+
+  /// No description provided for @pickSubcategory.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige una subcategoría'**
+  String get pickSubcategory;
+
+  /// No description provided for @filterSelectValid.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona opciones válidas antes de buscar.'**
+  String get filterSelectValid;
+
+  /// No description provided for @commonServiceCentre.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio / Centro'**
+  String get commonServiceCentre;
+
+  /// No description provided for @commonSessionFeedback.
+  ///
+  /// In es, this message translates to:
+  /// **'Comentarios de la sesión'**
+  String get commonSessionFeedback;
+
+  /// No description provided for @commonStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado'**
+  String get commonStatus;
+
+  /// No description provided for @commonSubgroup.
+  ///
+  /// In es, this message translates to:
+  /// **'Subgrupo'**
+  String get commonSubgroup;
+
+  /// No description provided for @commonBranch.
+  ///
+  /// In es, this message translates to:
+  /// **'Sucursal'**
+  String get commonBranch;
+
+  /// No description provided for @commonTimeSlots.
+  ///
+  /// In es, this message translates to:
+  /// **'Horarios'**
+  String get commonTimeSlots;
+
+  /// No description provided for @commonTrainer.
+  ///
+  /// In es, this message translates to:
+  /// **'Entrenador'**
+  String get commonTrainer;
+
+  /// No description provided for @commonTrainerDiscipline.
+  ///
+  /// In es, this message translates to:
+  /// **'Entrenador / Disciplina'**
+  String get commonTrainerDiscipline;
+
+  /// No description provided for @commonTrainerNotes.
+  ///
+  /// In es, this message translates to:
+  /// **'Notas del entrenador'**
+  String get commonTrainerNotes;
+
+  /// No description provided for @commonTrainers.
+  ///
+  /// In es, this message translates to:
+  /// **'Entrenadores'**
+  String get commonTrainers;
+
+  /// No description provided for @viewPreparation.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver preparación'**
+  String get viewPreparation;
+
+  /// No description provided for @filterWhatClass.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Qué tipo de clase buscas?'**
+  String get filterWhatClass;
+
+  /// No description provided for @commonGroupPrefix.
+  ///
+  /// In es, this message translates to:
+  /// **'Grupo: '**
+  String get commonGroupPrefix;
+
+  /// No description provided for @comingSoonDetail.
+  ///
+  /// In es, this message translates to:
+  /// **'La información detallada de {label} estará disponible pronto.'**
+  String comingSoonDetail(String label);
+
+  /// No description provided for @searchDisciplineHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Busca una disciplina'**
+  String get searchDisciplineHint;
+
+  /// No description provided for @searchTrainerHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Busca un entrenador'**
+  String get searchTrainerHint;
 }
 
 class _AppLocalizationsDelegate

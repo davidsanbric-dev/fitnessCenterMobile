@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
@@ -274,7 +275,7 @@ class _AvailableSlotsByCapabilityPageState
               children: [
                 if (widget.onHeaderStateChanged == null)
                   PageHeader(
-                    title: 'Book a Session',
+                    title: AppLocalizations.of(context).bookingsBookSession,
                     subtitle: widget.headerSubtitle,
                     subtitleIcon: widget.headerSubtitleIcon,
                     onBackButtonPressed: backHandler,
@@ -316,8 +317,8 @@ class _AvailableSlotsByCapabilityPageState
                           isLoading: isCapabilitySubgroupItemsLoading,
                           emptyStateMessage:
                               capabilitySubgroupItemsError ??
-                              'No class types available for this subcategory.',
-                          title: 'Pick a class type',
+                              AppLocalizations.of(context).emptyNoClassTypes,
+                          title: AppLocalizations.of(context).pickClassType,
                           iconData: LucideIcons.dumbbell,
                           onGroupSelected: _handleSubgroupItemSelected,
                         )
@@ -335,19 +336,21 @@ class _AvailableSlotsByCapabilityPageState
                           filterSummary: [
                             if (_selectedGroup != null)
                               TableFiltersSummaryItemData(
-                                label: 'Grupo',
+                                label: AppLocalizations.of(context).commonGroup,
                                 value: _selectedGroup?.description ?? '',
                                 icon: LucideIcons.tags,
                               ),
                             if (_selectedSubgroup != null)
                               TableFiltersSummaryItemData(
-                                label: 'Subgrupo',
+                                label: AppLocalizations.of(
+                                  context,
+                                ).commonSubgroup,
                                 value: _selectedSubgroup!.description.trim(),
                                 icon: LucideIcons.activity,
                               ),
                             if (_selectedSubgroupItem != null)
                               TableFiltersSummaryItemData(
-                                label: 'Class option',
+                                label: AppLocalizations.of(context).classOption,
                                 value: _selectedSubgroupItem!.description
                                     .trim(),
                                 icon: LucideIcons.trophy,

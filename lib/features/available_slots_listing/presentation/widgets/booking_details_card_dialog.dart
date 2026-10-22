@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
@@ -16,7 +17,7 @@ mixin BookingDetailsCardDialog {
     final sections = _buildSections(context, booking);
     return RowDetailsCardDialog.show(
       context,
-      title: 'Booking Details',
+      title: AppLocalizations.of(context).bookingDetailsTitle,
       sections: sections,
     );
   }
@@ -25,63 +26,91 @@ mixin BookingDetailsCardDialog {
     BuildContext context,
     BookingDto detail,
   ) {
-    final generalItems = _buildGeneralItems(detail);
-    final memberItems = _buildMemberItems(detail);
-    final trainerItems = _buildTrainerItems(detail);
+    final generalItems = _buildGeneralItems(context, detail);
+    final memberItems = _buildMemberItems(context, detail);
+    final trainerItems = _buildTrainerItems(context, detail);
     final serviceItems = _buildServiceItems(context, detail);
-    final feedbackItems = _buildFeedbackItems(detail);
+    final feedbackItems = _buildFeedbackItems(context, detail);
     return [
-      RowDetailsSection(title: 'General Information', items: generalItems),
-      RowDetailsSection(title: 'Member', items: memberItems),
+      RowDetailsSection(
+        title: AppLocalizations.of(context).commonGeneralInfo,
+        items: generalItems,
+      ),
+      RowDetailsSection(
+        title: AppLocalizations.of(context).commonMember,
+        items: memberItems,
+      ),
       if (trainerItems.isNotEmpty)
-        RowDetailsSection(title: 'Trainer', items: trainerItems),
+        RowDetailsSection(
+          title: AppLocalizations.of(context).commonTrainer,
+          items: trainerItems,
+        ),
       if (serviceItems.isNotEmpty)
-        RowDetailsSection(title: 'Class', items: serviceItems),
+        RowDetailsSection(
+          title: AppLocalizations.of(context).commonClass,
+          items: serviceItems,
+        ),
       if (feedbackItems.isNotEmpty)
-        RowDetailsSection(title: 'Session Feedback', items: feedbackItems),
+        RowDetailsSection(
+          title: AppLocalizations.of(context).commonSessionFeedback,
+          items: feedbackItems,
+        ),
     ];
   }
 
-  static List<RowDetailsItem> _buildFeedbackItems(BookingDto detail) {
+  static List<RowDetailsItem> _buildFeedbackItems(
+    BuildContext context,
+    BookingDto detail,
+  ) {
     final notes = detail.notes?.trim() ?? '';
     if (notes.isEmpty) {
       return const [];
     }
     return [
       RowDetailsItem(
-        label: 'Trainer Notes',
+        label: AppLocalizations.of(context).commonTrainerNotes,
         value: notes,
         icon: LucideIcons.messageSquare,
       ),
     ];
   }
 
-  static List<RowDetailsItem> _buildGeneralItems(BookingDto detail) {
+  static List<RowDetailsItem> _buildGeneralItems(
+    BuildContext context,
+    BookingDto detail,
+  ) {
     return [
       RowDetailsItem(
-        label: 'Status',
-        value: detail.state.isEmpty ? 'No status' : detail.state,
+        label: AppLocalizations.of(context).commonStatus,
+        value: detail.state.isEmpty
+            ? AppLocalizations.of(context).commonNoStatus
+            : detail.state,
         icon: LucideIcons.flag,
       ),
       RowDetailsItem(
-        label: 'Created At',
+        label: AppLocalizations.of(context).commonCreatedAt,
         value: formatDateTimeLabel(detail.creationDate),
         icon: LucideIcons.clock,
       ),
       RowDetailsItem(
-        label: 'Scheduled At',
+        label: AppLocalizations.of(context).commonScheduledAt,
         value: formatDateTimeLabel(detail.schedulingDate),
         icon: LucideIcons.calendarCheck,
       ),
       RowDetailsItem(
-        label: 'Duration',
-        value: detail.duration > 0 ? '${detail.duration} min' : 'Not defined',
+        label: AppLocalizations.of(context).commonDuration,
+        value: detail.duration > 0
+            ? '${detail.duration} min'
+            : AppLocalizations.of(context).commonNotDefined,
         icon: LucideIcons.timer,
       ),
     ];
   }
 
-  static List<RowDetailsItem> _buildMemberItems(BookingDto detail) {
+  static List<RowDetailsItem> _buildMemberItems(
+    BuildContext context,
+    BookingDto detail,
+  ) {
     // The signed-in member's RUT and phone live in the decoded session claims,
     // not in every booking projection, so fall back to them when the response's
     // member node omits them. All booking-detail entry points in this member app
@@ -101,29 +130,36 @@ mixin BookingDetailsCardDialog {
     return [
       RowDetailsItem(
         label: 'Name',
-        value: name.isEmpty ? 'No name' : name,
+        value: name.isEmpty ? AppLocalizations.of(context).commonNoName : name,
         icon: LucideIcons.user,
       ),
       RowDetailsItem(
         label: 'RUT',
-        value: rut.isEmpty ? 'Not available' : rut,
+        value: rut.isEmpty
+            ? AppLocalizations.of(context).commonNotAvailable
+            : rut,
         icon: LucideIcons.idCard,
       ),
       RowDetailsItem(
-        label: 'Phone',
-        value: phone.isEmpty ? 'Not available' : phone,
+        label: AppLocalizations.of(context).commonPhone,
+        value: phone.isEmpty
+            ? AppLocalizations.of(context).commonNotAvailable
+            : phone,
         icon: LucideIcons.phone,
       ),
     ];
   }
 
-  static List<RowDetailsItem> _buildTrainerItems(BookingDto detail) {
+  static List<RowDetailsItem> _buildTrainerItems(
+    BuildContext context,
+    BookingDto detail,
+  ) {
     final items = <RowDetailsItem>[];
 
     if ((detail.trainerName ?? '').isNotEmpty) {
       items.add(
         RowDetailsItem(
-          label: 'Trainer',
+          label: AppLocalizations.of(context).commonTrainer,
           value: detail.trainerName!,
           icon: LucideIcons.dumbbell,
         ),
@@ -133,7 +169,7 @@ mixin BookingDetailsCardDialog {
     if ((detail.disciplineName ?? '').isNotEmpty) {
       items.add(
         RowDetailsItem(
-          label: 'Discipline',
+          label: AppLocalizations.of(context).commonDiscipline,
           value: detail.disciplineName!,
           icon: LucideIcons.star,
         ),
@@ -152,7 +188,7 @@ mixin BookingDetailsCardDialog {
     if (detail.serviceName != null && detail.serviceName!.isNotEmpty) {
       items.add(
         RowDetailsItem(
-          label: 'Class',
+          label: AppLocalizations.of(context).commonClass,
           value: detail.serviceName!,
           icon: LucideIcons.dumbbell,
         ),
@@ -163,8 +199,8 @@ mixin BookingDetailsCardDialog {
     if (preparation.isNotEmpty) {
       items.add(
         RowDetailsItem(
-          label: 'Preparation',
-          value: 'View Preparation',
+          label: AppLocalizations.of(context).commonPreparation,
+          value: AppLocalizations.of(context).viewPreparation,
           icon: LucideIcons.fileText,
           onTap: () => _showPreparationDialog(context, preparation),
         ),
@@ -188,7 +224,7 @@ mixin BookingDetailsCardDialog {
       builder: (_) => AlertDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         title: Text(
-          'Preparation',
+          AppLocalizations.of(context).commonPreparation,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         content: ConstrainedBox(
@@ -196,7 +232,7 @@ mixin BookingDetailsCardDialog {
           child: SingleChildScrollView(
             child: SelectableText(
               preparationText.isEmpty
-                  ? 'No preparation instructions available.'
+                  ? AppLocalizations.of(context).emptyNoPreparation
                   : preparationText,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -206,7 +242,7 @@ mixin BookingDetailsCardDialog {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              'Close',
+              AppLocalizations.of(context).commonClose,
               style: TextStyle(color: AppTheme.brandAccentColor(context)),
             ),
           ),

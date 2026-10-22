@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
@@ -50,7 +51,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
   void _handleTrainerInfo(Map<String, dynamic> row) {
     final trainer = row['trainer'] as TrainerDirectoryDto?;
     if (trainer == null) {
-      _showSnackBar('Could not open the trainer profile.');
+      _showSnackBar(AppLocalizations.of(context).dirTrainerProfileFailed);
       return;
     }
     unawaited(TrainerInfoDialog.show(context, trainer));
@@ -59,7 +60,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
   void _handleTrainerSelected(Map<String, dynamic> row) {
     final trainer = row['trainer'] as TrainerDirectoryDto?;
     if (trainer == null) {
-      _showSnackBar('Could not select the trainer.');
+      _showSnackBar(AppLocalizations.of(context).dirSelectTrainerFailed);
       return;
     }
     unawaited(viewModel.showTrainerAvailability(trainer));
@@ -96,7 +97,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
     if (trainerName.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Trainer',
+          label: AppLocalizations.of(context).commonTrainer,
           value: trainerName,
           icon: LucideIcons.user,
         ),
@@ -106,7 +107,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
     if (discipline.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Discipline',
+          label: AppLocalizations.of(context).commonDiscipline,
           value: discipline,
           icon: LucideIcons.star,
         ),
@@ -116,7 +117,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
     if (membership.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Membership plan',
+          label: AppLocalizations.of(context).commonPlan,
           value: membership,
           icon: LucideIcons.creditCard,
         ),
@@ -193,7 +194,7 @@ class _TrainersDirectoryPageState extends State<TrainersDirectoryPage>
         totalItems: viewModel.trainersTotalItems,
         onPageChanged: viewModel.setTrainersPageNumber,
         showPagination: stage == TrainersViewStage.results,
-        emptyLabel: 'No trainers available.',
+        emptyLabel: AppLocalizations.of(context).emptyNoTrainers,
       ),
     );
   }
@@ -251,8 +252,8 @@ class _TrainersDirectoryStandalonePageState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PageHeader(
-              title: 'Fitness Directory',
-              subtitle: 'Trainers',
+              title: AppLocalizations.of(context).dirTitle,
+              subtitle: AppLocalizations.of(context).commonTrainers,
               subtitleIcon: LucideIcons.user,
               onBackButtonPressed: _handleBack,
             ),

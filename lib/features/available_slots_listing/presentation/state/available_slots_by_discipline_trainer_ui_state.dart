@@ -1,3 +1,5 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 import 'package:equatable/equatable.dart';
 
@@ -24,9 +26,10 @@ class AvailableSlotsFilterUiState extends Equatable {
   final List<String> trainers;
   final String? trainersErrorMessage;
 
-  String get primaryPlaceholder => searchMode == DisciplineSearchMode.discipline
-      ? 'Search for a discipline'
-      : 'Search for a trainer';
+  String primaryPlaceholder(BuildContext context) =>
+      searchMode == DisciplineSearchMode.discipline
+      ? AppLocalizations.of(context).searchDisciplineHint
+      : AppLocalizations.of(context).searchTrainerHint;
 
   bool shouldShowSheet({required bool showAvailabilityTable}) =>
       isSheetVisible && activeField != null && !showAvailabilityTable;

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +18,17 @@ class DisciplineTrainerFilterBox extends StatelessWidget {
   final DisciplineSearchMode selectedMode;
   final ValueChanged<DisciplineSearchMode>? onChanged;
 
-  static const List<FilterOption<DisciplineSearchMode>> _options = [
+  static List<FilterOption<DisciplineSearchMode>> _options(
+    BuildContext context,
+  ) => [
     FilterOption<DisciplineSearchMode>(
       value: DisciplineSearchMode.discipline,
-      label: 'By Discipline',
+      label: AppLocalizations.of(context).filterByDiscipline,
       iconData: LucideIcons.dumbbell,
     ),
     FilterOption<DisciplineSearchMode>(
       value: DisciplineSearchMode.trainer,
-      label: 'By Trainer',
+      label: AppLocalizations.of(context).filterByTrainer,
       iconData: LucideIcons.user,
     ),
   ];
@@ -37,9 +40,9 @@ class DisciplineTrainerFilterBox extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DoubleOptionFilterBox<DisciplineSearchMode>(
-          title: 'How do you want to search?',
+          title: AppLocalizations.of(context).filterHowToSearch,
           accentColor: resolvedAccent,
-          options: _options,
+          options: _options(context),
           selectedValue: selectedMode,
           onChanged: onChanged,
         ),

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
@@ -38,8 +39,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Text(
-          emptyStateMessage ??
-              'No subcategories available for the selected group.',
+          emptyStateMessage ?? AppLocalizations.of(context).emptyNoSubgroups,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium,
         ),
@@ -68,7 +68,7 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Select a subcategory',
+                  AppLocalizations.of(context).pickSubcategory,
                   style: AppTheme.titleMediumEmphasis(context),
                 ),
                 if (groupLabel != null) ...[
@@ -84,8 +84,10 @@ class CapabilitiesSubgroupFilterBox extends StatelessWidget {
                         child: Text.rich(
                           TextSpan(
                             children: [
-                              const TextSpan(
-                                text: 'Group: ',
+                              TextSpan(
+                                text: AppLocalizations.of(
+                                  context,
+                                ).commonGroupPrefix,
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               ),
                               TextSpan(text: groupLabel),

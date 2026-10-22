@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/check_availability_button_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
@@ -64,7 +65,7 @@ class DisciplinesTable extends StatelessWidget {
         fields: fields,
         isLoading: isLoading,
         errorMessage: errorMessage,
-        emptyLabel: 'No disciplines available.',
+        emptyLabel: AppLocalizations.of(context).emptyNoDisciplines,
         wrapFields: const {'name'},
       ),
       pagination: pagination,
