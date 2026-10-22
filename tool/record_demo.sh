@@ -19,6 +19,14 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# --post-only processes an existing capture instead of recording one. Use it
+# when the device cannot be driven by `adb shell screenrecord` (see the
+# preflight check below) and the screen was captured another way.
+POST_ONLY=false
+if [[ "${1:-}" == "--post-only" ]]; then
+  POST_ONLY=true
+fi
+
 readonly OUT_DIR="${OUT_DIR:-build/demo}"
 readonly DEVICE_MP4="/sdcard/fitnesscenter_demo.mp4"
 readonly RAW="${OUT_DIR}/raw.mp4"
@@ -34,34 +42,61 @@ command -v adb >/dev/null || die "adb not found on PATH"
 command -v ffmpeg >/dev/null || die "ffmpeg not found on PATH"
 [[ -f "$DEFINES" ]] || die "missing $DEFINES (holds BASE_URL)"
 
-# Credentials come from an untracked env file, never from this script.
-[[ -f "$ENV_FILE" ]] || die "missing $ENV_FILE - copy tool/demo.env.example and fill it in"
-# shellcheck disable=SC1090
-source "$ENV_FILE"
-[[ -n "${DEMO_EMAIL:-}" ]] || die "DEMO_EMAIL not set in $ENV_FILE"
-[[ -n "${DEMO_PASSWORD:-}" ]] || die "DEMO_PASSWORD not set in $ENV_FILE"
+if [[ "$POST_ONLY" == false ]]; then
+  # Credentials come from an untracked env file, never from this script.
+  [[ -f "$ENV_FILE" ]] || die "missing $ENV_FILE - copy tool/demo.env.example and fill it in"
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  [[ -n "${DEMO_EMAIL:-}" ]] || die "DEMO_EMAIL not set in $ENV_FILE"
+  [[ -n "${DEMO_PASSWORD:-}" ]] || die "DEMO_PASSWORD not set in $ENV_FILE"
 
-mapfile -t devices < <(adb devices | awk 'NR>1 && $2=="device" {print $1}')
-(( ${#devices[@]} > 0 )) || die "no device: boot the emulator or plug a phone in"
-readonly SERIAL="${SERIAL:-${devices[0]}}"
-log "device: $SERIAL"
+  mapfile -t devices < <(adb devices | awk 'NR>1 && $2=="device" {print $1}')
+  (( ${#devices[@]} > 0 )) || die "no device: boot the emulator or plug a phone in"
+  readonly SERIAL="${SERIAL:-${devices[0]}}"
+  log "device: $SERIAL"
+
+
+  # Android 13+ gates notifications behind a runtime prompt. Pre-granting keeps
+  # the system dialog out of the recording without needing Patrol to tap it.
+  APP_ID="$(grep -oP 'applicationId\s*=\s*"\K[^"]+' android/app/build.gradle.kts || true)"
+  if [[ -n "$APP_ID" ]]; then
+    adb -s "$SERIAL" shell pm grant "$APP_ID" android.permission.POST_NOTIFICATIONS 2>/dev/null \
+      && log "granted POST_NOTIFICATIONS to $APP_ID" \
+      || log "could not pre-grant notifications (app may not be installed yet)"
+  fi
+
+  # Some OEM builds (ColorOS/Realme among them) ship the screenrecord binary but
+  # refuse to let the adb shell execute it. Without this check the failure only
+  # surfaces later as an unexplained `adb pull` error with nothing to fetch.
+  if ! adb -s "$SERIAL" shell 'command -v screenrecord >/dev/null && screenrecord --help >/dev/null 2>&1; echo $?' 2>/dev/null | grep -q '^0'; then
+    die "this device will not run 'adb shell screenrecord' (common on ColorOS/Realme).
+    Record the screen another way, then post-process the file:
+
+      # 1. start the phone's built-in screen recorder (Quick Settings)
+      # 2. run the flow:
+      flutter test integration_test/member_flow_test.dart -d $SERIAL \\
+        --dart-define-from-file=$DEFINES --dart-define=ENABLE_DEVICE_PREVIEW=false \\
+        --dart-define=DEMO_EMAIL=\"\$DEMO_EMAIL\" --dart-define=DEMO_PASSWORD=\"\$DEMO_PASSWORD\"
+      # 3. stop the recording, pull it, and post-process:
+      adb -s $SERIAL pull /sdcard/Movies/<your-recording>.mp4 $RAW
+      tool/record_demo.sh --post-only
+
+    Or record on the emulator instead, where screenrecord works."
+  fi
+
+  # Keep the screen awake and hide status-bar clutter so the capture looks clean.
+  adb -s "$SERIAL" shell svc power stayon usb >/dev/null 2>&1 || true
+  adb -s "$SERIAL" shell cmd statusbar set-icon-visibility 2>/dev/null || true
+fi
 
 mkdir -p "$OUT_DIR"
 
-# Android 13+ gates notifications behind a runtime prompt. Pre-granting keeps
-# the system dialog out of the recording without needing Patrol to tap it.
-APP_ID="$(grep -oP 'applicationId\s*=\s*"\K[^"]+' android/app/build.gradle.kts || true)"
-if [[ -n "$APP_ID" ]]; then
-  adb -s "$SERIAL" shell pm grant "$APP_ID" android.permission.POST_NOTIFICATIONS 2>/dev/null \
-    && log "granted POST_NOTIFICATIONS to $APP_ID" \
-    || log "could not pre-grant notifications (app may not be installed yet)"
-fi
-
-# Keep the screen awake and hide status-bar clutter so the capture looks clean.
-adb -s "$SERIAL" shell svc power stayon usb >/dev/null 2>&1 || true
-adb -s "$SERIAL" shell cmd statusbar set-icon-visibility 2>/dev/null || true
-
 # ---------------------------------------------------------------- record
+if [[ "$POST_ONLY" == true ]]; then
+  [[ -s "$RAW" ]] || die "--post-only needs an existing capture at $RAW"
+  log "post-only: using the existing capture at $RAW"
+  TEST_STATUS=0
+else
 log "starting screen capture"
 adb -s "$SERIAL" shell rm -f "$DEVICE_MP4" 2>/dev/null || true
 adb -s "$SERIAL" shell screenrecord --bit-rate 6000000 --size 720x1600 "$DEVICE_MP4" &
@@ -97,9 +132,11 @@ fi
 
 # ---------------------------------------------------------------- post-process
 log "pulling capture"
-adb -s "$SERIAL" pull "$DEVICE_MP4" "$RAW" >/dev/null
+adb -s "$SERIAL" pull "$DEVICE_MP4" "$RAW" >/dev/null \
+  || die "nothing was captured on the device: screenrecord produced no file"
 adb -s "$SERIAL" shell rm -f "$DEVICE_MP4" || true
 [[ -s "$RAW" ]] || die "capture is empty"
+fi
 
 DURATION="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$RAW" | cut -d. -f1)"
 FPS="$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of csv=p=0 "$RAW")"
