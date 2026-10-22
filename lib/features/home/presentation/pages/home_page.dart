@@ -369,10 +369,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     required bool isLoading,
     Object? error,
   }) {
-    if (isLoading) return AppLocalizations.of(context).homeLoadingHistory;
+    if (isLoading) {
+      return AppLocalizations.of(context).homeLoadingHistory;
+    }
     if (error != null)
       return AppLocalizations.of(context).homeHistoryLoadFailed;
-    if (booking == null) return AppLocalizations.of(context).homeHistoryEmpty;
+    if (booking == null) {
+      return AppLocalizations.of(context).homeHistoryEmpty;
+    }
     final service = booking.serviceName?.trim() ?? '';
     final trainer = booking.trainerName?.trim() ?? '';
     final date = booking.schedulingDate.toLocal();
