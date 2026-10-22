@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/bookings/booking_dto.dart';
 import 'package:fitnesscenter_mobile/features/profile/presentation/widgets/assessment_feedback_card.dart';
 
+import 'support/test_app.dart';
+
 void main() {
   testWidgets('AssessmentFeedbackCard paints its content', (tester) async {
     final booking = BookingDto(
@@ -21,14 +23,9 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(brightness: Brightness.dark),
-        home: Scaffold(
-          body: AssessmentFeedbackCard(
-            booking: booking,
-            initiallyExpanded: true,
-          ),
-        ),
+      testApp(
+        AssessmentFeedbackCard(booking: booking, initiallyExpanded: true),
+        brightness: Brightness.dark,
       ),
     );
     await tester.pumpAndSettle();

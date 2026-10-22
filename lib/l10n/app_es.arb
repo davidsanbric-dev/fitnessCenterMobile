@@ -198,5 +198,129 @@
     }
   },
   "searchDisciplineHint": "Busca una disciplina",
-  "searchTrainerHint": "Busca un entrenador"
+  "searchTrainerHint": "Busca un entrenador",
+  "homeAssessmentsCard": "Evaluaciones\nfísicas",
+  "homeTrainersCard": "Conoce a los\nentrenadores",
+  "homeSubtitle": "Reserva y gestiona tus clases desde donde estés",
+  "homeDiscover": "Descubre todo lo que puedes hacer",
+  "homeTrainSmarter": "Entrena mejor, sin complicaciones",
+  "homeStartToday": "Empieza hoy",
+  "homeLearnMore": "Saber más",
+  "homeReadMore": "Leer más",
+  "homeViewAll": "Ver todo",
+  "homeBookingToday": "Reserva para hoy",
+  "homeLoadingNext": "Cargando tu próxima reserva...",
+  "homeLoadingHistory": "Cargando tu historial de entrenamiento...",
+  "homeHistoryLoadFailed": "No pudimos cargar tu historial de entrenamiento.",
+  "homeHistoryEmpty": "Tus sesiones completadas aparecerán aquí.",
+  "commonSession": "Sesión",
+  "planPrice": "Precio: ${amount}",
+  "planUpToSessions": "Hasta {count} sesiones / mes",
+  "planUpToSession": "Hasta {count} sesión / mes",
+  "profileTitle": "Mi perfil",
+  "profilePersonalInfo": "Información personal",
+  "profileFullName": "Nombre completo",
+  "profileMembershipPlan": "Plan de membresía",
+  "profileTrainingHistory": "Historial de entrenamiento",
+  "profileAssessmentResults": "Resultados de evaluación",
+  "profileSignOut": "Cerrar sesión",
+  "profileDetails": "Detalles",
+  "profileNoAssessments": "Aún no hay notas de evaluación.",
+  "profileNoSessions": "Aún no tienes sesiones completadas.",
+  "profileTrainerFeedback": "Comentarios del entrenador",
+  "profilePhotoUpdated": "Foto de perfil actualizada.",
+  "profileSignOutFailed": "No se pudo cerrar sesión: {error}",
+  "profilePhotoFailed": "No se pudo actualizar la foto: {error}",
+  "commonDetailsLoadFailed": "No se pudieron cargar los detalles",
+  "commonUnexpectedError": "Error inesperado",
+  "@planPrice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@planUpToSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@planUpToSession": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@profileSignOutFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@profilePhotoFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "homeLastSession": "Última: {session}{trainer}, {date}.",
+  "homeTodaySession": "Hoy: {session}{trainer}, {time}.",
+  "homeNextSession": "Próxima: {session}{trainer}, {date} a las {time}.",
+  "commonWithTrainer": " con {trainer}",
+  "assessmentEmpty": "Los comentarios de tu entrenador aparecerán aquí después de una sesión completada.",
+  "commonTime": "Hora",
+  "@homeLastSession": {
+    "placeholders": {
+      "session": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeTodaySession": {
+    "placeholders": {
+      "session": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeNextSession": {
+    "placeholders": {
+      "session": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@commonWithTrainer": {
+    "placeholders": {
+      "trainer": {
+        "type": "String"
+      }
+    }
+  }
 }

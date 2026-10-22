@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
@@ -32,7 +33,7 @@ class InfoSummary extends StatefulWidget {
     required this.tabs,
     this.iconAsset,
     this.iconData,
-    this.actionLabel = 'View all',
+    this.actionLabel,
     this.onActionPressed,
   }) : assert(tabs.length >= 2, 'Provide at least two tabs'),
        assert(
@@ -43,7 +44,7 @@ class InfoSummary extends StatefulWidget {
   final List<InfoSummaryTab> tabs;
   final String? iconAsset;
   final IconData? iconData;
-  final String actionLabel;
+  final String? actionLabel;
   final VoidCallback? onActionPressed;
 
   @override
@@ -71,7 +72,10 @@ class _InfoSummaryState extends State<InfoSummary> {
       fontSize: 13,
     );
 
-    final resolvedActionLabel = tab.actionLabel ?? widget.actionLabel;
+    final resolvedActionLabel =
+        tab.actionLabel ??
+        widget.actionLabel ??
+        AppLocalizations.of(context).homeViewAll;
     final resolvedActionPressed = tab.onActionPressed ?? widget.onActionPressed;
 
     return Column(

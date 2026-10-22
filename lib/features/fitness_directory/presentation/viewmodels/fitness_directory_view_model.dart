@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/memberships/membership_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_pagination.dart';
 import 'package:fitnesscenter_mobile/app/core/viewmodel/view_model_base.dart';
@@ -21,14 +22,14 @@ class FitnessDirectoryViewModel extends ViewModelBase {
   int membershipsPageSize = _defaultMembershipsPageSize;
   int membershipsTotalItems = 0;
 
-  List<Map<String, dynamic>> get membershipsRows {
+  List<Map<String, dynamic>> membershipsRows(AppLocalizations l10n) {
     final rows = memberships
         .map(
           (item) => {
             'id': item.membershipId,
             'name': item.membershipName,
-            'price': _formatPrice(item.price),
-            'maxBookings': _formatMaxBookings(item.maxBookingsPerMonth),
+            'price': _formatPrice(l10n, item.price),
+            'maxBookings': _formatMaxBookings(l10n, item.maxBookingsPerMonth),
           },
         )
         .toList(growable: false);
@@ -121,7 +122,7 @@ class FitnessDirectoryViewModel extends ViewModelBase {
     syncPagination: _syncMembershipsPagination,
   );
 
-  String _formatPrice(double? price) {
+  String _formatPrice(AppLocalizations l10n, double? price) {
     if (price == null) {
       return '';
     }
@@ -131,15 +132,16 @@ class FitnessDirectoryViewModel extends ViewModelBase {
     final amount = isWhole
         ? price.toStringAsFixed(0)
         : price.toStringAsFixed(2);
-    return 'Price: \$$amount';
+    return l10n.planPrice(amount);
   }
 
-  String _formatMaxBookings(int? maxBookings) {
+  String _formatMaxBookings(AppLocalizations l10n, int? maxBookings) {
     if (maxBookings == null || maxBookings <= 0) {
       return '';
     }
-    final unit = maxBookings == 1 ? 'session' : 'sessions';
-    return 'Up to $maxBookings $unit / month';
+    return maxBookings == 1
+        ? l10n.planUpToSession(maxBookings)
+        : l10n.planUpToSessions(maxBookings);
   }
 
   void _syncMembershipsPagination() {

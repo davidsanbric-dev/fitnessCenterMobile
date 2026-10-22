@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -177,7 +178,7 @@ class _BlogSlideCard extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            'Read more',
+                            AppLocalizations.of(context).homeReadMore,
                             style: GoogleFonts.poppins(
                               textStyle: textTheme.bodyLarge,
                               color: accent,

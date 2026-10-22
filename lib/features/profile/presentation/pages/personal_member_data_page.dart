@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/utils/format/input.dart';
 import 'package:fitnesscenter_mobile/app/core/utils/normalize.dart';
@@ -116,14 +117,16 @@ class _PersonalDataViewState extends State<PersonalDataView>
 
   PageHeaderConfig _resolveHeaderConfig() {
     if (widget.onBack == null) {
-      return const PageHeaderConfig(title: 'Personal Information');
+      return PageHeaderConfig(
+        title: AppLocalizations.of(context).profilePersonalInfo,
+      );
     }
 
     // Mirror the Directory page breadcrumb pattern: keep the master section
     // title and surface the current sub-view as an iconed subtitle hint.
     return PageHeaderConfig(
-      title: 'My Profile',
-      subtitle: 'Personal Information',
+      title: AppLocalizations.of(context).profileTitle,
+      subtitle: AppLocalizations.of(context).profilePersonalInfo,
       subtitleIcon: LucideIcons.idCard,
       onBackButtonPressed: widget.onBack,
     );
@@ -156,18 +159,18 @@ class _PersonalDataViewState extends State<PersonalDataView>
         const SizedBox(height: 25),
         _buildReadOnlyField(
           controller: _fullNameController,
-          label: 'Full Name',
+          label: AppLocalizations.of(context).profileFullName,
         ),
         const SizedBox(height: 18),
         _buildReadOnlyField(
           controller: _phoneController,
-          label: 'Phone',
+          label: AppLocalizations.of(context).commonPhone,
           keyboardType: TextInputType.phone,
         ),
         const SizedBox(height: 18),
         _buildReadOnlyField(
           controller: _emailController,
-          label: 'Email',
+          label: AppLocalizations.of(context).authEmail,
           keyboardType: TextInputType.emailAddress,
         ),
         const SizedBox(height: 18),
@@ -175,7 +178,7 @@ class _PersonalDataViewState extends State<PersonalDataView>
         const SizedBox(height: 18),
         _buildReadOnlyField(
           controller: _membershipController,
-          label: 'Membership Plan',
+          label: AppLocalizations.of(context).profileMembershipPlan,
         ),
       ],
     );

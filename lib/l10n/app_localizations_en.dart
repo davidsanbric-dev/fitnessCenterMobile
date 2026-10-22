@@ -437,4 +437,149 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchTrainerHint => 'Search for a trainer';
+
+  @override
+  String get homeAssessmentsCard => 'Fitness\nAssessments';
+
+  @override
+  String get homeTrainersCard => 'Meet\nTrainers';
+
+  @override
+  String get homeSubtitle => 'Book and manage your classes from anywhere';
+
+  @override
+  String get homeDiscover => 'Discover everything you can do';
+
+  @override
+  String get homeTrainSmarter => 'Train smarter, hassle-free';
+
+  @override
+  String get homeStartToday => 'Start today';
+
+  @override
+  String get homeLearnMore => 'Learn more';
+
+  @override
+  String get homeReadMore => 'Read more';
+
+  @override
+  String get homeViewAll => 'View all';
+
+  @override
+  String get homeBookingToday => 'Booking for today';
+
+  @override
+  String get homeLoadingNext => 'Loading your next booking...';
+
+  @override
+  String get homeLoadingHistory => 'Loading your training history...';
+
+  @override
+  String get homeHistoryLoadFailed =>
+      'We could not load your training history.';
+
+  @override
+  String get homeHistoryEmpty => 'Your completed sessions will appear here.';
+
+  @override
+  String get commonSession => 'Session';
+
+  @override
+  String planPrice(String amount) {
+    return 'Price: \$$amount';
+  }
+
+  @override
+  String planUpToSessions(int count) {
+    return 'Up to $count sessions / month';
+  }
+
+  @override
+  String planUpToSession(int count) {
+    return 'Up to $count session / month';
+  }
+
+  @override
+  String get profileTitle => 'My Profile';
+
+  @override
+  String get profilePersonalInfo => 'Personal Information';
+
+  @override
+  String get profileFullName => 'Full Name';
+
+  @override
+  String get profileMembershipPlan => 'Membership Plan';
+
+  @override
+  String get profileTrainingHistory => 'Training History';
+
+  @override
+  String get profileAssessmentResults => 'Assessment Results';
+
+  @override
+  String get profileSignOut => 'Sign Out';
+
+  @override
+  String get profileDetails => 'Details';
+
+  @override
+  String get profileNoAssessments => 'No assessment notes yet.';
+
+  @override
+  String get profileNoSessions => 'No completed sessions yet.';
+
+  @override
+  String get profileTrainerFeedback => 'Trainer feedback';
+
+  @override
+  String get profilePhotoUpdated => 'Profile photo updated.';
+
+  @override
+  String profileSignOutFailed(String error) {
+    return 'Could not sign out: $error';
+  }
+
+  @override
+  String profilePhotoFailed(String error) {
+    return 'Could not update the photo: $error';
+  }
+
+  @override
+  String get commonDetailsLoadFailed => 'Could not load details';
+
+  @override
+  String get commonUnexpectedError => 'Unexpected error';
+
+  @override
+  String homeLastSession(String session, String trainer, String date) {
+    return 'Last: $session$trainer, $date.';
+  }
+
+  @override
+  String homeTodaySession(String session, String trainer, String time) {
+    return 'Today: $session$trainer, $time.';
+  }
+
+  @override
+  String homeNextSession(
+    String session,
+    String trainer,
+    String date,
+    String time,
+  ) {
+    return 'Next: $session$trainer, $date at $time.';
+  }
+
+  @override
+  String commonWithTrainer(String trainer) {
+    return ' with $trainer';
+  }
+
+  @override
+  String get assessmentEmpty =>
+      'Your trainer\'s feedback will appear here after a completed session.';
+
+  @override
+  String get commonTime => 'Time';
 }
