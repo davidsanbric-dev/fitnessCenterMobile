@@ -5,6 +5,7 @@ import 'package:fitnesscenter_mobile/app/core/viewmodel/shared_view_model_host.d
 import 'package:fitnesscenter_mobile/features/available_slots_listing/presentation/widgets/book_session_flow.dart';
 import 'package:fitnesscenter_mobile/features/bookings/feature.dart';
 import 'package:fitnesscenter_mobile/features/bookings/presentation/widgets/bookings_table.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -166,12 +167,13 @@ class _BookingsPageState extends State<BookingsPage>
   }
 
   PageHeaderConfig _resolveHeaderConfig() {
+    final l10n = AppLocalizations.of(context);
     if (!_showBookFlow) {
-      return const PageHeaderConfig(title: 'My Bookings');
+      return PageHeaderConfig(title: l10n.bookingsTitle);
     }
     return PageHeaderConfig(
-      title: 'My Bookings',
-      subtitle: 'Book a Session',
+      title: l10n.bookingsTitle,
+      subtitle: l10n.bookingsBookSession,
       secondarySubtitle: _flowSecondarySubtitle,
       secondarySubtitleIcon: _flowSecondarySubtitleIcon,
       onBackButtonPressed: _flowBackHandler ?? _closeBookFlow,
@@ -217,6 +219,7 @@ class _BookingsPageState extends State<BookingsPage>
                   pageSize: viewModel.bookingsPageSize,
                   totalItems: viewModel.bookingsTotalItems,
                   onPageChanged: viewModel.setBookingsPageNumber,
+                  onRetry: _refresh,
                   showPagination: true,
                 ),
               ],

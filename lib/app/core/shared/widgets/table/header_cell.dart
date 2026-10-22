@@ -12,7 +12,9 @@ class HeaderCell extends StatelessWidget {
         text,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.85),
           fontSize: 13,
         ),
         textAlign: TextAlign.center,

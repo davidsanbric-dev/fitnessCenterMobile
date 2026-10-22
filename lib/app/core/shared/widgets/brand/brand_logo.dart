@@ -16,6 +16,7 @@ class BrandLogo extends StatelessWidget {
     return RepaintBoundary(
       child: Image.asset(
         AppAssets.logo,
+        semanticLabel: 'FitnessCenter',
         height: height,
         fit: BoxFit.contain,
         filterQuality: FilterQuality.medium,

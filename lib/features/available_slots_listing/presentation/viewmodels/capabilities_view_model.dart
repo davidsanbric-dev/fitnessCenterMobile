@@ -11,15 +11,11 @@ import 'package:flutter/material.dart';
 
 class CapabilitiesViewModel extends ViewModelBase {
   CapabilitiesViewModel({
-    CapabilitiesCatalogRepository? catalogRepository,
-    AvailabilityListingRepository? availabilityRepository,
+    required CapabilitiesCatalogRepository catalogRepository,
+    required AvailabilityListingRepository availabilityRepository,
     ClassBookingViewModel? bookingViewModel,
-  }) : _catalogRepository =
-           catalogRepository ??
-           (throw ArgumentError.notNull('catalogRepository')),
-       _availabilityRepository =
-           availabilityRepository ??
-           (throw ArgumentError.notNull('availabilityRepository')),
+  }) : _catalogRepository = catalogRepository,
+       _availabilityRepository = availabilityRepository,
        _bookingViewModel =
            bookingViewModel ??
            ClassBookingInjector.getSharedClassBookingViewModel();

@@ -33,7 +33,6 @@ abstract class FirebaseAuthGateway {
   });
   Future<ActionCodeInfo> checkActionCode({required String code});
   Future<void> applyActionCode({required String code});
-
 }
 
 class DefaultFirebaseAuthGateway implements FirebaseAuthGateway {
@@ -154,5 +153,4 @@ class DefaultFirebaseAuthGateway implements FirebaseAuthGateway {
   Future<void> applyActionCode({required String code}) {
     return _auth.applyActionCode(code);
   }
-
 }

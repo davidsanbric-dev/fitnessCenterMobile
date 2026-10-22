@@ -3,6 +3,7 @@ import 'package:fitnesscenter_mobile/app/core/shared/widgets/buttons/create_butt
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_status_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -22,7 +23,8 @@ class BookingsTable extends StatelessWidget {
     this.totalItems,
     this.onPageChanged,
     this.showPagination = false,
-    this.emptyLabel = 'You have no assigned bookings.',
+    this.onRetry,
+    this.emptyLabel,
   });
 
   final List<BookingDto> bookings;
@@ -42,14 +44,15 @@ class BookingsTable extends StatelessWidget {
   final int? totalItems;
   final ValueChanged<int>? onPageChanged;
   final bool showPagination;
-  final String emptyLabel;
+  final VoidCallback? onRetry;
+  final String? emptyLabel;
 
-  List<Map<String, dynamic>> get _rows => bookings
+  List<Map<String, dynamic>> _buildRows(AppLocalizations l10n) => bookings
       .map((item) {
         final serviceName = item.serviceName?.trim() ?? '';
         final trainerName = item.trainerName?.trim() ?? '';
         final disciplineName = item.disciplineName?.trim() ?? '';
-        const fallbackServiceName = 'Not specified';
+        final fallbackServiceName = l10n.commonNotSpecified;
 
         return <String, dynamic>{
           'bookingId': item.bookingId,
@@ -60,7 +63,7 @@ class BookingsTable extends StatelessWidget {
               ? fallbackServiceName
               : serviceName,
           'trainerName': trainerName.isEmpty
-              ? 'Trainer pending assignment'
+              ? l10n.bookingsTrainerPending
               : trainerName,
           'disciplineName': disciplineName,
           'duration': item.duration,
@@ -71,6 +74,7 @@ class BookingsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final shouldShowPagination =
         showPagination ||
         pageNumber != null ||
@@ -87,11 +91,15 @@ class BookingsTable extends StatelessWidget {
         : null;
 
     return TableCard(
-      headers: const ['Time', 'Class / Trainer', 'Actions'],
+      headers: [
+        l10n.bookingsColumnTime,
+        l10n.bookingsColumnClassTrainer,
+        l10n.bookingsColumnActions,
+      ],
       body: TableBodySection(
         isLoading: isLoading,
         errorMessage: errorMessage,
-        data: _rows,
+        data: _buildRows(l10n),
         fields: [
           (row) => DateTimeStatusCell(
             value: row['schedulingDate'] as DateTime?,
@@ -118,25 +126,34 @@ class BookingsTable extends StatelessWidget {
           }
           return handlers.isEmpty ? null : handlers;
         }(),
-        emptyLabel: emptyLabel,
+        emptyLabel: emptyLabel ?? l10n.bookingsEmpty,
+        onRetry: onRetry,
+        // An empty bookings list is the first thing a new member sees, so point
+        // at the one action that resolves it instead of a dead end.
+        emptyAction: onBookSession != null
+            ? _buildBookSessionButton(l10n)
+            : null,
       ),
       heightFactor: 0.72,
       margin: const EdgeInsets.fromLTRB(2, 0, 2, 16),
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-      toolbar: onBookSession != null ? _buildBookSessionButton() : null,
+      toolbar: onBookSession != null ? _buildBookSessionButton(l10n) : null,
       toolbarSpacing: 6,
       pagination: pagination,
     );
   }
 
-  Widget _buildBookSessionButton() {
+  Widget _buildBookSessionButton(AppLocalizations l10n) {
     return CreateButton(
-      label: 'Book a Session',
+      label: l10n.bookingsBookSession,
       onPressed: onBookSession,
       icon: const Icon(LucideIcons.calendarPlus, size: 18),
       alignment: Alignment.centerRight,
       spacing: 0,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      // No shrinkWrap here: this is the list's primary action, and dropping the
+      // framework's padding left it a 40px tap target, under the 48px minimum.
+      // `padded` keeps the button looking identical and grows only the
+      // invisible touch area.
     );
   }
 }

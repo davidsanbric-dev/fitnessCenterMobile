@@ -4,6 +4,8 @@ import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/dou
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/triple_text_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/single_text_cell.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_dropdown.dart';
+import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/state_placeholder.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 
 typedef TableCellBuilder = Widget Function(Map<String, dynamic> row);
 
@@ -221,7 +223,9 @@ class TableBodySection extends StatelessWidget {
     this.errorMessage,
     this.loadingBuilder,
     this.errorBuilder,
-    this.emptyLabel = 'No hay registros disponibles.',
+    this.emptyLabel,
+    this.emptyAction,
+    this.onRetry,
     this.tableWrapperBuilder,
     this.onRowTap,
     this.wrapFields = const <String>{},
@@ -239,7 +243,17 @@ class TableBodySection extends StatelessWidget {
 
   final WidgetBuilder? loadingBuilder;
   final Widget Function(BuildContext context, String message)? errorBuilder;
-  final String emptyLabel;
+
+  /// Defaults to a generic 'no records' message when omitted.
+  final String? emptyLabel;
+
+  /// Optional next step offered on the empty state, e.g. a "book a session"
+  /// button when a member has no bookings yet.
+  final Widget? emptyAction;
+
+  /// When provided, a failed load offers a retry instead of leaving
+  /// pull-to-refresh as the only way out.
+  final VoidCallback? onRetry;
   final Widget Function(BuildContext context, Widget tableWidget)?
   tableWrapperBuilder;
   final void Function(Map<String, dynamic> row)? onRowTap;
@@ -250,7 +264,7 @@ class TableBodySection extends StatelessWidget {
 
   Widget _defaultErrorBuilder(BuildContext context, String message) {
     return Expanded(
-      child: Center(child: Text(message, textAlign: TextAlign.center)),
+      child: StatePlaceholder.error(message: message, onRetry: onRetry),
     );
   }
 
@@ -271,7 +285,10 @@ class TableBodySection extends StatelessWidget {
 
     if (data.isEmpty) {
       return Expanded(
-        child: Center(child: Text(emptyLabel, textAlign: TextAlign.center)),
+        child: StatePlaceholder.empty(
+          message: emptyLabel ?? AppLocalizations.of(context).commonNoRecords,
+          action: emptyAction,
+        ),
       );
     }
 

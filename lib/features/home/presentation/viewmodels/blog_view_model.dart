@@ -8,8 +8,8 @@ import 'package:fitnesscenter_mobile/features/home/domain/domain.dart';
 /// a "new blog" push arrives, so the slider updates on-time without a manual
 /// reload.
 class BlogViewModel extends ViewModelBase {
-  BlogViewModel({BlogRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  BlogViewModel({required BlogRepository repository})
+    : _repository = repository;
 
   final BlogRepository _repository;
 

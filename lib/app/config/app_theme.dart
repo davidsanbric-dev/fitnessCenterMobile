@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 mixin AppTheme {
@@ -25,6 +25,7 @@ mixin AppTheme {
   static const Color darkPrimary = Color(0xFF2C6BA4);
   static const Color darkPrimarySoft = Color(0xFF1F4F7C);
   static const Color darkBorder = Color(0xFF23435F);
+  static const Color darkDanger = Color(0xFFE8737B);
   static const Color darkInputBg = Color(0xFF0F2438);
   static const Color darkNavHover = Color(0xFF17314A);
   // Sidebar/brand-chrome gradient — mirrors the web's --sidebar-grad-* vars so
@@ -133,6 +134,12 @@ mixin AppTheme {
 
   static Color brandAccentColor(BuildContext context) =>
       _isDark(context) ? darkPrimary : brandBlue;
+
+  /// Danger tone for inline error surfaces. The light [danger] red is too dark
+  /// to read against the dark panels, so dark mode lifts it the same way the
+  /// web admin does.
+  static Color dangerColor(BuildContext context) =>
+      _isDark(context) ? darkDanger : danger;
 
   /// `--primary-soft` — the slightly darker edge the web pairs with primary
   /// fills (e.g. `.btn-primary` border) so filled accents read as crisp.

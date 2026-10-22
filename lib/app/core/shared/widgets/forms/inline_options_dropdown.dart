@@ -240,6 +240,7 @@ class _InlineDropdownHeader extends StatelessWidget {
               if (showBack)
                 IconButton(
                   onPressed: onBack,
+                  tooltip: 'Back',
                   icon: const Icon(LucideIcons.chevronLeft),
                   color: Colors.white,
                   iconSize: 18,

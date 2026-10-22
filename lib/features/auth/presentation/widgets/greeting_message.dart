@@ -1,4 +1,4 @@
-import 'package:fitnesscenter_mobile/app/core/constants/app_strings.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class GreetingMessage extends StatelessWidget {
@@ -8,10 +8,10 @@ class GreetingMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          AppStrings.loadWelcomeTitle,
+        Text(
+          AppLocalizations.of(context).authWelcomeTitle,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -19,7 +19,7 @@ class GreetingMessage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          AppStrings.loadWelcomeSubtitle,
+          AppLocalizations.of(context).authWelcomeSubtitle,
           textAlign: TextAlign.center,
           style:
               Theme.of(context).textTheme.titleMedium?.copyWith(

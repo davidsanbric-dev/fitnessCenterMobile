@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -198,9 +199,9 @@ class TableCardPaginationConfig {
     this.onPageChanged,
     this.defaultPageSize = 7,
     this.padding = const EdgeInsets.only(top: 12),
-    this.previousTooltip = 'Previous page',
-    this.nextTooltip = 'Next page',
-    this.zeroResultsLabel = '0 results',
+    this.previousTooltip,
+    this.nextTooltip,
+    this.zeroResultsLabel,
   });
 
   final int? pageNumber;
@@ -209,9 +210,9 @@ class TableCardPaginationConfig {
   final ValueChanged<int>? onPageChanged;
   final int defaultPageSize;
   final EdgeInsetsGeometry padding;
-  final String previousTooltip;
-  final String nextTooltip;
-  final String zeroResultsLabel;
+  final String? previousTooltip;
+  final String? nextTooltip;
+  final String? zeroResultsLabel;
 }
 
 class TablePagination extends StatelessWidget {
@@ -240,12 +241,14 @@ class TablePagination extends StatelessWidget {
         builder: (context, constraints) {
           final shouldStack = constraints.maxWidth < 420;
           final summary = _buildSummary(
+            context: context,
             resolvedPageNumber: resolvedPageNumber,
             resolvedPageSize: resolvedPageSize,
             totalPages: resolvedTotalPages,
             textStyle: textStyle,
           );
           final controls = _buildControls(
+            context: context,
             resolvedPageNumber: resolvedPageNumber,
             totalPages: resolvedTotalPages,
             canGoPrevious: canGoPrevious,
@@ -280,20 +283,25 @@ class TablePagination extends StatelessWidget {
   }
 
   Widget _buildSummary({
+    required BuildContext context,
     required int resolvedPageNumber,
     required int resolvedPageSize,
     required int? totalPages,
     TextStyle? textStyle,
   }) {
+    final l10n = AppLocalizations.of(context);
     if (config.totalItems == null) {
       final label = totalPages == null
-          ? 'Page $resolvedPageNumber'
-          : 'Page $resolvedPageNumber of $totalPages';
+          ? l10n.paginationPage(resolvedPageNumber)
+          : l10n.paginationPageOf(resolvedPageNumber, totalPages);
       return Text(label, style: textStyle);
     }
 
     if (config.totalItems == 0) {
-      return Text(config.zeroResultsLabel, style: textStyle);
+      return Text(
+        config.zeroResultsLabel ?? l10n.paginationZeroResults,
+        style: textStyle,
+      );
     }
 
     final startItem = (resolvedPageNumber - 1) * resolvedPageSize + 1;
@@ -302,12 +310,13 @@ class TablePagination extends StatelessWidget {
       endItem = config.totalItems!;
     }
     return Text(
-      'Showing $startItem-$endItem of ${config.totalItems}',
+      l10n.paginationShowing(startItem, endItem, config.totalItems!),
       style: textStyle,
     );
   }
 
   Widget _buildControls({
+    required BuildContext context,
     required int resolvedPageNumber,
     required int? totalPages,
     required bool canGoPrevious,
@@ -315,9 +324,10 @@ class TablePagination extends StatelessWidget {
     bool allowWrapping = false,
     TextStyle? textStyle,
   }) {
+    final l10n = AppLocalizations.of(context);
     final pageLabel = totalPages == null
-        ? 'Page $resolvedPageNumber'
-        : 'Page $resolvedPageNumber of $totalPages';
+        ? l10n.paginationPage(resolvedPageNumber)
+        : l10n.paginationPageOf(resolvedPageNumber, totalPages);
     final pageIndicator = ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 180),
       child: Text(
@@ -333,7 +343,7 @@ class TablePagination extends StatelessWidget {
       onPressed: canGoPrevious
           ? () => config.onPageChanged!(resolvedPageNumber - 1)
           : null,
-      tooltip: config.previousTooltip,
+      tooltip: config.previousTooltip ?? l10n.paginationPrevious,
       icon: const Icon(LucideIcons.chevronLeft),
       iconSize: 20,
       visualDensity: VisualDensity.compact,
@@ -342,7 +352,7 @@ class TablePagination extends StatelessWidget {
       onPressed: canGoNext
           ? () => config.onPageChanged!(resolvedPageNumber + 1)
           : null,
-      tooltip: config.nextTooltip,
+      tooltip: config.nextTooltip ?? l10n.paginationNext,
       icon: const Icon(LucideIcons.chevronRight),
       iconSize: 20,
       visualDensity: VisualDensity.compact,

@@ -61,8 +61,9 @@ class _InfoSliderState extends State<InfoSlider> {
         final currentSlide = widget.slides[_currentIndex];
         final imageAspectRatio =
             currentSlide.imageAspectRatio ?? _defaultImageAspectRatio;
-        final imageHeight =
-            currentSlide.imageAsset != null ? width / imageAspectRatio : 0.0;
+        final imageHeight = currentSlide.imageAsset != null
+            ? width / imageAspectRatio
+            : 0.0;
         final sliderHeight = imageHeight + _footerHeight;
 
         return Column(
@@ -79,8 +80,9 @@ class _InfoSliderState extends State<InfoSlider> {
                   final slide = widget.slides[index];
                   final itemAspectRatio =
                       slide.imageAspectRatio ?? _defaultImageAspectRatio;
-                  final itemImageHeight =
-                      slide.imageAsset != null ? width / itemAspectRatio : 0.0;
+                  final itemImageHeight = slide.imageAsset != null
+                      ? width / itemAspectRatio
+                      : 0.0;
 
                   return _SlideCard(
                     slide: slide,
@@ -156,6 +158,7 @@ class _SlideCard extends StatelessWidget {
                 height: imageHeight,
                 child: ClipRRect(
                   child: Image.asset(
+                    excludeFromSemantics: true,
                     slide.imageAsset!,
                     fit: BoxFit.fitWidth,
                     errorBuilder: (context, error, stackTrace) {

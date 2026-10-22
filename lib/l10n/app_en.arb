@@ -1,0 +1,111 @@
+{
+  "@@locale": "en",
+  "commonBack": "Back",
+  "commonClose": "Close",
+  "commonClear": "Clear",
+  "commonMenu": "Menu",
+  "commonRetry": "Retry",
+  "commonRowActions": "Row actions",
+  "commonNoRecords": "No records available.",
+  "commonNotSpecified": "Not specified",
+  "commonViewProfile": "View profile",
+  "authAccessAccount": "Access your account",
+  "authEmail": "Email",
+  "authEmailHint": "Enter your email",
+  "authPassword": "Password",
+  "authPasswordHint": "Enter your password",
+  "authSignIn": "Sign in",
+  "authResendVerification": "Resend verification email",
+  "authIHaveVerified": "I have verified",
+  "authWelcomeTitle": "Welcome!",
+  "authWelcomeSubtitle": "Enter your email to continue",
+  "bookingsTitle": "My Bookings",
+  "bookingsBookSession": "Book a Session",
+  "bookingsEmpty": "You have no bookings yet.",
+  "bookingsColumnTime": "Time",
+  "bookingsColumnClassTrainer": "Class / Trainer",
+  "bookingsColumnActions": "Actions",
+  "bookingsTrainerPending": "Trainer pending assignment",
+  "bookingsViewDetails": "View details",
+  "bookingsConfirmBooking": "CONFIRM BOOKING",
+  "bookingsCancelBooking": "CANCEL BOOKING",
+  "bookingsUpdateStatus": "Update Status",
+  "bookingActionUnavailableTitle": "Action unavailable",
+  "bookingCancelUnavailable": "Only reserved or confirmed bookings can be canceled.",
+  "bookingConfirmUnavailable": "Only reserved or canceled bookings can be confirmed.",
+  "bookingStatusUpdatedTitle": "Status updated",
+  "bookingChangedToCanceled": "Booking changed to canceled.",
+  "bookingChangedToConfirmed": "Booking changed to confirmed.",
+  "bookingUpdateFailedTitle": "Could not update booking",
+  "bookingUnexpectedErrorTitle": "Unexpected error",
+  "bookingUnexpectedErrorDetail": "Could not update booking status: {error}",
+  "@bookingUnexpectedErrorDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingCouldNotBookSession": "Could not book the session",
+  "bookingCouldNotBookClassSlot": "Could not book this class slot",
+  "bookingsLoadFailed": "Could not load your bookings",
+  "navHome": "Home",
+  "navBookings": "Bookings",
+  "navDirectory": "Directory",
+  "navProfile": "Profile",
+  "navSlots": "Slots",
+  "brandSlogan": "now even closer to you",
+  "homeGreeting": "Hi, {name}!",
+  "homeGreetingNoName": "Hi!",
+  "homeExploreDisciplines": "Explore\nDisciplines",
+  "homeUpcomingBookings": "Upcoming Bookings",
+  "homeHistory": "History",
+  "homeViewHistory": "View history",
+  "homeViewBookings": "View bookings",
+  "homeNoUpcoming": "You have no upcoming bookings at FitnessCenter.",
+  "homeUpcomingLoadFailed": "We could not load your upcoming bookings.",
+  "commonClass": "Class",
+  "paginationPrevious": "Previous page",
+  "paginationNext": "Next page",
+  "paginationZeroResults": "0 results",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paginationPage": "Page {page}",
+  "paginationPageOf": "Page {page} of {total}",
+  "paginationShowing": "Showing {start}-{end} of {total}",
+  "@paginationPage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "@paginationPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@paginationShowing": {
+    "placeholders": {
+      "start": {
+        "type": "int"
+      },
+      "end": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
+}

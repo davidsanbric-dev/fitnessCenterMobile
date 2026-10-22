@@ -1,8 +1,10 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:fitnesscenter_mobile/app/config/config.dart';
 import 'package:fitnesscenter_mobile/app/core/auth/auth.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -10,7 +12,22 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      locale: kEnableDevicePreview ? DevicePreview.locale(context) : null,
+      // Spanish is the product language: the gyms and members this serves are
+      // Spanish-speaking. English stays available as a fallback rather than as
+      // the default.
+      //
+      // Deliberately not deferring to DevicePreview.locale here. That flag
+      // defaults to kDebugMode, so routing the locale through it meant every
+      // debug build - including the demo recording - silently ran in English.
+      // The product language should not depend on a dev-tooling toggle.
+      locale: const Locale('es'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       builder: kEnableDevicePreview ? DevicePreview.appBuilder : null,
       title: 'FitnessCenter',
       debugShowCheckedModeBanner: false,

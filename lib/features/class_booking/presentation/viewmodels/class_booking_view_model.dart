@@ -9,12 +9,10 @@ import 'package:flutter/foundation.dart';
 
 class ClassBookingViewModel extends ChangeNotifier {
   ClassBookingViewModel({
-    ClassBookingRepository? repository,
-    AgendaRefreshPort? agendaRefreshPort,
-  }) : _repository = repository ?? (throw ArgumentError.notNull('repository')),
-       _agendaRefreshPort =
-           agendaRefreshPort ??
-           (throw ArgumentError.notNull('agendaRefreshPort'));
+    required ClassBookingRepository repository,
+    required AgendaRefreshPort agendaRefreshPort,
+  }) : _repository = repository,
+       _agendaRefreshPort = agendaRefreshPort;
 
   final ClassBookingRepository _repository;
   final AgendaRefreshPort _agendaRefreshPort;

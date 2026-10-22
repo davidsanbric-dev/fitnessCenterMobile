@@ -31,10 +31,7 @@ class AnimatedHeader extends StatelessWidget {
 
     return Transform.translate(
       offset: Offset(0, headerOffset),
-      child: Transform.scale(
-        scale: headerScale,
-        child: child,
-      ),
+      child: Transform.scale(scale: headerScale, child: child),
     );
   }
 }

@@ -98,3 +98,6 @@ flutter_01.png
 RELEASING.md
 
 *.specs.md
+# Demo recording credentials (never commit)
+tool/demo.env
+build/demo/

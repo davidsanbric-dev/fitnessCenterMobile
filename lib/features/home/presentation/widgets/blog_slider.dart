@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -223,6 +223,7 @@ class _BlogHeroImage extends StatelessWidget {
     }
 
     return Image.network(
+      excludeFromSemantics: true,
       imageUrl,
       fit: BoxFit.cover,
       width: double.infinity,

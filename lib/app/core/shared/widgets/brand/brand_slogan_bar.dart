@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/constants/app_strings.dart';
@@ -29,7 +30,7 @@ class BrandSloganBar extends StatelessWidget {
                 style: AppTheme.brandNameSmall,
               ),
               TextSpan(
-                text: ' ${AppStrings.slogan}',
+                text: ' ${AppLocalizations.of(context).brandSlogan}',
                 style: AppTheme.orangeBarTextNormal,
               ),
             ],

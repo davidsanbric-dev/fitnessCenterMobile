@@ -9,8 +9,8 @@ import 'package:fitnesscenter_mobile/features/fitness_directory/domain/domain.da
 import 'package:fitnesscenter_mobile/features/fitness_directory/types.dart';
 
 class TrainersViewModel extends ViewModelBase {
-  TrainersViewModel({TrainersDirectoryRepository? repository})
-    : _repository = repository ?? (throw ArgumentError.notNull('repository'));
+  TrainersViewModel({required TrainersDirectoryRepository repository})
+    : _repository = repository;
 
   static const int _defaultPageSize = 6;
   // Sentinel "filter" key for the no-discipline listing, so the load-cache

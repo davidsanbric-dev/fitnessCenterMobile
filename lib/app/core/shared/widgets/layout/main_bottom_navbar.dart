@@ -56,6 +56,7 @@ class MainBottomNavBar extends StatelessWidget {
     }
     if (icon is String) {
       return Image.asset(
+        excludeFromSemantics: true,
         icon,
         width: size,
         height: size,

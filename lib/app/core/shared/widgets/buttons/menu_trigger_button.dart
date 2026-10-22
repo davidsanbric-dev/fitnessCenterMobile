@@ -22,6 +22,7 @@ class MenuTriggerButton extends StatelessWidget {
       ),
       child: IconButton(
         icon: const Icon(LucideIcons.menu),
+        tooltip: 'Menu',
         color: Colors.grey.shade800,
         onPressed: onPressed,
       ),

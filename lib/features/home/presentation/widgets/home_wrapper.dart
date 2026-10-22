@@ -106,7 +106,11 @@ class _HomeWrapperState extends State<HomeWrapper> {
           onTap: navCtrl.changeTab,
           items: [
             for (final tab in kNavTabs)
-              NavBarItem(icon: tab.icon, label: tab.label, index: tab.id),
+              NavBarItem(
+                icon: tab.icon,
+                label: tab.labelFor(context),
+                index: tab.id,
+              ),
           ],
         ),
       );

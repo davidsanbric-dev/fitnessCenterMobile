@@ -138,6 +138,7 @@ class _ShortcutCard extends StatelessWidget {
                                 color: accent,
                               )
                             : Image.asset(
+                                excludeFromSemantics: true,
                                 shortcut.iconPath!,
                                 height: shortcut.iconSize,
                                 width: shortcut.iconSize,

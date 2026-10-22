@@ -1,5 +1,5 @@
 name: fitnesscenter_mobile
-description: "A new Flutter project."
+description: "FitnessCenter member-facing mobile client (Flutter)."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -44,7 +47,7 @@ dependencies:
   firebase_core: ^4.2.1
   firebase_auth: ^6.1.2
   flutter_local_notifications: ^17.2.3
-  flutter_markdown: ^0.7.6
+  flutter_markdown_plus: ^1.0.3
   lucide_flutter: ^1.16.0
   scribble: ^0.10.0+1
   device_preview: ^1.2.0
@@ -53,6 +56,8 @@ dependencies:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -67,6 +72,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -17,7 +17,8 @@ class ProfileNavigationService extends GetxService {
 
   void requestTrainingHistory() => pendingSubView.value = 'training_history';
 
-  void requestAssessmentResults() => pendingSubView.value = 'assessment_results';
+  void requestAssessmentResults() =>
+      pendingSubView.value = 'assessment_results';
 
   void consume() => pendingSubView.value = null;
 }
