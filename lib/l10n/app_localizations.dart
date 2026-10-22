@@ -1158,6 +1158,186 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hora'**
   String get commonTime;
+
+  /// No description provided for @commonBook.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar'**
+  String get commonBook;
+
+  /// No description provided for @bookingConfirmed.
+  ///
+  /// In es, this message translates to:
+  /// **'{capability} reservada para {when}.'**
+  String bookingConfirmed(String capability, String when);
+
+  /// No description provided for @bookingClassSlotFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo reservar este horario.'**
+  String get bookingClassSlotFailed;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get commonCancel;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get commonSave;
+
+  /// No description provided for @commonCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get commonCreate;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get commonEdit;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get commonDelete;
+
+  /// No description provided for @commonAssign.
+  ///
+  /// In es, this message translates to:
+  /// **'Asignar'**
+  String get commonAssign;
+
+  /// No description provided for @commonSearch.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar'**
+  String get commonSearch;
+
+  /// No description provided for @commonError.
+  ///
+  /// In es, this message translates to:
+  /// **'Error'**
+  String get commonError;
+
+  /// No description provided for @commonRange.
+  ///
+  /// In es, this message translates to:
+  /// **'Rango'**
+  String get commonRange;
+
+  /// No description provided for @deleteItemTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar elemento'**
+  String get deleteItemTitle;
+
+  /// No description provided for @deleteItemPrompt.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Quieres eliminar este elemento?'**
+  String get deleteItemPrompt;
+
+  /// No description provided for @itemDeleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Elemento eliminado.'**
+  String get itemDeleted;
+
+  /// No description provided for @validationRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Este campo es obligatorio'**
+  String get validationRequired;
+
+  /// No description provided for @validationEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un correo válido'**
+  String get validationEmail;
+
+  /// No description provided for @validationMinLength.
+  ///
+  /// In es, this message translates to:
+  /// **'No se alcanza la longitud mínima'**
+  String get validationMinLength;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona un rango de fechas'**
+  String get selectDateRange;
+
+  /// No description provided for @filtersAdvanced.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros\\navanzados'**
+  String get filtersAdvanced;
+
+  /// No description provided for @filtersAdvancedActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros avanzados\\n(activos)'**
+  String get filtersAdvancedActive;
+
+  /// No description provided for @filtersAdvancedActiveLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros avanzados activos'**
+  String get filtersAdvancedActiveLabel;
+
+  /// No description provided for @filtersAdvancedOpen.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir filtros avanzados'**
+  String get filtersAdvancedOpen;
+
+  /// No description provided for @emptyNoMatches.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay coincidencias.'**
+  String get emptyNoMatches;
+
+  /// No description provided for @emptyNoOptions.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay opciones disponibles.'**
+  String get emptyNoOptions;
+
+  /// No description provided for @emptyNoOptionsNow.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay opciones disponibles por el momento.'**
+  String get emptyNoOptionsNow;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get statusPending;
+
+  /// No description provided for @statusConfirmed.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmada'**
+  String get statusConfirmed;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Anulada'**
+  String get statusCancelled;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Completada'**
+  String get statusCompleted;
 }
 
 class _AppLocalizationsDelegate

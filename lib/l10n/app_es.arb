@@ -322,5 +322,45 @@
         "type": "String"
       }
     }
-  }
+  },
+  "commonBook": "Reservar",
+  "bookingConfirmed": "{capability} reservada para {when}.",
+  "bookingClassSlotFailed": "No se pudo reservar este horario.",
+  "@bookingConfirmed": {
+    "placeholders": {
+      "capability": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "commonCancel": "Cancelar",
+  "commonSave": "Guardar",
+  "commonCreate": "Crear",
+  "commonEdit": "Editar",
+  "commonDelete": "Eliminar",
+  "commonAssign": "Asignar",
+  "commonSearch": "Buscar",
+  "commonError": "Error",
+  "commonRange": "Rango",
+  "deleteItemTitle": "Eliminar elemento",
+  "deleteItemPrompt": "¿Quieres eliminar este elemento?",
+  "itemDeleted": "Elemento eliminado.",
+  "validationRequired": "Este campo es obligatorio",
+  "validationEmail": "Ingresa un correo válido",
+  "validationMinLength": "No se alcanza la longitud mínima",
+  "selectDateRange": "Selecciona un rango de fechas",
+  "filtersAdvanced": "Filtros\\navanzados",
+  "filtersAdvancedActive": "Filtros avanzados\\n(activos)",
+  "filtersAdvancedActiveLabel": "Filtros avanzados activos",
+  "filtersAdvancedOpen": "Abrir filtros avanzados",
+  "emptyNoMatches": "No hay coincidencias.",
+  "emptyNoOptions": "No hay opciones disponibles.",
+  "emptyNoOptionsNow": "No hay opciones disponibles por el momento.",
+  "statusPending": "Pendiente",
+  "statusConfirmed": "Confirmada",
+  "statusCancelled": "Anulada",
+  "statusCompleted": "Completada"
 }

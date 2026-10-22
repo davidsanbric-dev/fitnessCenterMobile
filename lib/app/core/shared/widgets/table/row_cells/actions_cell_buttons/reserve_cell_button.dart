@@ -1,4 +1,5 @@
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -33,7 +34,7 @@ class ReserveCellButton<T> extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: isDisabled ? null : () => handler(selectedSlot),
           icon: const Icon(LucideIcons.calendarCheck, size: 18),
-          label: const Text('Book'),
+          label: Text(AppLocalizations.of(context).commonBook),
           style: AppTheme.tableActionButtonStyle(),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/snackbar_messenger.dart';
@@ -36,13 +37,15 @@ extension ClassBookingFeedback on ClassBookingViewModel {
       book: () => bookByClassType(slot: slot),
       successMessage: () {
         final when = formatDateTimeLabel(slot.schedulingDate);
+        final l10n = AppLocalizations.of(context);
         final capability = slot.capabilityDescription.trim().isEmpty
-            ? 'Class option'
+            ? l10n.classOption
             : slot.capabilityDescription.trim();
-        return '$capability booked for $when.';
+        return l10n.bookingConfirmed(capability, when);
       },
       errorMessage: () =>
-          classTypeBookingError ?? 'Could not book this class slot.',
+          classTypeBookingError ??
+          AppLocalizations.of(context).bookingClassSlotFailed,
       onBooked: onBooked,
     );
   }

@@ -52,27 +52,29 @@ void main() {
 
   group('cancelReservation', () {
     test('cancels a reserved booking and reports success', () async {
-      repository.setBookings([buildBooking(state: 'RESERVADA')]);
+      repository.setBookings([buildBooking(state: 'PENDING')]);
       await viewModel.loadBookings();
 
       final result = await viewModel.cancelReservation(
-        buildRow(bookingStatus: 'RESERVADA'),
+        buildRow(bookingStatus: 'PENDING'),
       );
 
-      expect(repository.statusUpdates, [(bookingId: 'bk-1', state: '2')]);
+      expect(repository.statusUpdates, [
+        (bookingId: 'bk-1', state: 'CANCELLED'),
+      ]);
       expect(result.outcome, BookingActionOutcome.updated);
       expect(result.action, BookingAction.cancel);
     });
 
     test('cancels a confirmed booking too', () async {
-      await viewModel.cancelReservation(buildRow(bookingStatus: 'CONFIRMADA'));
+      await viewModel.cancelReservation(buildRow(bookingStatus: 'CONFIRMED'));
 
       expect(repository.statusUpdates, hasLength(1));
     });
 
     test('refuses to cancel an already-canceled booking', () async {
       final result = await viewModel.cancelReservation(
-        buildRow(bookingStatus: 'ANULADA'),
+        buildRow(bookingStatus: 'CANCELLED'),
       );
 
       // The guard has to hold before any network call is made.
@@ -93,7 +95,7 @@ void main() {
     test('accepts a lowercase status from the table row', () async {
       // Rows are built for display, so casing is not guaranteed.
       final result = await viewModel.cancelReservation(
-        buildRow(bookingStatus: 'reservada'),
+        buildRow(bookingStatus: 'pending'),
       );
 
       expect(repository.statusUpdates, hasLength(1));
@@ -106,7 +108,7 @@ void main() {
       );
 
       final result = await viewModel.cancelReservation(
-        buildRow(bookingStatus: 'RESERVADA'),
+        buildRow(bookingStatus: 'PENDING'),
       );
 
       expect(result.outcome, BookingActionOutcome.apiFailure);
@@ -118,19 +120,19 @@ void main() {
       'falls back to a local status change when the refresh fails',
       () async {
         repository.setBookings([
-          buildBooking(bookingId: 'bk-1', state: 'RESERVADA'),
+          buildBooking(bookingId: 'bk-1', state: 'PENDING'),
         ]);
         await viewModel.loadBookings();
 
         // The cancel succeeds but the follow-up refresh does not.
         repository.fetchBookingsError = const ApiException('Sin conexion');
         final result = await viewModel.cancelReservation(
-          buildRow(bookingStatus: 'RESERVADA'),
+          buildRow(bookingStatus: 'PENDING'),
         );
 
         // The member still sees the booking as canceled rather than a stale
         // "reserved" row, and the action is still reported as successful.
-        expect(viewModel.bookings.single.state, 'ANULADA');
+        expect(viewModel.bookings.single.state, 'CANCELLED');
         expect(result.outcome, BookingActionOutcome.updated);
       },
     );
@@ -139,23 +141,25 @@ void main() {
   group('confirmReservation', () {
     test('confirms a reserved booking with the confirm action code', () async {
       final result = await viewModel.confirmReservation(
-        buildRow(bookingStatus: 'RESERVADA'),
+        buildRow(bookingStatus: 'PENDING'),
       );
 
-      expect(repository.statusUpdates, [(bookingId: 'bk-1', state: '1')]);
+      expect(repository.statusUpdates, [
+        (bookingId: 'bk-1', state: 'CONFIRMED'),
+      ]);
       expect(result.outcome, BookingActionOutcome.updated);
       expect(result.action, BookingAction.confirm);
     });
 
     test('re-confirms a canceled booking', () async {
-      await viewModel.confirmReservation(buildRow(bookingStatus: 'ANULADA'));
+      await viewModel.confirmReservation(buildRow(bookingStatus: 'CANCELLED'));
 
       expect(repository.statusUpdates, hasLength(1));
     });
 
     test('refuses to confirm an already-confirmed booking', () async {
       final result = await viewModel.confirmReservation(
-        buildRow(bookingStatus: 'CONFIRMADA'),
+        buildRow(bookingStatus: 'CONFIRMED'),
       );
 
       expect(repository.statusUpdates, isEmpty);
@@ -182,9 +186,9 @@ void main() {
     test('keeps the member-selectable statuses', () async {
       repository = FakeBookingsRepository(
         states: const [
-          BookingStateDto(code: 'RESERVADA', label: 'Reservada'),
-          BookingStateDto(code: 'CONFIRMADA', label: 'Confirmada'),
-          BookingStateDto(code: 'COMPLETADA', label: 'Completada'),
+          BookingStateDto(code: 'PENDING', label: 'Pendiente'),
+          BookingStateDto(code: 'CONFIRMED', label: 'Confirmada'),
+          BookingStateDto(code: 'COMPLETED', label: 'Completada'),
         ],
       );
       viewModel = BookingsViewModel(repository: repository);
@@ -195,15 +199,15 @@ void main() {
           .map((option) => option.id)
           .toList();
 
-      expect(codes, containsAll(<String>['RESERVADA', 'CONFIRMADA']));
-      expect(codes, isNot(contains('COMPLETADA')));
+      expect(codes, containsAll(<String>['PENDING', 'CONFIRMED']));
+      expect(codes, isNot(contains('COMPLETED')));
     });
 
     test('falls back to statuses derived from the loaded bookings', () async {
       // The catalog endpoint is non-fatal: if it fails the picker still works.
       repository.setBookings([
-        buildBooking(bookingId: 'bk-1', state: 'RESERVADA'),
-        buildBooking(bookingId: 'bk-2', state: 'CONFIRMADA'),
+        buildBooking(bookingId: 'bk-1', state: 'PENDING'),
+        buildBooking(bookingId: 'bk-2', state: 'CONFIRMED'),
       ]);
       repository.fetchBookingStatesError = const ApiException('500');
       await viewModel.loadBookings();
@@ -214,7 +218,7 @@ void main() {
           .map((option) => option.id)
           .toList();
 
-      expect(codes, containsAll(<String>['RESERVADA', 'CONFIRMADA']));
+      expect(codes, containsAll(<String>['PENDING', 'CONFIRMED']));
     });
   });
 

@@ -92,6 +92,7 @@ class DoubleOptionFilterBox<T> extends StatelessWidget {
                                 onPressed: () => onChanged?.call(option.value),
                               )
                             : ActiveFilterOptionButton<T>(
+                                key: option.key,
                                 option: option,
                                 isSelected: isSelected,
                                 accentColor: accentColor,

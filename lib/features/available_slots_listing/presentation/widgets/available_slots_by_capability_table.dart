@@ -96,6 +96,9 @@ class AvailableSlotsByCapabilityTable extends StatelessWidget {
           const ['trainer', 'discipline'],
           if (onReserveBooking != null)
             (row) => ReserveCellButton<AvailableSlotByCapabilityDto>.fromRow(
+              key: ValueKey(
+                'reserve-slot-${row['slotAssignmentCode'] ?? row['schedulingDate']}',
+              ),
               row: row,
               onReserve: onReserveBooking,
             ),
