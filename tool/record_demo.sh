@@ -102,23 +102,42 @@ adb -s "$SERIAL" shell rm -f "$DEVICE_MP4" || true
 [[ -s "$RAW" ]] || die "capture is empty"
 
 DURATION="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$RAW" | cut -d. -f1)"
-log "raw capture: ${DURATION}s"
+FPS="$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of csv=p=0 "$RAW")"
+log "raw capture: ${DURATION}s at ${FPS} fps"
 
-# A Spanish title card, then the capture. `-vf` normalizes to an even width,
-# which some encoders require, and keeps the phone aspect ratio intact.
-log "encoding final clip"
-ffmpeg -y -loglevel error \
-  -f lavfi -i "color=c=0x081622:s=720x1600:d=2.5" \
+# `adb screenrecord` writes a variable-frame-rate file whose nominal rate is the
+# 90kHz media timebase (r_frame_rate=90000/1), not the real capture rate. Handing
+# that to the `fps` filter makes it resample against 90000fps and emit frames
+# without bound: the encode never finishes and the output grows past the source.
+# Normalising with `-fps_mode cfr -r 30` instead uses the real timestamps.
+readonly BODY="${OUT_DIR}/body.mp4"
+readonly INTRO="${OUT_DIR}/intro.mp4"
+readonly CONCAT_LIST="${OUT_DIR}/concat.txt"
+
+log "normalising the capture to constant frame rate"
+ffmpeg -y -hide_banner -loglevel error -stats \
   -i "$RAW" \
-  -filter_complex "\
-    [0:v]drawtext=text='FitnessCenter':fontcolor=0xA1D8E3:fontsize=58:x=(w-text_w)/2:y=(h/2)-90,\
-         drawtext=text='Reserva de clases':fontcolor=0xECF3FA:fontsize=38:x=(w-text_w)/2:y=(h/2)-10,\
-         drawtext=text='App movil Flutter':fontcolor=0x9FB4CA:fontsize=28:x=(w-text_w)/2:y=(h/2)+50[intro];\
-    [1:v]scale=720:1600:force_original_aspect_ratio=decrease,\
-         pad=720:1600:(ow-iw)/2:(oh-ih)/2:color=0x081622,setsar=1,fps=30[body];\
-    [intro][body]concat=n=2:v=1:a=0[out]" \
-  -map "[out]" -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p \
-  "$FINAL"
+  -vf "scale=720:1600:force_original_aspect_ratio=decrease,pad=720:1600:(ow-iw)/2:(oh-ih)/2:color=0x081622,setsar=1" \
+  -fps_mode cfr -r 30 \
+  -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -an \
+  "$BODY"
+
+# Encoded with the same parameters as the body so the two concatenate without
+# a re-encode.
+log "rendering the title card"
+ffmpeg -y -hide_banner -loglevel error -stats \
+  -f lavfi -i "color=c=0x081622:s=720x1600:r=30:d=2.5" \
+  -vf "drawtext=text='FitnessCenter':fontcolor=0xA1D8E3:fontsize=58:x=(w-text_w)/2:y=(h/2)-90,\
+drawtext=text='Reserva de clases':fontcolor=0xECF3FA:fontsize=38:x=(w-text_w)/2:y=(h/2)-10,\
+drawtext=text='App movil Flutter':fontcolor=0x9FB4CA:fontsize=28:x=(w-text_w)/2:y=(h/2)+50" \
+  -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p \
+  "$INTRO"
+
+log "joining"
+printf "file '%s'\nfile '%s'\n" "$(basename "$INTRO")" "$(basename "$BODY")" > "$CONCAT_LIST"
+ffmpeg -y -hide_banner -loglevel error \
+  -f concat -safe 0 -i "$CONCAT_LIST" -c copy "$FINAL"
+rm -f "$CONCAT_LIST"
 
 FINAL_DURATION="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$FINAL" | cut -d. -f1)"
 log "done: $FINAL (${FINAL_DURATION}s)"
