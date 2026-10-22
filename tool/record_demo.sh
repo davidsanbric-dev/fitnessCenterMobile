@@ -217,9 +217,47 @@ readonly BODY="${OUT_DIR}/body.mp4"
 readonly INTRO="${OUT_DIR}/intro.mp4"
 readonly CONCAT_LIST="${OUT_DIR}/concat.txt"
 
+# The capture starts on whatever was on screen while Gradle built and the app
+# installed, and ends after the flow has torn down. The app's dark theme is far
+# darker than a typical launcher, so a per-second luma reading finds the window
+# where the app was actually in front. Override the cutoff with APP_LUMA_MAX, or
+# skip trimming entirely with NO_TRIM=1.
+TRIM_ARGS=()
+if [[ "${NO_TRIM:-0}" != "1" ]]; then
+  log "finding the app in the capture"
+  WINDOW="$(ffmpeg -v info -i "$RAW" \
+      -vf "fps=1,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-" \
+      -f null /dev/null 2>/dev/null \
+    | awk -v thresh="${APP_LUMA_MAX:-45}" '
+        /pts_time/ { t=$0; sub(/.*pts_time:/,"",t) }
+        /YAVG/ {
+          y=$0; sub(/.*YAVG=/,"",y)
+          if (y+0 < thresh) { if (first=="") first=t; last=t }
+        }
+        END { if (first!="") printf "%d %d", first, last }' || true)"
+
+  if [[ -n "$WINDOW" ]]; then
+    APP_START="${WINDOW% *}"
+    APP_END="${WINDOW#* }"
+    # A second of lead-in and lead-out keeps the cut off a transition frame.
+    (( APP_START > 1 )) && APP_START=$((APP_START - 1)) || APP_START=0
+    APP_END=$((APP_END + 1))
+    TRIMMED=$((APP_END - APP_START))
+    if (( TRIMMED < 15 )); then
+      log "the detected app window is only ${TRIMMED}s; keeping the full capture"
+    else
+      log "trimming to the app: ${APP_START}s -> ${APP_END}s (${TRIMMED}s)"
+      TRIM_ARGS=(-ss "$APP_START" -to "$APP_END")
+    fi
+  else
+    log "could not find the app in this capture; keeping it whole"
+    log "  (if the app never reached the screen, the take is launcher only)"
+  fi
+fi
+
 log "normalising the capture to constant frame rate"
 ffmpeg -y -hide_banner -loglevel error -stats \
-  -i "$RAW" \
+  "${TRIM_ARGS[@]}" -i "$RAW" \
   -vf "scale=720:1600:force_original_aspect_ratio=decrease,pad=720:1600:(ow-iw)/2:(oh-ih)/2:color=0x081622,setsar=1" \
   -fps_mode cfr -r 30 \
   -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -an \
