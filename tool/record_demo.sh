@@ -19,13 +19,20 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-# --post-only processes an existing capture instead of recording one. Use it
-# when the device cannot be driven by `adb shell screenrecord` (see the
-# preflight check below) and the screen was captured another way.
+# Capture modes:
+#   (default)        drive `adb shell screenrecord` on the device
+#   --manual-capture guide you through the device's own screen recorder, for
+#                    OEM builds that refuse to run screenrecord over adb
+#   --post-only      skip capture entirely and post-process an existing file
+MODE=record
+case "${1:-}" in
+  --post-only) MODE=post ;;
+  --manual-capture) MODE=manual ;;
+  "") ;;
+  *) echo "unknown option: $1" >&2; exit 2 ;;
+esac
 POST_ONLY=false
-if [[ "${1:-}" == "--post-only" ]]; then
-  POST_ONLY=true
-fi
+[[ "$MODE" == post ]] && POST_ONLY=true
 
 readonly OUT_DIR="${OUT_DIR:-build/demo}"
 readonly DEVICE_MP4="/sdcard/fitnesscenter_demo.mp4"
@@ -66,8 +73,10 @@ if [[ "$POST_ONLY" == false ]]; then
   fi
 
   # Some OEM builds (ColorOS/Realme among them) ship the screenrecord binary but
-  # refuse to let the adb shell execute it. Without this check the failure only
-  # surfaces later as an unexplained `adb pull` error with nothing to fetch.
+  # refuse to let the adb shell execute it. Only the scripted capture needs it.
+  if [[ "$MODE" == record ]]; then
+  # Without it the failure only surfaces later as an unexplained `adb pull`
+  # error with nothing to fetch.
   if ! adb -s "$SERIAL" shell 'command -v screenrecord >/dev/null && screenrecord --help >/dev/null 2>&1; echo $?' 2>/dev/null | grep -q '^0'; then
     die "this device will not run 'adb shell screenrecord' (common on ColorOS/Realme).
     Record the screen another way, then post-process the file:
@@ -81,12 +90,15 @@ if [[ "$POST_ONLY" == false ]]; then
       adb -s $SERIAL pull /sdcard/Movies/<your-recording>.mp4 $RAW
       tool/record_demo.sh --post-only
 
-    Or record on the emulator instead, where screenrecord works."
+    Or record on the emulator instead, where screenrecord works.
+    Guided alternative: tool/record_demo.sh --manual-capture"
+  fi
   fi
 
   # Keep the screen awake and hide status-bar clutter so the capture looks clean.
   adb -s "$SERIAL" shell svc power stayon usb >/dev/null 2>&1 || true
-  adb -s "$SERIAL" shell cmd statusbar set-icon-visibility 2>/dev/null || true
+  # Best effort and noisy on some builds, so both streams are discarded.
+  adb -s "$SERIAL" shell cmd statusbar set-icon-visibility >/dev/null 2>&1 || true
 fi
 
 mkdir -p "$OUT_DIR"
@@ -96,6 +108,40 @@ if [[ "$POST_ONLY" == true ]]; then
   [[ -s "$RAW" ]] || die "--post-only needs an existing capture at $RAW"
   log "post-only: using the existing capture at $RAW"
   TEST_STATUS=0
+elif [[ "$MODE" == manual ]]; then
+  # Build and install first, so the recording does not open on a Gradle wait.
+  log "building and installing before you start recording"
+  flutter install -d "$SERIAL" --debug >/dev/null \
+    || die "could not install the app on $SERIAL (ColorOS needs 'Install via USB' enabled)"
+
+  readonly RECORD_DIR="${RECORD_DIR:-/sdcard/DCIM/Screenrecords}"
+  BEFORE="$(adb -s "$SERIAL" shell "ls -1 $RECORD_DIR 2>/dev/null" | tr -d '\r' | sort)"
+
+  printf '\n\033[1;33m  Start the phone screen recorder now (Quick Settings), then press Enter.\033[0m\n'
+  read -r _
+  log "running the member flow - leave the phone alone until it finishes"
+
+  set +e
+  flutter test integration_test/member_flow_test.dart \
+    -d "$SERIAL" \
+    --dart-define-from-file="$DEFINES" \
+    --dart-define=ENABLE_DEVICE_PREVIEW=false \
+    --dart-define=DEMO_EMAIL="$DEMO_EMAIL" \
+    --dart-define=DEMO_PASSWORD="$DEMO_PASSWORD"
+  TEST_STATUS=$?
+  set -e
+
+  printf '\n\033[1;33m  Stop the recording now, then press Enter.\033[0m\n'
+  read -r _
+
+  # Whatever appeared in the recordings folder since we started is the take.
+  AFTER="$(adb -s "$SERIAL" shell "ls -1 $RECORD_DIR 2>/dev/null" | tr -d '\r' | sort)"
+  NEW="$(comm -13 <(echo "$BEFORE") <(echo "$AFTER") | tail -1)"
+  [[ -n "$NEW" ]] || die "no new recording found in $RECORD_DIR.
+  Pull it by hand and run: tool/record_demo.sh --post-only"
+  log "pulling $NEW"
+  adb -s "$SERIAL" pull "$RECORD_DIR/$NEW" "$RAW" >/dev/null
+  [[ -s "$RAW" ]] || die "the pulled recording is empty"
 else
 log "starting screen capture"
 adb -s "$SERIAL" shell rm -f "$DEVICE_MP4" 2>/dev/null || true
