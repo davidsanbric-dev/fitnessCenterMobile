@@ -372,8 +372,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (isLoading) {
       return AppLocalizations.of(context).homeLoadingHistory;
     }
-    if (error != null)
+    if (error != null) {
       return AppLocalizations.of(context).homeHistoryLoadFailed;
+    }
     if (booking == null) {
       return AppLocalizations.of(context).homeHistoryEmpty;
     }
