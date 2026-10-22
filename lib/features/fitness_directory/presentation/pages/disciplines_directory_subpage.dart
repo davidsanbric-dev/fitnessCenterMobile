@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
@@ -53,7 +54,9 @@ class _DisciplinesDirectoryPageState extends State<DisciplinesDirectoryPage> {
     final discipline = row['discipline'] as DisciplineDto?;
     if (discipline == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not select the discipline.')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).dirSelectDisciplineFailed),
+        ),
       );
       return;
     }
@@ -169,7 +172,7 @@ class _DisciplinesDirectoryStandalonePageState
     if (disciplineName.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Discipline',
+          label: AppLocalizations.of(context).commonDiscipline,
           value: disciplineName,
           icon: LucideIcons.star,
         ),
@@ -215,8 +218,8 @@ class _DisciplinesDirectoryStandalonePageState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PageHeader(
-              title: 'Fitness Directory',
-              subtitle: 'Disciplines',
+              title: AppLocalizations.of(context).dirTitle,
+              subtitle: AppLocalizations.of(context).commonDisciplines,
               subtitleIcon: LucideIcons.dumbbell,
               onBackButtonPressed: _handleBack,
             ),

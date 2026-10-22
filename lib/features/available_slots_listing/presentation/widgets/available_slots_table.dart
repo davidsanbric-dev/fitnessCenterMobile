@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/actions_cell_buttons/reserve_cell_button.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/row_cells/date_time_cell.dart';
@@ -61,12 +62,13 @@ class AvailableSlotsTable extends StatelessWidget {
             : null;
 
         return TableCard(
-          title: 'Available Time Slots',
+          title: AppLocalizations.of(context).slotAvailableTimes,
           icon: LucideIcons.calendarCheck,
           headers: [
             'Time',
-            'Trainer / Discipline',
-            if (onReserveBooking != null) 'Action',
+            AppLocalizations.of(context).commonTrainerDiscipline,
+            if (onReserveBooking != null)
+              AppLocalizations.of(context).commonAction,
           ],
           toolbar: _buildToolbar(context),
           toolbarSpacing: 12,
@@ -83,7 +85,7 @@ class AvailableSlotsTable extends StatelessWidget {
                   onReserve: onReserveBooking,
                 ),
             ],
-            emptyLabel: 'No available time slots for the selected filters.',
+            emptyLabel: AppLocalizations.of(context).emptyNoSlotsForFilters,
           ),
           heightFactor: 0.7,
           margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 16),
@@ -94,7 +96,7 @@ class AvailableSlotsTable extends StatelessWidget {
   }
 
   Widget? _buildToolbar(BuildContext context) {
-    final summary = _buildFiltersSummary();
+    final summary = _buildFiltersSummary(context);
     final editButton = showEditFiltersButton
         ? _buildEditFiltersButton(context)
         : null;
@@ -113,7 +115,7 @@ class AvailableSlotsTable extends StatelessWidget {
     return summary ?? editButton;
   }
 
-  Widget? _buildFiltersSummary() {
+  Widget? _buildFiltersSummary(BuildContext context) {
     final data = controller.lastSubmittedFilters;
     if (data == null) {
       return null;
@@ -124,7 +126,7 @@ class AvailableSlotsTable extends StatelessWidget {
     if (service.isNotEmpty) {
       items.add(
         TableFiltersSummaryItemData(
-          label: 'Class type',
+          label: AppLocalizations.of(context).classType,
           value: service,
           icon: LucideIcons.dumbbell,
         ),
@@ -136,7 +138,9 @@ class AvailableSlotsTable extends StatelessWidget {
       final isDiscipline = data.searchMode == DisciplineSearchMode.discipline;
       items.add(
         TableFiltersSummaryItemData(
-          label: isDiscipline ? 'Discipline' : 'Trainer',
+          label: isDiscipline
+              ? AppLocalizations.of(context).commonDiscipline
+              : AppLocalizations.of(context).commonTrainer,
           value: primaryLabel,
           icon: isDiscipline ? LucideIcons.star : LucideIcons.user,
         ),
@@ -144,9 +148,9 @@ class AvailableSlotsTable extends StatelessWidget {
 
       if (!isDiscipline && (data.disciplineLabel?.trim().isEmpty ?? true)) {
         items.add(
-          const TableFiltersSummaryItemData(
-            label: 'Discipline',
-            value: 'All disciplines',
+          TableFiltersSummaryItemData(
+            label: AppLocalizations.of(context).commonDiscipline,
+            value: AppLocalizations.of(context).dirAllDisciplines,
             icon: LucideIcons.star,
           ),
         );
@@ -166,7 +170,7 @@ class AvailableSlotsTable extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
       ),
       icon: const Icon(LucideIcons.chevronLeft, size: 18),
-      label: const Text('Change filters'),
+      label: Text(AppLocalizations.of(context).filterChange),
     );
   }
 }

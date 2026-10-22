@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/available_slots/available_slot_by_capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/ui/error_banner.dart';
@@ -128,8 +129,8 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage>
           isLoading: viewModel.isSubgroupItemsLoading,
           emptyStateMessage:
               viewModel.subgroupItemsError ??
-              'No class types available for this subcategory.',
-          title: 'Pick a class type',
+              AppLocalizations.of(context).emptyNoClassTypes,
+          title: AppLocalizations.of(context).pickClassType,
           iconData: LucideIcons.dumbbell,
           onGroupSelected: viewModel.loadBookingsForCapability,
         );
@@ -163,19 +164,19 @@ class _CapabilitiesDirectoryPageState extends State<CapabilitiesDirectoryPage>
           filterSummary: [
             if (selectedGroup != null)
               TableFiltersSummaryItemData(
-                label: 'Group',
+                label: AppLocalizations.of(context).commonGroup,
                 value: selectedGroup.description,
                 icon: LucideIcons.tags,
               ),
             if (selectedSubgroup != null)
               TableFiltersSummaryItemData(
-                label: 'Subgroup',
+                label: AppLocalizations.of(context).commonSubgroup,
                 value: selectedSubgroup.description.trim(),
                 icon: LucideIcons.user,
               ),
             if (selectedCapability != null)
               TableFiltersSummaryItemData(
-                label: 'Class option',
+                label: AppLocalizations.of(context).classOption,
                 value: selectedCapability.description.trim(),
                 icon: LucideIcons.trophy,
               ),

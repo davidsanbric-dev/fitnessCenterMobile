@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/double_option_filter_box.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/types.dart';
 import 'package:flutter/material.dart';
@@ -6,28 +7,28 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 class SchedulingModeFilterBox extends StatelessWidget {
   const SchedulingModeFilterBox({
     super.key,
-    this.title = 'Booking Options',
+    this.title,
     this.accentColor,
     required this.selectedMode,
     this.onChanged,
   });
 
-  final String title;
+  final String? title;
   final Color? accentColor;
   final SchedulingMode? selectedMode;
   final ValueChanged<SchedulingMode>? onChanged;
 
   static const double _optionHeight = 160;
 
-  static const List<FilterOption<SchedulingMode>> _options = [
+  static List<FilterOption<SchedulingMode>> _options(BuildContext context) => [
     FilterOption<SchedulingMode>(
       value: SchedulingMode.byDisciplineTrainer,
-      label: 'By Discipline/Trainer',
+      label: AppLocalizations.of(context).filterByDisciplineTrainer,
       iconData: LucideIcons.users,
     ),
     FilterOption<SchedulingMode>(
       value: SchedulingMode.byService,
-      label: 'By Class Type',
+      label: AppLocalizations.of(context).filterByClassType,
       iconData: LucideIcons.tags,
     ),
   ];
@@ -36,9 +37,9 @@ class SchedulingModeFilterBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolvedAccent = accentColor ?? Theme.of(context).colorScheme.primary;
     return DoubleOptionFilterBox<SchedulingMode>(
-      title: title,
+      title: title ?? AppLocalizations.of(context).bookingOptionsTitle,
       accentColor: resolvedAccent,
-      options: _options,
+      options: _options(context),
       selectedValue: selectedMode,
       onChanged: onChanged,
       optionBuilder:

@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/slide_page_switcher.dart';
 import 'package:fitnesscenter_mobile/features/available_slots_listing/feature.dart';
@@ -48,9 +49,10 @@ class BookSessionFlow extends StatefulWidget {
 }
 
 class BookSessionFlowState extends State<BookSessionFlow> {
-  static const String _byDisciplineTrainerHeaderSubtitle =
-      'By Discipline/Trainer';
-  static const String _byServiceHeaderSubtitle = 'By Class Type';
+  static String _byDisciplineTrainerHeaderSubtitle(BuildContext context) =>
+      AppLocalizations.of(context).filterByDisciplineTrainer;
+  static String _byServiceHeaderSubtitle(BuildContext context) =>
+      AppLocalizations.of(context).filterByClassType;
 
   bool _hasSelectedSchedulingMode = false;
   SchedulingMode _schedulingMode = SchedulingMode.byService;
@@ -153,7 +155,7 @@ class BookSessionFlowState extends State<BookSessionFlow> {
         ? AvailableSlotsByDisciplineTrainerPage(
             isEmbedded: true,
             onBack: _backToSchedulingMode,
-            headerSubtitle: _byDisciplineTrainerHeaderSubtitle,
+            headerSubtitle: _byDisciplineTrainerHeaderSubtitle(context),
             headerSubtitleIcon: LucideIcons.dumbbell,
             onHeaderStateChanged: widget.onHeaderStateChanged,
           )
@@ -168,13 +170,15 @@ class BookSessionFlowState extends State<BookSessionFlow> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (!showCapabilityFlow && !chromeless)
-                      const PageHeader(title: 'Book a Session'),
+                      PageHeader(
+                        title: AppLocalizations.of(context).bookingsBookSession,
+                      ),
                     if (showCapabilityFlow)
                       AvailableSlotsByCapabilityPage(
                         isEmbedded: true,
                         horizontalPadding: horizontalPadding,
                         onBack: _backToSchedulingMode,
-                        headerSubtitle: _byServiceHeaderSubtitle,
+                        headerSubtitle: _byServiceHeaderSubtitle(context),
                         headerSubtitleIcon: LucideIcons.trophy,
                         onHeaderStateChanged: widget.onHeaderStateChanged,
                       )

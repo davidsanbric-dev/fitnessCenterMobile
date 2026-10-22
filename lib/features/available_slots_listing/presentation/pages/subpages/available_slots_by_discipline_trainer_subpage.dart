@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/forms/inline_error_text.dart';
@@ -303,7 +304,7 @@ class _AvailableSlotsByDisciplineTrainerPageState
                       AvailableSlotsFilterFields(
                         primaryController: _primarySearchController,
                         primaryFocusNode: _primaryFocusNode,
-                        primaryPlaceholder: uiState.primaryPlaceholder,
+                        primaryPlaceholder: uiState.primaryPlaceholder(context),
                         liftToTop: shouldLiftInputs,
                         showOnlyActiveField: shouldShowSheet,
                         activeFocusNode: _focusNodeForField(
@@ -443,7 +444,7 @@ class _AvailableSlotsByDisciplineTrainerPageState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   PageHeader(
-                    title: 'Book a Session',
+                    title: AppLocalizations.of(context).bookingsBookSession,
                     subtitle: widget.headerSubtitle,
                     subtitleIcon: widget.headerSubtitleIcon,
                     onBackButtonPressed: headerBackHandler,

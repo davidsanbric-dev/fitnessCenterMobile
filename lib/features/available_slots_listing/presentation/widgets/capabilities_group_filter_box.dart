@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/schemas/capabilities/capability_dto.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/filter_boxes/filter_box_option_button.dart';
@@ -15,7 +16,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
     required this.onGroupSelected,
     this.emptyStateMessage,
     this.isLoading = false,
-    this.title = 'What type of class are you looking for?',
+    this.title,
     this.iconData = LucideIcons.tags,
   });
 
@@ -24,7 +25,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
   final ValueChanged<CapabilityDto> onGroupSelected;
   final String? emptyStateMessage;
   final bool isLoading;
-  final String title;
+  final String? title;
   final IconData iconData;
 
   @override
@@ -43,8 +44,7 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Text(
-          emptyStateMessage ??
-              'No class category groups are available right now.',
+          emptyStateMessage ?? AppLocalizations.of(context).emptyNoGroups,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium,
         ),
@@ -69,7 +69,10 @@ class CapabilitiesGroupFilterBox extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
-            child: Text(title, style: AppTheme.titleMediumEmphasis(context)),
+            child: Text(
+              title ?? AppLocalizations.of(context).bookingOptionsTitle,
+              style: AppTheme.titleMediumEmphasis(context),
+            ),
           ),
           Container(
             height: 1,

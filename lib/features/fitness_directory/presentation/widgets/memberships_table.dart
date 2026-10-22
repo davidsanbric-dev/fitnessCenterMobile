@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_card.dart';
 import 'package:flutter/material.dart';
@@ -43,9 +44,9 @@ class MembershipsTable extends StatelessWidget {
         : null;
 
     return TableCard(
-      // title: 'Membershipes',
+      // title: AppLocalizations.of(context).commonPlans,
       icon: LucideIcons.creditCard,
-      // headers: const ['Previsión'],
+      // headers: const [AppLocalizations.of(context).commonInsurance],
       heightFactor: 0.6,
       margin: const EdgeInsets.only(top: 8),
       body: TableBodySection(
@@ -57,7 +58,7 @@ class MembershipsTable extends StatelessWidget {
         ],
         isLoading: isLoading,
         errorMessage: errorMessage,
-        emptyLabel: 'No membership plans available.',
+        emptyLabel: AppLocalizations.of(context).emptyNoPlans,
         wrapFields: const {'name', 'price', 'maxBookings'},
         onRowTap: (row) => _showComingSoonSnackBar(
           context,
@@ -73,9 +74,7 @@ class MembershipsTable extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(
-            'Detailed information for $label will be available soon.',
-          ),
+          content: Text(AppLocalizations.of(context).comingSoonDetail(label)),
         ),
       );
   }

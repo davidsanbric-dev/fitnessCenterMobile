@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'package:fitnesscenter_mobile/app/config/app_theme.dart';
 import 'package:fitnesscenter_mobile/app/core/utils/format/info_card.dart';
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/table/table_body.dart';
@@ -36,8 +37,11 @@ class CapabilitiesSubgroupItemsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showAction = onItemSelected != null;
-    final tableRows = _buildRows(items);
-    final headers = <String>['Class Option', if (showAction) 'Action'];
+    final tableRows = _buildRows(context, items);
+    final headers = <String>[
+      AppLocalizations.of(context).classOption,
+      if (showAction) AppLocalizations.of(context).commonAction,
+    ];
     final shouldShowPagination =
         showPagination ||
         pageNumber != null ||
@@ -54,7 +58,7 @@ class CapabilitiesSubgroupItemsTable extends StatelessWidget {
         : null;
 
     return TableCard(
-      title: 'Class Options',
+      title: AppLocalizations.of(context).classOptions,
       icon: LucideIcons.listChecks,
       headers: headers,
       toolbar: _buildFiltersSummary(),
@@ -71,7 +75,7 @@ class CapabilitiesSubgroupItemsTable extends StatelessWidget {
         ],
         isLoading: isLoading,
         errorMessage: errorMessage,
-        emptyLabel: 'No class options available for this subcategory.',
+        emptyLabel: AppLocalizations.of(context).emptyNoClassOptions,
         wrapFields: const {'description'},
       ),
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -80,13 +84,16 @@ class CapabilitiesSubgroupItemsTable extends StatelessWidget {
     );
   }
 
-  List<Map<String, dynamic>> _buildRows(List<CapabilityDto> source) {
+  List<Map<String, dynamic>> _buildRows(
+    BuildContext context,
+    List<CapabilityDto> source,
+  ) {
     return source
         .map(
           (item) => {
             'description': item.description,
             'scheduleType': item.scheduleType.trim().isEmpty
-                ? 'Normal'
+                ? AppLocalizations.of(context).commonNormal
                 : item.scheduleType.trim(),
             'item': item,
           },
@@ -127,7 +134,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
               onPressed: () =>
                   _showPreparationDialog(context, item.preparation),
               icon: const Icon(LucideIcons.fileText, size: 16),
-              label: const Text('Preparation'),
+              label: Text(AppLocalizations.of(context).commonPreparation),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.brandAccentColor(context),
                 side: BorderSide(
@@ -153,7 +160,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
                   ? null
                   : () => onItemSelected!(item),
               icon: const Icon(LucideIcons.calendarCheck, size: 16),
-              label: const Text('Time Slots'),
+              label: Text(AppLocalizations.of(context).commonTimeSlots),
               style: AppTheme.tableActionButtonStyle(),
             ),
           ),
@@ -172,7 +179,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
       builder: (_) => AlertDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         title: Text(
-          'Preparation',
+          AppLocalizations.of(context).commonPreparation,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         content: ConstrainedBox(
@@ -180,7 +187,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
           child: SingleChildScrollView(
             child: SelectableText(
               preparationText.isEmpty
-                  ? 'No preparation instructions available.'
+                  ? AppLocalizations.of(context).emptyNoPreparation
                   : preparationText,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -190,7 +197,7 @@ class _SubgroupItemActionsCell extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              'Close',
+              AppLocalizations.of(context).commonClose,
               style: TextStyle(color: AppTheme.brandAccentColor(context)),
             ),
           ),

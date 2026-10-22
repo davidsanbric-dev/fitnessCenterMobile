@@ -1,3 +1,4 @@
+import 'package:fitnesscenter_mobile/l10n/app_localizations.dart';
 import 'dart:math' as math;
 
 import 'package:fitnesscenter_mobile/app/core/shared/widgets/layout/page_header_scope.dart';
@@ -45,7 +46,7 @@ Future<void> showBookSessionDialog(BuildContext context) {
                   right: 6,
                   child: IconButton(
                     icon: const Icon(LucideIcons.x, color: Colors.white),
-                    tooltip: 'Close',
+                    tooltip: AppLocalizations.of(context).commonClose,
                     onPressed: () => Navigator.of(dialogContext).pop(),
                   ),
                 ),
