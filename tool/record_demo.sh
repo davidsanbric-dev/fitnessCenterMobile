@@ -218,28 +218,44 @@ readonly INTRO="${OUT_DIR}/intro.mp4"
 readonly CONCAT_LIST="${OUT_DIR}/concat.txt"
 
 # The capture starts on whatever was on screen while Gradle built and the app
-# installed, and ends after the flow has torn down. The app's dark theme is far
-# darker than a typical launcher, so a per-second luma reading finds the window
-# where the app was actually in front. Override the cutoff with APP_LUMA_MAX, or
-# skip trimming entirely with NO_TRIM=1.
+# installed, and ends after the flow has torn down. On a cold cache that can be
+# minutes of wallpaper.
+#
+# Detection is relative, not absolute: a first attempt used a fixed luma cutoff
+# and cut the clip mid-flow, because this app's screens average 37-52 while the
+# launcher averages 83 - the cutoff sat inside the app's own range. So take the
+# opening seconds as the launcher baseline and treat a sustained departure from
+# it as the app. APP_LUMA_DELTA tunes the sensitivity; NO_TRIM=1 disables it.
 TRIM_ARGS=()
 if [[ "${NO_TRIM:-0}" != "1" ]]; then
   log "finding the app in the capture"
-  WINDOW="$(ffmpeg -v info -i "$RAW" \
-      -vf "fps=1,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-" \
-      -f null /dev/null 2>/dev/null \
-    | awk -v thresh="${APP_LUMA_MAX:-45}" '
-        /pts_time/ { t=$0; sub(/.*pts_time:/,"",t) }
-        /YAVG/ {
-          y=$0; sub(/.*YAVG=/,"",y)
-          if (y+0 < thresh) { if (first=="") first=t; last=t }
-        }
-        END { if (first!="") printf "%d %d", first, last }' || true)"
+  LUMA_FILE="${OUT_DIR}/.luma.txt"
+  ffmpeg -v error -i "$RAW" \
+    -vf "fps=1,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=$LUMA_FILE" \
+    -f null /dev/null 2>/dev/null || true
+
+  WINDOW=""
+  if [[ -s "$LUMA_FILE" ]]; then
+    WINDOW="$(awk -v delta="${APP_LUMA_DELTA:-12}" '
+      /pts_time/ { t=$0; sub(/.*pts_time:/,"",t); next }
+      /YAVG=/ {
+        v=$0; sub(/.*YAVG=/,"",v); v=v+0; sec=int(t)
+        if (n < 3) { b += v; n++; if (n == 3) base = b/3; next }
+        d = (v > base) ? v - base : base - v
+        if (d > delta) { if (st == "") st = sec; en = sec }
+        else if (st != "") { if (en - st > best) { best = en - st; bs = st; be = en } st = "" }
+      }
+      END {
+        if (st != "" && en - st > best) { best = en - st; bs = st; be = en }
+        if (best > 0) printf "%d %d", bs, be
+      }' "$LUMA_FILE")"
+  fi
+  rm -f "$LUMA_FILE"
 
   if [[ -n "$WINDOW" ]]; then
     APP_START="${WINDOW% *}"
     APP_END="${WINDOW#* }"
-    # A second of lead-in and lead-out keeps the cut off a transition frame.
+    # A second either side keeps the cut off a transition frame.
     (( APP_START > 1 )) && APP_START=$((APP_START - 1)) || APP_START=0
     APP_END=$((APP_END + 1))
     TRIMMED=$((APP_END - APP_START))
@@ -250,8 +266,8 @@ if [[ "${NO_TRIM:-0}" != "1" ]]; then
       TRIM_ARGS=(-ss "$APP_START" -to "$APP_END")
     fi
   else
-    log "could not find the app in this capture; keeping it whole"
-    log "  (if the app never reached the screen, the take is launcher only)"
+    log "could not tell the app apart from the background; keeping the capture whole"
+    log "  (expected if the recording already starts inside the app)"
   fi
 fi
 
