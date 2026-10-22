@@ -42,6 +42,14 @@ readonly DEFINES="${DEFINES:-.dart-defines.local.json}"
 readonly ENV_FILE="${ENV_FILE:-tool/demo.env}"
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+prompt() {
+  printf '\n\033[1;33m  %s\033[0m\n' "$*"
+  # Read from the terminal rather than stdin, so a piped or redirected stdin
+  # does not turn the prompt into an instant EOF.
+  if ! read -r _ < /dev/tty; then
+    die "could not read from the terminal. Run this in an interactive shell."
+  fi
+}
 die() { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 
 # ---------------------------------------------------------------- preflight
@@ -109,16 +117,26 @@ if [[ "$POST_ONLY" == true ]]; then
   log "post-only: using the existing capture at $RAW"
   TEST_STATUS=0
 elif [[ "$MODE" == manual ]]; then
+  [[ -e /dev/tty ]] || die "--manual-capture needs an interactive terminal"
   # Build and install first, so the recording does not open on a Gradle wait.
   log "building and installing before you start recording"
-  flutter install -d "$SERIAL" --debug >/dev/null \
+  flutter install -d "$SERIAL" --debug \
     || die "could not install the app on $SERIAL (ColorOS needs 'Install via USB' enabled)"
 
-  readonly RECORD_DIR="${RECORD_DIR:-/sdcard/DCIM/Screenrecords}"
-  BEFORE="$(adb -s "$SERIAL" shell "ls -1 $RECORD_DIR 2>/dev/null" | tr -d '\r' | sort)"
+  # Where a built-in recorder saves varies by OEM, and the folder often does
+  # not exist until the first recording. So instead of watching one directory,
+  # snapshot every video under the usual roots and diff afterwards. Failures are
+  # tolerated: an `ls` on a missing folder returns non-zero, and under `set -e`
+  # that used to kill the script silently, before the prompt had even printed.
+  readonly RECORD_ROOTS="${RECORD_ROOTS:-/sdcard/DCIM /sdcard/Movies /sdcard/Recordings /sdcard/Pictures}"
+  list_videos() {
+    adb -s "$SERIAL" shell \
+      "find $RECORD_ROOTS -type f \\( -iname '*.mp4' -o -iname '*.mkv' \\) 2>/dev/null" \
+      2>/dev/null | tr -d '\r' | sort || true
+  }
+  BEFORE="$(list_videos)"
 
-  printf '\n\033[1;33m  Start the phone screen recorder now (Quick Settings), then press Enter.\033[0m\n'
-  read -r _
+  prompt "Start the phone screen recorder now (Quick Settings), then press Enter."
   log "running the member flow - leave the phone alone until it finishes"
 
   set +e
@@ -131,16 +149,18 @@ elif [[ "$MODE" == manual ]]; then
   TEST_STATUS=$?
   set -e
 
-  printf '\n\033[1;33m  Stop the recording now, then press Enter.\033[0m\n'
-  read -r _
+  prompt "Stop the recording now, then press Enter."
 
-  # Whatever appeared in the recordings folder since we started is the take.
-  AFTER="$(adb -s "$SERIAL" shell "ls -1 $RECORD_DIR 2>/dev/null" | tr -d '\r' | sort)"
+  # Whatever video appeared while the flow ran is the take.
+  AFTER="$(list_videos)"
   NEW="$(comm -13 <(echo "$BEFORE") <(echo "$AFTER") | tail -1)"
-  [[ -n "$NEW" ]] || die "no new recording found in $RECORD_DIR.
-  Pull it by hand and run: tool/record_demo.sh --post-only"
+  [[ -n "$NEW" ]] || die "no new recording appeared under: $RECORD_ROOTS
+  If your recorder saves elsewhere, pull the file by hand and run:
+    adb -s $SERIAL pull <path-on-device> $RAW
+    tool/record_demo.sh --post-only
+  Or point the search at the right place with RECORD_ROOTS=..."
   log "pulling $NEW"
-  adb -s "$SERIAL" pull "$RECORD_DIR/$NEW" "$RAW" >/dev/null
+  adb -s "$SERIAL" pull "$NEW" "$RAW" >/dev/null
   [[ -s "$RAW" ]] || die "the pulled recording is empty"
 else
 log "starting screen capture"
